@@ -12,7 +12,7 @@ import logging
 import requests
 from typing import Optional
 
-import config
+import config_copy as config
 
 logger = logging.getLogger(__name__)
 
@@ -255,3 +255,28 @@ class UMLSClient:
             result = data["result"]
             return result if isinstance(result, list) else []
         return []
+
+    # ──────────────────────────────────────────────────────────────────
+    # Semantic Network API
+    # ──────────────────────────────────────────────────────────────────
+
+    def umls_semantic_types(
+        self,
+        number: str = None,
+    ) -> Optional[dict]:
+        """
+        Retrieve semantic type information by TUI.
+
+        Args:
+            number: numeric part of a TUI (e.g. "47" -> "T047")
+            tui: full TUI identifier (e.g. "T047")
+
+        Returns:
+            The inner result dict from the semantic-network endpoint, or None.
+        """
+        data = self._get(
+            f"/semantic-network/{self.version}/TUI/T{number}"
+        )
+        if data and "result" in data:
+            return data["result"]
+        return None

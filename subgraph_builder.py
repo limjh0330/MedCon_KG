@@ -10,7 +10,7 @@ Design rationale (from research proposal §2.4 Step 2):
 
 import logging
 
-from umls_client import UMLSClient
+from UMLS_KG.umls_client import UMLSClient
 import config
 
 logger = logging.getLogger(__name__)

@@ -54,32 +54,44 @@ for number in range(1,1000):
         print(f"There is no T{number}")
         continue
     else:
-        semantic_type_group = semantic_type_info.get("semanticTypeGroup", {})
-        semantic_type_group_name = semantic_type_group.get("expandedForm", "")
-        semantic_type_group_code = semantic_type_group.get("abbreviation", "")
-        semantic_type_class = semantic_type_group.get("classType", "")
-
         semantic_type_def = semantic_type_info.get("definition", "")        
         semantic_type_name = semantic_type_info.get("name", "")
         semantic_type_examples = semantic_type_info.get("example", [])
-        semantic_type = {
-            "abbreviation": semantic_type_group_code,
+        if "semanticTypeGroup" in semantic_type_info:
+            semantic_type_group = semantic_type_info.get("semanticTypeGroup", {})
+            semantic_type_group_name = semantic_type_group.get("expandedForm", "")
+            semantic_type_group_code = semantic_type_group.get("abbreviation", "")
+            semantic_type_class = semantic_type_group.get("classType", "")
+
+            semantic_type = {
+            "group_abbreviation": semantic_type_group_code,
             "semanticTypeGroup": semantic_type_group_name,
             "TUI": f"T{number}",
             "name": semantic_type_name,
             "definition": semantic_type_def,
             "example": semantic_type_examples
-        }
-        if semantic_type_class == "SemanticGroup":
+            }
             if semantic_type in semantic_type_list:
                 continue
             else:
                 semantic_type_list.append(semantic_type)
-        else:
+
+        elif "relations" in semantic_type_info:
+            semantic_type = {
+            "TUI": f"T{number}",
+            "name": semantic_type_name,
+            "definition": semantic_type_def,
+            "example": semantic_type_examples,
+            "semanticRelation": semantic_type_info.get("relations", []),
+            "inverseRelation": semantic_type_info.get("inverseRelations", []),
+            "inheritedRelation": semantic_type_info.get("inheritedRelations", []),
+            }
             if semantic_type in semantic_rel_type:
                 continue
             else:
                 semantic_rel_type.append(semantic_type)
+        else:
+            print(semantic_type_info)
 
 
 

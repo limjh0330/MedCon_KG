@@ -12,7 +12,7 @@ import re
 import logging
 from typing import Optional
 
-from umls_client import UMLSClient
+from UMLS_KG.umls_client import UMLSClient
 
 logger = logging.getLogger(__name__)
 

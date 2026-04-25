@@ -2,7 +2,7 @@
   {
     "semantic_type": [
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T001",
         "name": "Organism",
@@ -10,7 +10,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T002",
         "name": "Plant",
@@ -18,7 +18,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T004",
         "name": "Fungus",
@@ -26,7 +26,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T005",
         "name": "Virus",
@@ -34,7 +34,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T007",
         "name": "Bacterium",
@@ -42,7 +42,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T008",
         "name": "Animal",
@@ -50,7 +50,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T010",
         "name": "Vertebrate",
@@ -58,7 +58,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T011",
         "name": "Amphibian",
@@ -66,7 +66,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T012",
         "name": "Bird",
@@ -74,7 +74,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T013",
         "name": "Fish",
@@ -82,7 +82,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T014",
         "name": "Reptile",
@@ -90,7 +90,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T015",
         "name": "Mammal",
@@ -98,7 +98,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T016",
         "name": "Human",
@@ -106,7 +106,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ANAT",
+        "group_abbreviation": "ANAT",
         "semanticTypeGroup": "Anatomy",
         "TUI": "T017",
         "name": "Anatomical Structure",
@@ -114,7 +114,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ANAT",
+        "group_abbreviation": "ANAT",
         "semanticTypeGroup": "Anatomy",
         "TUI": "T018",
         "name": "Embryonic Structure",
@@ -122,7 +122,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T019",
         "name": "Congenital Abnormality",
@@ -130,7 +130,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T020",
         "name": "Acquired Abnormality",
@@ -138,7 +138,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ANAT",
+        "group_abbreviation": "ANAT",
         "semanticTypeGroup": "Anatomy",
         "TUI": "T021",
         "name": "Fully Formed Anatomical Structure",
@@ -146,7 +146,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ANAT",
+        "group_abbreviation": "ANAT",
         "semanticTypeGroup": "Anatomy",
         "TUI": "T022",
         "name": "Body System",
@@ -154,7 +154,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ANAT",
+        "group_abbreviation": "ANAT",
         "semanticTypeGroup": "Anatomy",
         "TUI": "T023",
         "name": "Body Part, Organ, or Organ Component",
@@ -162,7 +162,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ANAT",
+        "group_abbreviation": "ANAT",
         "semanticTypeGroup": "Anatomy",
         "TUI": "T024",
         "name": "Tissue",
@@ -170,7 +170,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ANAT",
+        "group_abbreviation": "ANAT",
         "semanticTypeGroup": "Anatomy",
         "TUI": "T025",
         "name": "Cell",
@@ -178,7 +178,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ANAT",
+        "group_abbreviation": "ANAT",
         "semanticTypeGroup": "Anatomy",
         "TUI": "T026",
         "name": "Cell Component",
@@ -186,7 +186,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "GENE",
+        "group_abbreviation": "GENE",
         "semanticTypeGroup": "Genes & Molecular Sequences",
         "TUI": "T028",
         "name": "Gene or Genome",
@@ -194,7 +194,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ANAT",
+        "group_abbreviation": "ANAT",
         "semanticTypeGroup": "Anatomy",
         "TUI": "T029",
         "name": "Body Location or Region",
@@ -202,7 +202,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ANAT",
+        "group_abbreviation": "ANAT",
         "semanticTypeGroup": "Anatomy",
         "TUI": "T030",
         "name": "Body Space or Junction",
@@ -210,7 +210,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ANAT",
+        "group_abbreviation": "ANAT",
         "semanticTypeGroup": "Anatomy",
         "TUI": "T031",
         "name": "Body Substance",
@@ -218,7 +218,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHYS",
+        "group_abbreviation": "PHYS",
         "semanticTypeGroup": "Physiology",
         "TUI": "T032",
         "name": "Organism Attribute",
@@ -226,7 +226,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T033",
         "name": "Finding",
@@ -234,7 +234,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHEN",
+        "group_abbreviation": "PHEN",
         "semanticTypeGroup": "Phenomena",
         "TUI": "T034",
         "name": "Laboratory or Test Result",
@@ -242,7 +242,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T037",
         "name": "Injury or Poisoning",
@@ -250,7 +250,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHEN",
+        "group_abbreviation": "PHEN",
         "semanticTypeGroup": "Phenomena",
         "TUI": "T038",
         "name": "Biologic Function",
@@ -258,7 +258,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHYS",
+        "group_abbreviation": "PHYS",
         "semanticTypeGroup": "Physiology",
         "TUI": "T039",
         "name": "Physiologic Function",
@@ -266,7 +266,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHYS",
+        "group_abbreviation": "PHYS",
         "semanticTypeGroup": "Physiology",
         "TUI": "T040",
         "name": "Organism Function",
@@ -274,7 +274,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHYS",
+        "group_abbreviation": "PHYS",
         "semanticTypeGroup": "Physiology",
         "TUI": "T041",
         "name": "Mental Process",
@@ -282,7 +282,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHYS",
+        "group_abbreviation": "PHYS",
         "semanticTypeGroup": "Physiology",
         "TUI": "T042",
         "name": "Organ or Tissue Function",
@@ -290,7 +290,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHYS",
+        "group_abbreviation": "PHYS",
         "semanticTypeGroup": "Physiology",
         "TUI": "T043",
         "name": "Cell Function",
@@ -298,7 +298,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHYS",
+        "group_abbreviation": "PHYS",
         "semanticTypeGroup": "Physiology",
         "TUI": "T044",
         "name": "Molecular Function",
@@ -306,7 +306,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHYS",
+        "group_abbreviation": "PHYS",
         "semanticTypeGroup": "Physiology",
         "TUI": "T045",
         "name": "Genetic Function",
@@ -314,7 +314,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T046",
         "name": "Pathologic Function",
@@ -322,7 +322,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T047",
         "name": "Disease or Syndrome",
@@ -330,7 +330,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T048",
         "name": "Mental or Behavioral Dysfunction",
@@ -338,7 +338,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T049",
         "name": "Cell or Molecular Dysfunction",
@@ -346,7 +346,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T050",
         "name": "Experimental Model of Disease",
@@ -354,7 +354,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ACTI",
+        "group_abbreviation": "ACTI",
         "semanticTypeGroup": "Activities & Behaviors",
         "TUI": "T051",
         "name": "Event",
@@ -362,7 +362,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ACTI",
+        "group_abbreviation": "ACTI",
         "semanticTypeGroup": "Activities & Behaviors",
         "TUI": "T052",
         "name": "Activity",
@@ -370,7 +370,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ACTI",
+        "group_abbreviation": "ACTI",
         "semanticTypeGroup": "Activities & Behaviors",
         "TUI": "T053",
         "name": "Behavior",
@@ -378,7 +378,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ACTI",
+        "group_abbreviation": "ACTI",
         "semanticTypeGroup": "Activities & Behaviors",
         "TUI": "T054",
         "name": "Social Behavior",
@@ -386,7 +386,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ACTI",
+        "group_abbreviation": "ACTI",
         "semanticTypeGroup": "Activities & Behaviors",
         "TUI": "T055",
         "name": "Individual Behavior",
@@ -394,7 +394,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ACTI",
+        "group_abbreviation": "ACTI",
         "semanticTypeGroup": "Activities & Behaviors",
         "TUI": "T056",
         "name": "Daily or Recreational Activity",
@@ -402,7 +402,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ACTI",
+        "group_abbreviation": "ACTI",
         "semanticTypeGroup": "Activities & Behaviors",
         "TUI": "T057",
         "name": "Occupational Activity",
@@ -410,7 +410,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PROC",
+        "group_abbreviation": "PROC",
         "semanticTypeGroup": "Procedures",
         "TUI": "T058",
         "name": "Health Care Activity",
@@ -418,7 +418,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PROC",
+        "group_abbreviation": "PROC",
         "semanticTypeGroup": "Procedures",
         "TUI": "T059",
         "name": "Laboratory Procedure",
@@ -426,7 +426,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PROC",
+        "group_abbreviation": "PROC",
         "semanticTypeGroup": "Procedures",
         "TUI": "T060",
         "name": "Diagnostic Procedure",
@@ -434,7 +434,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PROC",
+        "group_abbreviation": "PROC",
         "semanticTypeGroup": "Procedures",
         "TUI": "T061",
         "name": "Therapeutic or Preventive Procedure",
@@ -442,7 +442,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PROC",
+        "group_abbreviation": "PROC",
         "semanticTypeGroup": "Procedures",
         "TUI": "T062",
         "name": "Research Activity",
@@ -450,7 +450,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PROC",
+        "group_abbreviation": "PROC",
         "semanticTypeGroup": "Procedures",
         "TUI": "T063",
         "name": "Molecular Biology Research Technique",
@@ -458,7 +458,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ACTI",
+        "group_abbreviation": "ACTI",
         "semanticTypeGroup": "Activities & Behaviors",
         "TUI": "T064",
         "name": "Governmental or Regulatory Activity",
@@ -466,7 +466,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PROC",
+        "group_abbreviation": "PROC",
         "semanticTypeGroup": "Procedures",
         "TUI": "T065",
         "name": "Educational Activity",
@@ -474,7 +474,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ACTI",
+        "group_abbreviation": "ACTI",
         "semanticTypeGroup": "Activities & Behaviors",
         "TUI": "T066",
         "name": "Machine Activity",
@@ -482,7 +482,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHEN",
+        "group_abbreviation": "PHEN",
         "semanticTypeGroup": "Phenomena",
         "TUI": "T067",
         "name": "Phenomenon or Process",
@@ -490,7 +490,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHEN",
+        "group_abbreviation": "PHEN",
         "semanticTypeGroup": "Phenomena",
         "TUI": "T068",
         "name": "Human-caused Phenomenon or Process",
@@ -498,7 +498,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHEN",
+        "group_abbreviation": "PHEN",
         "semanticTypeGroup": "Phenomena",
         "TUI": "T069",
         "name": "Environmental Effect of Humans",
@@ -506,7 +506,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHEN",
+        "group_abbreviation": "PHEN",
         "semanticTypeGroup": "Phenomena",
         "TUI": "T070",
         "name": "Natural Phenomenon or Process",
@@ -514,7 +514,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "OBJC",
+        "group_abbreviation": "OBJC",
         "semanticTypeGroup": "Objects",
         "TUI": "T071",
         "name": "Entity",
@@ -522,7 +522,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "OBJC",
+        "group_abbreviation": "OBJC",
         "semanticTypeGroup": "Objects",
         "TUI": "T072",
         "name": "Physical Object",
@@ -530,7 +530,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "OBJC",
+        "group_abbreviation": "OBJC",
         "semanticTypeGroup": "Objects",
         "TUI": "T073",
         "name": "Manufactured Object",
@@ -538,7 +538,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DEVI",
+        "group_abbreviation": "DEVI",
         "semanticTypeGroup": "Devices",
         "TUI": "T074",
         "name": "Medical Device",
@@ -546,7 +546,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DEVI",
+        "group_abbreviation": "DEVI",
         "semanticTypeGroup": "Devices",
         "TUI": "T075",
         "name": "Research Device",
@@ -554,7 +554,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T077",
         "name": "Conceptual Entity",
@@ -562,7 +562,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T078",
         "name": "Idea or Concept",
@@ -570,7 +570,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T079",
         "name": "Temporal Concept",
@@ -578,7 +578,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T080",
         "name": "Qualitative Concept",
@@ -586,7 +586,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T081",
         "name": "Quantitative Concept",
@@ -594,7 +594,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T082",
         "name": "Spatial Concept",
@@ -602,7 +602,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "GEOG",
+        "group_abbreviation": "GEOG",
         "semanticTypeGroup": "Geographic Areas",
         "TUI": "T083",
         "name": "Geographic Area",
@@ -610,7 +610,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "GENE",
+        "group_abbreviation": "GENE",
         "semanticTypeGroup": "Genes & Molecular Sequences",
         "TUI": "T085",
         "name": "Molecular Sequence",
@@ -618,7 +618,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "GENE",
+        "group_abbreviation": "GENE",
         "semanticTypeGroup": "Genes & Molecular Sequences",
         "TUI": "T086",
         "name": "Nucleotide Sequence",
@@ -626,7 +626,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "GENE",
+        "group_abbreviation": "GENE",
         "semanticTypeGroup": "Genes & Molecular Sequences",
         "TUI": "T087",
         "name": "Amino Acid Sequence",
@@ -634,7 +634,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "GENE",
+        "group_abbreviation": "GENE",
         "semanticTypeGroup": "Genes & Molecular Sequences",
         "TUI": "T088",
         "name": "Carbohydrate Sequence",
@@ -642,7 +642,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T089",
         "name": "Regulation or Law",
@@ -650,7 +650,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "OCCU",
+        "group_abbreviation": "OCCU",
         "semanticTypeGroup": "Occupations",
         "TUI": "T090",
         "name": "Occupation or Discipline",
@@ -658,7 +658,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "OCCU",
+        "group_abbreviation": "OCCU",
         "semanticTypeGroup": "Occupations",
         "TUI": "T091",
         "name": "Biomedical Occupation or Discipline",
@@ -666,7 +666,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ORGA",
+        "group_abbreviation": "ORGA",
         "semanticTypeGroup": "Organizations",
         "TUI": "T092",
         "name": "Organization",
@@ -674,7 +674,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ORGA",
+        "group_abbreviation": "ORGA",
         "semanticTypeGroup": "Organizations",
         "TUI": "T093",
         "name": "Health Care Related Organization",
@@ -682,7 +682,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ORGA",
+        "group_abbreviation": "ORGA",
         "semanticTypeGroup": "Organizations",
         "TUI": "T094",
         "name": "Professional Society",
@@ -690,7 +690,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "ORGA",
+        "group_abbreviation": "ORGA",
         "semanticTypeGroup": "Organizations",
         "TUI": "T095",
         "name": "Self-help or Relief Organization",
@@ -698,7 +698,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T096",
         "name": "Group",
@@ -706,7 +706,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T097",
         "name": "Professional or Occupational Group",
@@ -714,7 +714,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T098",
         "name": "Population Group",
@@ -722,7 +722,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T099",
         "name": "Family Group",
@@ -730,7 +730,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T100",
         "name": "Age Group",
@@ -738,7 +738,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T101",
         "name": "Patient or Disabled Group",
@@ -746,7 +746,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T102",
         "name": "Group Attribute",
@@ -754,7 +754,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T103",
         "name": "Chemical",
@@ -762,7 +762,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T104",
         "name": "Chemical Viewed Structurally",
@@ -770,7 +770,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T109",
         "name": "Organic Chemical",
@@ -778,7 +778,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T114",
         "name": "Nucleic Acid, Nucleoside, or Nucleotide",
@@ -786,7 +786,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T116",
         "name": "Amino Acid, Peptide, or Protein",
@@ -794,7 +794,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T120",
         "name": "Chemical Viewed Functionally",
@@ -802,7 +802,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T121",
         "name": "Pharmacologic Substance",
@@ -810,7 +810,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T122",
         "name": "Biomedical or Dental Material",
@@ -818,7 +818,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T123",
         "name": "Biologically Active Substance",
@@ -826,7 +826,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T125",
         "name": "Hormone",
@@ -834,7 +834,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T126",
         "name": "Enzyme",
@@ -842,7 +842,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T127",
         "name": "Vitamin",
@@ -850,7 +850,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T129",
         "name": "Immunologic Factor",
@@ -858,7 +858,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T130",
         "name": "Indicator, Reagent, or Diagnostic Aid",
@@ -866,7 +866,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T131",
         "name": "Hazardous or Poisonous Substance",
@@ -874,7 +874,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "OBJC",
+        "group_abbreviation": "OBJC",
         "semanticTypeGroup": "Objects",
         "TUI": "T167",
         "name": "Substance",
@@ -882,7 +882,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "OBJC",
+        "group_abbreviation": "OBJC",
         "semanticTypeGroup": "Objects",
         "TUI": "T168",
         "name": "Food",
@@ -890,7 +890,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T169",
         "name": "Functional Concept",
@@ -898,7 +898,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T170",
         "name": "Intellectual Product",
@@ -906,7 +906,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T171",
         "name": "Language",
@@ -914,7 +914,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T184",
         "name": "Sign or Symptom",
@@ -922,7 +922,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CONC",
+        "group_abbreviation": "CONC",
         "semanticTypeGroup": "Concepts & Ideas",
         "TUI": "T185",
         "name": "Classification",
@@ -930,7 +930,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T190",
         "name": "Anatomical Abnormality",
@@ -938,7 +938,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DISO",
+        "group_abbreviation": "DISO",
         "semanticTypeGroup": "Disorders",
         "TUI": "T191",
         "name": "Neoplastic Process",
@@ -946,7 +946,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T192",
         "name": "Receptor",
@@ -954,7 +954,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T194",
         "name": "Archaeon",
@@ -962,7 +962,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T195",
         "name": "Antibiotic",
@@ -970,7 +970,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T196",
         "name": "Element, Ion, or Isotope",
@@ -978,7 +978,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T197",
         "name": "Inorganic Chemical",
@@ -986,7 +986,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "CHEM",
+        "group_abbreviation": "CHEM",
         "semanticTypeGroup": "Chemicals & Drugs",
         "TUI": "T200",
         "name": "Clinical Drug",
@@ -994,7 +994,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "PHYS",
+        "group_abbreviation": "PHYS",
         "semanticTypeGroup": "Physiology",
         "TUI": "T201",
         "name": "Clinical Attribute",
@@ -1002,7 +1002,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "DEVI",
+        "group_abbreviation": "DEVI",
         "semanticTypeGroup": "Devices",
         "TUI": "T203",
         "name": "Drug Delivery Device",
@@ -1010,7 +1010,7 @@
         "example": "NONE"
       },
       {
-        "abbreviation": "LIVB",
+        "group_abbreviation": "LIVB",
         "semanticTypeGroup": "Living Beings",
         "TUI": "T204",
         "name": "Eukaryote",
@@ -1022,436 +1022,1855 @@
   {
     "sematic_relation": [
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T132",
         "name": "physically_related_to",
         "definition": "Related by virtue of some physical attribute or characteristic.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "associated_with",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "inverseRelation": "branch_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "inverseRelation": "connected_to",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "inverseRelation": "consists_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "inverseRelation": "contains",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "inverseRelation": "ingredient_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "inverseRelation": "interconnects",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "inverseRelation": "part_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "inverseRelation": "tributary_of",
+            "type": "isa"
+          }
+        ],
+        "inheritedRelation": [
+          {
+            "relation1": "physically_related_to",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T133",
         "name": "part_of",
         "definition": "Composes, with one or more other physical units, some larger whole. This includes component of, division of, portion of, fragment of, section of, and layer of.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "part_of",
+            "relationType": "isa",
+            "relation2": "physically_related_to"
+          },
+          {
+            "relation1": "part_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T134",
         "name": "contains",
         "definition": "Holds or is the receptacle for fluids or other substances. This includes is filled with, holds, and is occupied by.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "contains",
+            "relationType": "isa",
+            "relation2": "physically_related_to"
+          },
+          {
+            "relation1": "contains",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T135",
         "name": "location_of",
         "definition": "The position, site, or region of an entity or the site of a process.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "spatially_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "location_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          },
+          {
+            "relation1": "location_of",
+            "relationType": "isa",
+            "relation2": "spatially_related_to"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T136",
         "name": "temporally_related_to",
         "definition": "Related in time by preceding, co-occuring with, or following.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "associated_with",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "temporally_related_to",
+            "inverseRelation": "co-occurs_with",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "temporally_related_to",
+            "inverseRelation": "precedes",
+            "type": "isa"
+          }
+        ],
+        "inheritedRelation": [
+          {
+            "relation1": "temporally_related_to",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T137",
         "name": "co-occurs_with",
         "definition": "Occurs at the same time as, together with, or jointly. This includes is co-incident with, is concurrent with, is contemporaneous with, accompanies, coexists with, and is concomitant with.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "temporally_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "co-occurs_with",
+            "relationType": "isa",
+            "relation2": "temporally_related_to"
+          },
+          {
+            "relation1": "co-occurs_with",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T138",
         "name": "precedes",
         "definition": "Occurs earlier in time. This includes antedates, comes before, is in advance of, predates, and is prior to.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "temporally_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "precedes",
+            "relationType": "isa",
+            "relation2": "temporally_related_to"
+          },
+          {
+            "relation1": "precedes",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T139",
         "name": "functionally_related_to",
         "definition": "Related by the carrying out of some function or activity.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "associated_with",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "inverseRelation": "affects",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "inverseRelation": "brings_about",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "inverseRelation": "indicates",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "inverseRelation": "manifestation_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "inverseRelation": "occurs_in",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "inverseRelation": "performs",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "inverseRelation": "result_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "inverseRelation": "uses",
+            "type": "isa"
+          }
+        ],
+        "inheritedRelation": [
+          {
+            "relation1": "functionally_related_to",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T140",
         "name": "process_of",
         "definition": "Action, function, or state of.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "occurs_in",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "process_of",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "process_of",
+            "relationType": "isa",
+            "relation2": "occurs_in"
+          },
+          {
+            "relation1": "process_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T141",
         "name": "carries_out",
         "definition": "Executes a function or performs a procedure or activity. This includes transacts, operates on, handles, and executes.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "performs",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "carries_out",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "carries_out",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          },
+          {
+            "relation1": "carries_out",
+            "relationType": "isa",
+            "relation2": "performs"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T142",
         "name": "interacts_with",
         "definition": "Acts, functions, or operates together with.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "interacts_with",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "interacts_with",
+            "relationType": "isa",
+            "relation2": "affects"
+          },
+          {
+            "relation1": "interacts_with",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T143",
         "name": "practices",
         "definition": "Performs habitually or customarily.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "performs",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "practices",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "practices",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          },
+          {
+            "relation1": "practices",
+            "relationType": "isa",
+            "relation2": "performs"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T144",
         "name": "produces",
         "definition": "Brings forth, generates or creates. This includes yields, secretes, emits, biosynthesizes, generates, releases, discharges, and creates.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "brings_about",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "produces",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "produces",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          },
+          {
+            "relation1": "produces",
+            "relationType": "isa",
+            "relation2": "brings_about"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T145",
         "name": "exhibits",
         "definition": "Shows or demonstrates.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "performs",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "exhibits",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "exhibits",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          },
+          {
+            "relation1": "exhibits",
+            "relationType": "isa",
+            "relation2": "performs"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T146",
         "name": "disrupts",
         "definition": "Alters or influences an already existing condition, state, or situation. Produces a negative effect on.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "disrupts",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "disrupts",
+            "relationType": "isa",
+            "relation2": "affects"
+          },
+          {
+            "relation1": "disrupts",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T147",
         "name": "causes",
         "definition": "Brings about a condition or an effect. Implied here is that an agent, such as for example, a pharmacologic substance or an organism, has brought about the effect. This includes induces, effects, evokes, and etiology.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "brings_about",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "causes",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "causes",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          },
+          {
+            "relation1": "causes",
+            "relationType": "isa",
+            "relation2": "brings_about"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T148",
         "name": "prevents",
         "definition": "Stops, hinders or eliminates an action or condition.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "prevents",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "prevents",
+            "relationType": "isa",
+            "relation2": "affects"
+          },
+          {
+            "relation1": "prevents",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T149",
         "name": "complicates",
         "definition": "Causes to become more severe or complex or results in adverse effects.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "complicates",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "complicates",
+            "relationType": "isa",
+            "relation2": "affects"
+          },
+          {
+            "relation1": "complicates",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T150",
         "name": "manifestation_of",
         "definition": "That part of a phenomenon which is directly observable or concretely or visibly expressed, or which gives evidence to the underlying process. This includes expression of, display of, and exhibition of.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "manifestation_of",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "manifestation_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T151",
         "name": "affects",
         "definition": "Produces a direct effect on. Implied here is the altering or influencing of an existing condition, state, situation, or entity. This includes has a role in, alters, influences, predisposes, catalyzes, stimulates, regulates, depresses, impedes, enhances, contributes to, leads to, and modifies.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "inverseRelation": "complicates",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "inverseRelation": "disrupts",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "inverseRelation": "interacts_with",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "inverseRelation": "manages",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "inverseRelation": "prevents",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "inverseRelation": "treats",
+            "type": "isa"
+          }
+        ],
+        "inheritedRelation": [
+          {
+            "relation1": "affects",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "affects",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T152",
         "name": "occurs_in",
         "definition": "Takes place in or happens under given conditions, circumstances, or time periods, or in a given location or population. This includes appears in, transpires, comes about, is present in, and exists in.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "occurs_in",
+            "inverseRelation": "process_of",
+            "type": "isa"
+          }
+        ],
+        "inheritedRelation": [
+          {
+            "relation1": "occurs_in",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "occurs_in",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T153",
         "name": "manages",
         "definition": "Administers, or contributes to the care of an individual or group of individuals.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "manages",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "manages",
+            "relationType": "isa",
+            "relation2": "affects"
+          },
+          {
+            "relation1": "manages",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T154",
         "name": "treats",
         "definition": "Applies a remedy with the object of effecting a cure or managing a condition.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "affects",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "treats",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "treats",
+            "relationType": "isa",
+            "relation2": "affects"
+          },
+          {
+            "relation1": "treats",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T155",
         "name": "uses",
         "definition": "Employs in the carrying out of some activity. This includes applies, utilizes, employs, and avails.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "uses",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "uses",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T156",
         "name": "indicates",
         "definition": "Gives evidence for the presence at some time of an entity or process.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "indicates",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "indicates",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T157",
         "name": "result_of",
         "definition": "The condition, product, or state occurring as a consequence, effect, or conclusion of an activity or process. This includes product of, effect of, sequel of, outcome of, culmination of, and completion of.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "result_of",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "result_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T158",
         "name": "conceptually_related_to",
         "definition": "Related by some abstract concept, thought, or idea.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "associated_with",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "analyzes",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "conceptual_part_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "degree_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "derivative_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "developmental_form_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "diagnoses",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "evaluation_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "issue_in",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "measurement_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "measures",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "method_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "inverseRelation": "property_of",
+            "type": "isa"
+          }
+        ],
+        "inheritedRelation": [
+          {
+            "relation1": "conceptually_related_to",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T159",
         "name": "property_of",
         "definition": "Characteristic of, or quality of.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "property_of",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "property_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T160",
         "name": "conceptual_part_of",
         "definition": "Conceptually a portion, division, or component of some larger whole.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "conceptual_part_of",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "conceptual_part_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T161",
         "name": "evaluation_of",
         "definition": "Judgment of the value or degree of some attribute or process.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "evaluation_of",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "evaluation_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T162",
         "name": "measures",
         "definition": "Ascertains or marks the dimensions, quantity, degree, or capacity of.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "measures",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "measures",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T163",
         "name": "diagnoses",
         "definition": "Distinguishes or identifies the nature or characteristics of.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "diagnoses",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "diagnoses",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T164",
         "name": "assesses_effect_of",
         "definition": "Analyzes the influence or consequences of the function or action of.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "analyzes",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "assesses_effect_of",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "assesses_effect_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          },
+          {
+            "relation1": "assesses_effect_of",
+            "relationType": "isa",
+            "relation2": "analyzes"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T165",
         "name": "issue_in",
         "definition": "Is an issue in or a point of discussion, study, debate, or dispute.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "issue_in",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "issue_in",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T166",
         "name": "associated_with",
         "definition": "has a significant or salient relationship to.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "associated_with",
+            "inverseRelation": "conceptually_related_to",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "associated_with",
+            "inverseRelation": "functionally_related_to",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "associated_with",
+            "inverseRelation": "physically_related_to",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "associated_with",
+            "inverseRelation": "spatially_related_to",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "associated_with",
+            "inverseRelation": "temporally_related_to",
+            "type": "isa"
+          }
+        ],
+        "inheritedRelation": []
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T172",
         "name": "consists_of",
         "definition": "Is structurally made up of in whole or in part of some material or matter. This includes composed of, made of, and formed of.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "consists_of",
+            "relationType": "isa",
+            "relation2": "physically_related_to"
+          },
+          {
+            "relation1": "consists_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T173",
         "name": "adjacent_to",
         "definition": "Close to, near or abutting another physical unit with no other structure of the same kind intervening. This includes adjoins, abuts, is contiguous to, is juxtaposed, and is close to.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "spatially_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "adjacent_to",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          },
+          {
+            "relation1": "adjacent_to",
+            "relationType": "isa",
+            "relation2": "spatially_related_to"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T174",
         "name": "connected_to",
         "definition": "Directly attached to another physical unit as tendons are connected to muscles. This includes attached to and anchored to.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "connected_to",
+            "relationType": "isa",
+            "relation2": "physically_related_to"
+          },
+          {
+            "relation1": "connected_to",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T175",
         "name": "interconnects",
         "definition": "Serves to link or join together two or more other physical units. This includes joins, links, conjoins, articulates, separates, and bridges.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "interconnects",
+            "relationType": "isa",
+            "relation2": "physically_related_to"
+          },
+          {
+            "relation1": "interconnects",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T176",
         "name": "surrounds",
         "definition": "Establishes the boundaries for, or defines the limits of another physical structure. This includes limits, bounds, confines, encloses, and circumscribes.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "spatially_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "surrounds",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          },
+          {
+            "relation1": "surrounds",
+            "relationType": "isa",
+            "relation2": "spatially_related_to"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T177",
         "name": "traverses",
         "definition": "Crosses or extends across another physical structure or area. This includes crosses over and crosses through.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "spatially_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "traverses",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          },
+          {
+            "relation1": "traverses",
+            "relationType": "isa",
+            "relation2": "spatially_related_to"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T178",
         "name": "derivative_of",
         "definition": "In chemistry, a substance structurally related to another or that can be made from the other substance. This is used only for structural relationships. This does not include functional relationships such as metabolite of, by product of, nor analog of.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "derivative_of",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "derivative_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T179",
         "name": "developmental_form_of",
         "definition": "An earlier stage in the individual maturation of.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "developmental_form_of",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "developmental_form_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T180",
         "name": "degree_of",
         "definition": "The relative intensity of a process or the relative intensity or amount of a quality or attribute.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "degree_of",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "degree_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T182",
         "name": "measurement_of",
         "definition": "The dimension, quantity, or capacity determined by measuring.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "measurement_of",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "measurement_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T183",
         "name": "method_of",
         "definition": "The manner and sequence of events in performing an act or procedure.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "method_of",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "method_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T186",
         "name": "isa",
         "definition": "The basic hierarchical link in the Network. If one item \"isa\" another item then the first item is more specific in meaning than the second item.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": []
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T187",
         "name": "brings_about",
         "definition": "Acts on or influences an entity.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "brings_about",
+            "inverseRelation": "causes",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "brings_about",
+            "inverseRelation": "produces",
+            "type": "isa"
+          }
+        ],
+        "inheritedRelation": [
+          {
+            "relation1": "brings_about",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "brings_about",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T188",
         "name": "performs",
         "definition": "Executes, accomplishes, or achieves an activity.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "functionally_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "performs",
+            "inverseRelation": "carries_out",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "performs",
+            "inverseRelation": "exhibits",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "performs",
+            "inverseRelation": "practices",
+            "type": "isa"
+          }
+        ],
+        "inheritedRelation": [
+          {
+            "relation1": "performs",
+            "relationType": "isa",
+            "relation2": "functionally_related_to"
+          },
+          {
+            "relation1": "performs",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T189",
         "name": "spatially_related_to",
         "definition": "Related by place or region.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "associated_with",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "spatially_related_to",
+            "inverseRelation": "adjacent_to",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "spatially_related_to",
+            "inverseRelation": "location_of",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "spatially_related_to",
+            "inverseRelation": "surrounds",
+            "type": "isa"
+          },
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "spatially_related_to",
+            "inverseRelation": "traverses",
+            "type": "isa"
+          }
+        ],
+        "inheritedRelation": [
+          {
+            "relation1": "spatially_related_to",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T193",
         "name": "analyzes",
         "definition": "Studies or examines using established quantitative or qualitative methods.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "conceptually_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "analyzes",
+            "inverseRelation": "assesses_effect_of",
+            "type": "isa"
+          }
+        ],
+        "inheritedRelation": [
+          {
+            "relation1": "analyzes",
+            "relationType": "isa",
+            "relation2": "conceptually_related_to"
+          },
+          {
+            "relation1": "analyzes",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T198",
         "name": "branch_of",
         "definition": "Arises from the division of. For example, the arborization of arteries.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "branch_of",
+            "relationType": "isa",
+            "relation2": "physically_related_to"
+          },
+          {
+            "relation1": "branch_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T199",
         "name": "tributary_of",
         "definition": "Merges with. For example, the confluence of veins.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "tributary_of",
+            "relationType": "isa",
+            "relation2": "physically_related_to"
+          },
+          {
+            "relation1": "tributary_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       },
       {
-        "abbreviation": "",
-        "semanticTypeGroup": "",
         "TUI": "T202",
         "name": "ingredient_of",
         "definition": "Is a component of, as in a constituent of a preparation.",
-        "example": "NONE"
+        "example": "NONE",
+        "semanticRelation": [
+          {
+            "flag": "D",
+            "other": "",
+            "relation": "physically_related_to",
+            "type": "isa"
+          }
+        ],
+        "inverseRelation": [],
+        "inheritedRelation": [
+          {
+            "relation1": "ingredient_of",
+            "relationType": "isa",
+            "relation2": "physically_related_to"
+          },
+          {
+            "relation1": "ingredient_of",
+            "relationType": "isa",
+            "relation2": "associated_with"
+          }
+        ]
       }
     ]
   },

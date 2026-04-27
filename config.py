@@ -21,10 +21,13 @@ LLM_MAX_TOKENS = 4096
 CREST_XML_DIR = os.environ.get("CREST_XML_DIR", "./crest/xml")
 CREST_PRIMARY_DIR = os.environ.get("CREST_PRIMARY_DIR", "./crest/primary")
 
-# ── Semantic Groups File ──
-SEMANTIC_GROUPS_FILE = os.environ.get(
-    "SEMANTIC_GROUPS_FILE",
-    "./UMLS_semantic_network_semantic_groups.txt",
+# ── Semantic Types JSON ──
+SEMANTIC_TYPES_FILE = os.environ.get(
+    "SEMANTIC_TYPES_FILE",
+    os.environ.get(
+        "SEMANTIC_GROUPS_FILE",
+        "./UMLS_KG/semantic_type_of_UMLS.json",
+    ),
 )
 
 # ── Output ──

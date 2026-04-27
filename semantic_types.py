@@ -14,9 +14,13 @@ Format:
 import json
 from pathlib import Path
 
+import config
+
 
 PROJECT_ROOT = Path(__file__).resolve().parent
-SEMANTIC_TYPES_JSON = PROJECT_ROOT / "UMLS_KG" / "semantic_type_of_UMLS.json"
+SEMANTIC_TYPES_JSON = Path(config.SEMANTIC_TYPES_FILE)
+if not SEMANTIC_TYPES_JSON.is_absolute():
+    SEMANTIC_TYPES_JSON = PROJECT_ROOT / SEMANTIC_TYPES_JSON
 
 
 def _clean_definition(definition: str) -> str:
@@ -103,37 +107,22 @@ def build_prompt_semantic_section() -> str:
     return "\n".join(lines)
 
 
-def load_semantic_groups_from_file(filepath: str) -> tuple[dict, dict]:
+def load_semantic_groups_from_file(filepath: str = None) -> tuple[dict, dict]:
     """
-    Load TUI -> group_abbr and TUI -> type_name mappings.
-
-    Preferred source is the provided semantic groups text file:
-    GROUP_ABBR|Group Name|TUI|Semantic Type Name
-
-    If the file is missing, fall back to the JSON-backed in-memory mapping.
+    Load TUI -> group_abbr and TUI -> type_name mappings from semantic_type_of_UMLS.json.
     """
+    semantic_types_path = Path(filepath) if filepath else SEMANTIC_TYPES_JSON
+    if not semantic_types_path.is_absolute():
+        semantic_types_path = PROJECT_ROOT / semantic_types_path
+
     tui_to_group = {}
     tui_to_name = {}
 
-    try:
-        with open(filepath, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-
-                parts = line.split("|")
-                if len(parts) >= 4:
-                    group_abbr = parts[0]
-                    tui = parts[2]
-                    type_name = parts[3]
-                    tui_to_group[tui] = group_abbr
-                    tui_to_name[tui] = type_name
-    except FileNotFoundError:
-        for group_abbr, group_data in SEMANTIC_GROUPS_WITH_EXAMPLES.items():
-            for tui, type_name, _definition in group_data["types"]:
-                tui_to_group[tui] = group_abbr
-                tui_to_name[tui] = type_name
+    semantic_groups = _load_semantic_types_from_json(semantic_types_path)
+    for group_abbr, group_data in semantic_groups.items():
+        for tui, type_name, _definition in group_data["types"]:
+            tui_to_group[tui] = group_abbr
+            tui_to_name[tui] = type_name
 
     return tui_to_group, tui_to_name
 

@@ -12,15 +12,7 @@ Matching strategy:
 
   Bidirectional filter: a triple is sent to the LLM only when head AND tail
   both resolve to a shared recommendation. Triples without such a rec are
-  passed through with empty conditions (has_conditions=False).
-
-Cost optimization:
-  - Pair cache for find_relevant_recommendations (head_cui, tail_id)
-  - Global dedup by (head_cui, tail_id, rec_set): conditions depend on rec
-    text + endpoints, not relation. One LLM call covers all triples sharing
-    that group.
-  - response_format=json_object: model closes JSON cleanly so we never need
-    a hard max_tokens cap to control cost.
+  passed through with empty conditions (has_conditions=False)
 
 Condition types (4):
   numeric_threshold, categorical_state, medication_history, temporal_condition
@@ -55,18 +47,137 @@ def _get_openai_client(api_key: str = None):
 # Prompt
 # ──────────────────────────────────────────────────────────────────
 
-CONDITION_SYSTEM_PROMPT = """Extract structured conditions from guideline sentences that constrain medical triples.
+CONDITION_SYSTEM_PROMPT = """Extract structured conditions from guideline recommendation sentences that constrain medical triples.
 
-[CONDITION TYPES — pick exactly one per condition]
-- numeric_threshold: numeric cutoffs / ranges / labs / age. Required: variable, comparator, value. Optional: unit.
-- categorical_state: diagnosis / state / risk / patient population (e.g. "pregnant", "type 2 diabetes"). Required: variable, value.
-- medication_history: current / prior drug exposure or failure. Required: drug, status. Optional: dose.
-- temporal_condition: time windows / follow-up / onset timing (e.g. "within 72h", "stable for 2 years"). Required: event, anchor, comparator. Optional: interval, interval_unit.
+You will receive:
+1. Medical triples: (head_name, relation, tail_name)
+2. Guideline recommendation sentence(s) aligned with each triple
+
+Your task:
+For each input triple, extract only the conditions that actually constrain the validity, applicability, or interpretation of that triple or its aligned recommendation/action sentence. Do not extract unrelated mentions.
+
+[CORE PRINCIPLE]
+- Entities are the head or tail of the primary triple.
+- Conditions are qualifier values: they restrict when, for whom, under what clinical state, history/exposure, numeric criterion, or temporal context the triple or recommendation is valid.
+- Pick exactly one condition type per condition.
+- Keep required fields minimal. Add optional fields only when clearly supported by the text.
+
+[CONDITION TYPES]
+
+1. numeric_threshold
+Use for numeric cutoffs, numeric ranges, laboratory values, vital signs, age, scores, imaging measurements, physiologic measurements, or duration cutoffs.
+Required fields: type, variable, comparator, value.
+Range exception: for a conceptual range, use comparator="between" with value_min and value_max. In that case value may be a compact string such as "55-74" or may be omitted if validation allows range fields.
+Optional fields: unit, evidence_text, subtype, qualifies, value_min, value_max, inclusive_min, inclusive_max.
+Allowed subtypes: age, vital_sign, lab_value, score, imaging, duration.
+
+Examples:
+- "systolic blood pressure <90 mmHg"
+  → {"type":"numeric_threshold","subtype":"vital_sign","variable":"systolic_blood_pressure","comparator":"<","value":90,"unit":"mmHg","evidence_text":"systolic blood pressure <90 mmHg","qualifies":"relation"}
+- "adults aged 55-74"
+  → {"type":"numeric_threshold","subtype":"age","variable":"age","comparator":"between","value":"55-74","value_min":55,"value_max":74,"inclusive_min":true,"inclusive_max":true,"unit":"years","evidence_text":"aged 55-74","qualifies":"recommendation"}
+
+2. categorical_state
+Use for non-numeric diagnosis/state/risk/patient population/stage/severity/care setting/procedure/intervention context, or when the condition modifies the head or tail entity.
+Required fields: type, variable, value.
+Optional fields: evidence_text, subtype, qualifies, clinical_status, verification_status, severity, body_site, value_operator.
+Allowed subtypes: patient_context, population, clinical_state, stage_severity, risk_status, care_setting, head_modifier, tail_modifier, procedure_history, intervention_status.
+
+Status dimensions for categorical_state:
+- clinical_status: active, inactive, stable, unstable, resolved, present, absent, current, past, no_history, unknown.
+- verification_status: confirmed, suspected, excluded, contraindicated, unknown.
+- severity: mild, moderate, severe.
+Do not use the old single status field for categorical_state unless unavoidable; prefer clinical_status, verification_status, and severity.
+
+Examples:
+- "stable blunt trauma patients"
+  → {"type":"categorical_state","subtype":"patient_context","variable":"blunt_trauma","value":"stable blunt trauma patients","clinical_status":"stable","evidence_text":"stable blunt trauma patients","qualifies":"relation"}
+- "gross hematuria or microscopic hematuria"
+  → {"type":"categorical_state","subtype":"tail_modifier","variable":"hematuria","value":"gross or microscopic hematuria","value_operator":"OR","evidence_text":"gross hematuria or microscopic hematuria","qualifies":"tail"}
+- "patients who underwent appendectomy"
+  → {"type":"categorical_state","subtype":"procedure_history","variable":"appendectomy","value":"underwent appendectomy","clinical_status":"past","evidence_text":"underwent appendectomy","qualifies":"relation"}
+- "severe active diabetes"
+  → {"type":"categorical_state","subtype":"clinical_state","variable":"diabetes","value":"severe active diabetes","clinical_status":"active","severity":"severe","evidence_text":"severe active diabetes","qualifies":"relation"}
+
+3. medication_history
+Use for current or prior medication exposure, medication failure, discontinued medication, contraindicated medication, or medication dose/frequency/route condition.
+Required fields: type, drug, status.
+Optional fields: evidence_text, subtype, dose, unit, frequency, route, qualifies.
+Allowed subtypes: current_medication, prior_medication, medication_failure, discontinued_medication, contraindicated_medication, dose_condition.
+Allowed status values: current, prior, past, failed, discontinued, contraindicated, not_current, unknown.
+
+Examples:
+- "failed first-line antibiotics"
+  → {"type":"medication_history","subtype":"medication_failure","drug":"first-line antibiotics","status":"failed","evidence_text":"failed first-line antibiotics","qualifies":"recommendation"}
+- "metformin 500mg twice daily orally"
+  → {"type":"medication_history","subtype":"current_medication","drug":"metformin","status":"current","dose":"500","unit":"mg","frequency":"twice daily","route":"oral","evidence_text":"metformin 500mg twice daily orally","qualifies":"relation"}
+
+4. temporal_condition
+Use for time windows, follow-up, onset timing, temporal order, frequency, duration, or event-anchor-based temporal constraints.
+Required fields: type, event, anchor, comparator.
+Optional fields: evidence_text, subtype, interval, interval_unit, temporal_relation, qualifies.
+Allowed subtypes: time_window, temporal_order, duration, follow_up, frequency.
+Allowed temporal_relation values: before, after, during, overlaps, contains, equals, starts, finishes, meets.
+
+Important distinction:
+- comparator handles arithmetic comparison of the interval or duration, such as <= 15 years.
+- temporal_relation handles qualitative temporal relation between event/interval and anchor, such as before, after, during, overlaps.
+
+Examples:
+- "quit within 15 years before presentation"
+  → {"type":"temporal_condition","subtype":"time_window","event":"smoking_cessation","anchor":"presentation","comparator":"<=","interval":15,"interval_unit":"years","temporal_relation":"before","evidence_text":"quit within 15 years","qualifies":"recommendation"}
+- "vomiting during the first 2 hours from presentation"
+  → {"type":"temporal_condition","subtype":"duration","event":"vomiting","anchor":"presentation","comparator":"=","interval":2,"interval_unit":"hours","temporal_relation":"during","evidence_text":"vomiting for 2 hours from presentation","qualifies":"relation"}
+
+[OPTIONAL FIELDS — include only when clear]
+- subtype: use only the controlled subtype values listed above.
+- qualifies: one of relation, head, tail, recommendation. Use relation by default.
+  If the condition refines the head entity, use head.
+  If the condition refines the tail entity, use tail.
+  If the condition applies to the whole guideline recommendation/action, use recommendation.
+- value_operator: use only when the condition value itself contains internal alternatives or conjunctions. Allowed values: AND, OR. Do NOT use NOT as value_operator.
+- body_site: use for anatomical/procedural/lesion site when explicitly stated.
+- frequency and route: use only for medication_history.
+- temporal_relation: use only for temporal_condition qualitative temporal relations.
+- value_min/value_max/inclusive_min/inclusive_max: use only for numeric_threshold ranges.
+
+[NEGATIVE OR EXCLUSION CONDITIONS]
+- Do not use NOT as value_operator.
+- For categorical_state negative/exclusion/no-history/contraindication conditions, use dimensional fields:
+  "without diabetes" → clinical_status="absent"
+  "no history of stroke" → clinical_status="no_history"
+  "exclude patients with renal failure" → verification_status="excluded"
+  "contraindicated in pregnancy" → verification_status="contraindicated"
+- For medication_history, use the medication status field:
+  "discontinued metformin" → status="discontinued"
+  "not currently taking anticoagulants" → status="not_current"
+  "contraindicated NSAIDs" → status="contraindicated"
+- Use condition_logic="NOT" only when the entire condition set is explicitly negated.
+
+[ENTITY-CONDITION SEPARATION RULES]
+- Do not duplicate a head or tail entity as a condition unless the condition adds subtype, body site, severity, clinical/verification status, numeric threshold, temporal information, exposure history, procedure/intervention status, or contextual restriction.
+- If a condition only repeats the head or tail without adding any extra restriction, do not extract it.
+- If the condition refines the head or tail entity, set qualifies to head or tail.
+- If the condition restricts applicability of the relation or recommendation, set qualifies to relation or recommendation.
+
+[PRIORITY RULE]
+If a phrase appears to fit multiple condition types, choose the type using this priority:
+1. medication_history
+2. numeric_threshold
+3. temporal_condition
+4. categorical_state
+
+Examples:
+- "prednisone ≥20 mg/day" → medication_history, because it is a medication dose condition.
+- "age ≥65 years" or "age 55-74" → numeric_threshold.
+- "within 72 hours after onset" → temporal_condition.
+- "older adult" or "severe active diabetes" → categorical_state.
+- "underwent appendectomy" → categorical_state with subtype procedure_history.
 
 [RULES]
-- Only attach conditions that actually constrain the triple relation; ignore unrelated mentions in the rec.
-- Age ranges split into two numeric_threshold conditions (e.g. "55-74 years" → age>=55 AND age<=74).
-- Each condition must include evidence_text (≤50 chars, verbatim phrase from the rec).
+- Only attach conditions that actually constrain the triple relation or the aligned recommendation/action; ignore unrelated mentions in the rec.
+- For numeric ranges, prefer a single numeric_threshold with comparator="between", value_min, and value_max when the phrase is conceptually one range. Splitting into two numeric_threshold conditions remains allowed for backward compatibility.
+- Each condition should include evidence_text (≤50 chars, verbatim phrase from the rec). If uncertain, omit it; validation will not fail solely for missing evidence_text.
 - condition_logic must be one of "AND" | "OR" | "NOT" (use "AND" when only one condition).
 - condition_source: {"guideline_id", "evidence_level", "evidence_texts":[...]} — evidence_level is "sentence_aligned" when the condition is in the same recommendation sentence, "guideline_cooccurrence" when only co-located in the guideline, or "inferred".
 
@@ -87,7 +198,8 @@ Rec for Triple 1:
   "screening recommended for adults aged 55-74, 30+ pack-years, quit within 15 years"
   [guideline_id: g42, strength: strong]"""
 
-FEW_SHOT_ASSISTANT = """{"results":[{"triple_index":0,"conditions":[{"type":"numeric_threshold","variable":"age","comparator":">=","value":55,"unit":"years","evidence_text":"aged 55-74"},{"type":"numeric_threshold","variable":"age","comparator":"<=","value":74,"unit":"years","evidence_text":"aged 55-74"},{"type":"numeric_threshold","variable":"smoking_pack_year","comparator":">=","value":30,"unit":"pack-years","evidence_text":"30+ pack-years"},{"type":"temporal_condition","event":"smoking_cessation","anchor":"presentation","interval":15,"interval_unit":"years","comparator":"<=","evidence_text":"quit within 15 years"}],"condition_logic":"AND","condition_source":{"guideline_id":"g42","evidence_level":"sentence_aligned","evidence_texts":["aged 55-74","30+ pack-years","quit within 15 years"]}},{"triple_index":1,"conditions":[]}]}"""
+FEW_SHOT_ASSISTANT = """{"results":[{"triple_index":0,"conditions":[{"type":"numeric_threshold","subtype":"age","variable":"age","comparator":"between","value":"55-74","value_min":55,"value_max":74,"inclusive_min":true,"inclusive_max":true,"unit":"years","evidence_text":"aged 55-74","qualifies":"recommendation"},{"type":"numeric_threshold","subtype":"duration","variable":"smoking_pack_year","comparator":">=","value":30,"unit":"pack-years","evidence_text":"30+ pack-years","qualifies":"recommendation"},{"type":"temporal_condition","subtype":"time_window","event":"smoking_cessation","anchor":"presentation","interval":15,"interval_unit":"years","comparator":"<=","temporal_relation":"before","evidence_text":"quit within 15 years","qualifies":"recommendation"}],"condition_logic":"AND","condition_source":{"guideline_id":"g42","evidence_level":"sentence_aligned","evidence_texts":["aged 55-74","30+ pack-years","quit within 15 years"]}},{"triple_index":1,"conditions":[]}]}"""
+
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -349,11 +461,91 @@ VALID_CONDITION_TYPES = {
     "medication_history", "temporal_condition",
 }
 
+# Keep hard validation minimal to avoid dropping useful LLM outputs.
+# numeric_threshold allows either the original single-value representation
+# or the revised range representation using value_min/value_max.
 REQUIRED_FIELDS = {
-    "numeric_threshold": {"variable", "comparator", "value"},
+    "numeric_threshold": {"variable", "comparator"},
     "categorical_state": {"variable", "value"},
     "medication_history": {"drug", "status"},
     "temporal_condition": {"event", "anchor", "comparator"},
+}
+
+# Optional fields are controlled to keep schema drift and token usage bounded.
+OPTIONAL_ALLOWED_FIELDS = {
+    "evidence_text", "subtype", "qualifies", "value_operator",
+    # Existing optional fields supported by the original prompt/schema.
+    "unit", "dose", "interval", "interval_unit",
+    # Revised numeric_threshold range representation.
+    "value", "value_min", "value_max", "inclusive_min", "inclusive_max",
+    # Revised categorical_state fields.
+    "body_site", "clinical_status", "verification_status", "severity",
+    # Backward-compatible old categorical_state status. It is mapped below.
+    "status",
+    # Revised medication_history dosage detail.
+    "frequency", "route",
+    # Revised temporal_condition qualitative temporal relation.
+    "temporal_relation",
+}
+
+_ALLOWED_QUALIFIES = {"relation", "head", "tail", "recommendation"}
+_ALLOWED_VALUE_OPERATORS = {"AND", "OR"}
+_ALLOWED_COMPARATORS = {"<", "<=", "=", ">=", ">", "between"}
+
+# medication_history.status keeps its own meaning and remains required.
+_ALLOWED_MEDICATION_STATUS = {
+    "current", "prior", "past", "failed", "discontinued",
+    "contraindicated", "not_current", "unknown",
+}
+
+# categorical_state status is decomposed into three independent dimensions.
+_ALLOWED_CLINICAL_STATUS = {
+    "active", "inactive", "stable", "unstable", "resolved",
+    "present", "absent", "current", "past", "no_history", "unknown",
+}
+_ALLOWED_VERIFICATION_STATUS = {
+    "confirmed", "suspected", "excluded", "contraindicated", "unknown",
+}
+_ALLOWED_SEVERITY = {"mild", "moderate", "severe"}
+_ALLOWED_TEMPORAL_RELATIONS = {
+    "before", "after", "during", "overlaps", "contains",
+    "equals", "starts", "finishes", "meets",
+}
+
+# Backward-compatible mapping from the old single categorical_state.status field.
+_STATUS_TO_CATEGORICAL_FIELD = {
+    "active": "clinical_status",
+    "inactive": "clinical_status",
+    "stable": "clinical_status",
+    "unstable": "clinical_status",
+    "resolved": "clinical_status",
+    "present": "clinical_status",
+    "absent": "clinical_status",
+    "current": "clinical_status",
+    "past": "clinical_status",
+    "no_history": "clinical_status",
+    "confirmed": "verification_status",
+    "suspected": "verification_status",
+    "excluded": "verification_status",
+    "contraindicated": "verification_status",
+    "mild": "severity",
+    "moderate": "severity",
+    "severe": "severity",
+    "unknown": "clinical_status",
+}
+
+_ALLOWED_SUBTYPES = {
+    "numeric_threshold": {"", "age", "vital_sign", "lab_value", "score", "imaging", "duration"},
+    "categorical_state": {
+        "", "patient_context", "population", "clinical_state", "stage_severity",
+        "risk_status", "care_setting", "head_modifier", "tail_modifier",
+        "procedure_history", "intervention_status",
+    },
+    "medication_history": {
+        "", "current_medication", "prior_medication", "medication_failure",
+        "discontinued_medication", "contraindicated_medication", "dose_condition",
+    },
+    "temporal_condition": {"", "time_window", "temporal_order", "duration", "follow_up", "frequency"},
 }
 
 
@@ -361,7 +553,134 @@ def _validate_condition(cond: dict) -> bool:
     ctype = cond.get("type", "")
     if ctype not in VALID_CONDITION_TYPES:
         return False
+
+    # numeric_threshold keeps the original fields for backward compatibility,
+    # but accepts the revised range representation when comparator="between".
+    if ctype == "numeric_threshold":
+        if cond.get("variable") is None or cond.get("comparator") is None:
+            return False
+        has_single_value = cond.get("value") is not None
+        has_range = cond.get("value_min") is not None and cond.get("value_max") is not None
+        return has_single_value or has_range
+
     return all(cond.get(f) is not None for f in REQUIRED_FIELDS.get(ctype, set()))
+
+
+def _coerce_bool(value, default: bool = True) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        v = value.strip().lower()
+        if v in {"true", "1", "yes", "y"}:
+            return True
+        if v in {"false", "0", "no", "n"}:
+            return False
+    return default
+
+
+def _clean_optional_fields(cond: dict) -> dict:
+    """Normalize the revised optional schema without making optional fields hard-required."""
+    ctype = cond.get("type", "")
+
+    # evidence_text is prompt-level requested but not hard validation-required.
+    cond.setdefault("evidence_text", "")
+
+    # Drop unapproved extra keys. Keep required fields and controlled optional fields.
+    required = {"type"} | REQUIRED_FIELDS.get(ctype, set())
+    if ctype == "numeric_threshold":
+        required = {"type", "variable", "comparator"}
+    for key in list(cond.keys()):
+        if key not in required and key not in OPTIONAL_ALLOWED_FIELDS:
+            cond.pop(key, None)
+
+    # qualifies defaults to relation; invalid values are coerced rather than dropped.
+    q = str(cond.get("qualifies", "relation")).strip().lower()
+    cond["qualifies"] = q if q in _ALLOWED_QUALIFIES else "relation"
+
+    # subtype is optional. Keep only compact controlled values to reduce sparse labels.
+    subtype = str(cond.get("subtype", "")).strip().lower()
+    subtype = subtype.replace("-", "_").replace(" ", "_")
+    cond["subtype"] = subtype if subtype in _ALLOWED_SUBTYPES.get(ctype, {""}) else ""
+
+    # comparator controlled normalization for numeric and temporal conditions.
+    if ctype in {"numeric_threshold", "temporal_condition"} and "comparator" in cond:
+        comp = str(cond.get("comparator", "")).strip().lower()
+        if comp in {"≤", "=<"}:
+            comp = "<="
+        elif comp in {"≥", "=>"}:
+            comp = ">="
+        if comp not in _ALLOWED_COMPARATORS:
+            # Preserve temporal qualitative comparators as temporal_relation when possible.
+            if ctype == "temporal_condition" and comp in _ALLOWED_TEMPORAL_RELATIONS:
+                cond["temporal_relation"] = cond.get("temporal_relation", comp)
+                cond["comparator"] = "="
+            else:
+                cond["comparator"] = comp
+        else:
+            cond["comparator"] = comp
+
+    # value_operator is only AND/OR; NOT is handled via status dimensions or condition_logic.
+    if "value_operator" in cond:
+        op = str(cond.get("value_operator", "")).strip().upper()
+        if op in _ALLOWED_VALUE_OPERATORS:
+            cond["value_operator"] = op
+        else:
+            cond.pop("value_operator", None)
+
+    # numeric_threshold range normalization.
+    if ctype == "numeric_threshold":
+        if "inclusive_min" in cond:
+            cond["inclusive_min"] = _coerce_bool(cond.get("inclusive_min"), True)
+        if "inclusive_max" in cond:
+            cond["inclusive_max"] = _coerce_bool(cond.get("inclusive_max"), True)
+        if cond.get("comparator") == "between":
+            cond.setdefault("inclusive_min", True)
+            cond.setdefault("inclusive_max", True)
+
+    # categorical_state: map old single status to dimensional fields and validate dimensions.
+    if ctype == "categorical_state":
+        old_status = cond.pop("status", None)
+        if old_status is not None:
+            status_norm = str(old_status).strip().lower().replace(" ", "_")
+            target_field = _STATUS_TO_CATEGORICAL_FIELD.get(status_norm)
+            if target_field and target_field not in cond:
+                cond[target_field] = status_norm
+
+        if "clinical_status" in cond:
+            v = str(cond.get("clinical_status", "")).strip().lower().replace(" ", "_")
+            if v in _ALLOWED_CLINICAL_STATUS:
+                cond["clinical_status"] = v
+            else:
+                cond.pop("clinical_status", None)
+
+        if "verification_status" in cond:
+            v = str(cond.get("verification_status", "")).strip().lower().replace(" ", "_")
+            if v in _ALLOWED_VERIFICATION_STATUS:
+                cond["verification_status"] = v
+            else:
+                cond.pop("verification_status", None)
+
+        if "severity" in cond:
+            v = str(cond.get("severity", "")).strip().lower().replace(" ", "_")
+            if v in _ALLOWED_SEVERITY:
+                cond["severity"] = v
+            else:
+                cond.pop("severity", None)
+
+    # medication_history: keep and validate medication-specific status.
+    if ctype == "medication_history":
+        status = str(cond.get("status", "")).strip().lower().replace(" ", "_")
+        cond["status"] = status if status in _ALLOWED_MEDICATION_STATUS else (status or "unknown")
+
+    # temporal_condition qualitative relation.
+    if ctype == "temporal_condition" and "temporal_relation" in cond:
+        tr = str(cond.get("temporal_relation", "")).strip().lower().replace(" ", "_")
+        if tr in _ALLOWED_TEMPORAL_RELATIONS:
+            cond["temporal_relation"] = tr
+        else:
+            cond.pop("temporal_relation", None)
+
+    return cond
 
 
 def _normalize_conditions(conditions: list) -> list[dict]:
@@ -370,8 +689,7 @@ def _normalize_conditions(conditions: list) -> list[dict]:
     valid = []
     for cond in conditions:
         if isinstance(cond, dict) and _validate_condition(cond):
-            cond.setdefault("evidence_text", "")
-            valid.append(cond)
+            valid.append(_clean_optional_fields(cond))
     return valid
 
 
@@ -391,6 +709,7 @@ def _apply_no_conditions(triple: dict) -> None:
     triple["conditions_json"] = "[]"
     triple["has_conditions"] = False
     triple["parse_failed"] = False
+    triple["condition_schema_version"] = "condition_schema_v2"
 
 
 def _apply_parse_failed(triple: dict) -> None:
@@ -428,6 +747,7 @@ def _apply_cr(triple: dict, cr: dict, recs: list[dict]) -> None:
     )
     triple["has_conditions"] = bool(valid_conditions)
     triple["parse_failed"] = False
+    triple["condition_schema_version"] = "condition_schema_v2"
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -465,34 +785,66 @@ def run_stage3(
 
     rec_index = build_recommendation_index(recommendations, entities, match_results)
 
-    # Step 1: Group triples by endpoint pair. Same (head, tail) → same recs →
-    # one LLM call (conditions depend on rec text + endpoints, not relation).
-    # Triples without a head+tail rec match get empty conditions and skip LLM.
-    pair_cache: dict = {}
-    groups: dict = {}  # pair_key → list of triple indices needing LLM
+    # Step 1: Endpoint-validity check, then group by (endpoints, relation).
+    #
+    # Endpoint validity: a triple is only sent for condition extraction when
+    # both head_name and tail_name are present — otherwise neither rec lookup
+    # nor LLM reasoning is meaningful.
+    #
+    # Group key includes relation so that triples with the same (head, tail)
+    # but different relations are evaluated independently. Without relation
+    # in the key, one LLM call's result would be broadcast across siblings
+    # (e.g. clinical conditions extracted under `may_be_treated_by` would
+    # leak onto `SY`/`translation_of`/`PAR`), violating the prompt rule
+    # "only attach conditions that actually constrain the triple relation".
+    #
+    # Rec cache is still keyed by endpoint pair only — finding recs does not
+    # depend on relation, so multiple groups sharing the same endpoints
+    # share one rec lookup.
+    rec_cache: dict = {}              # endpoint_key → list[rec]
+    groups: dict = {}                 # group_key (endpoints + relation) → triple indices
+    group_to_endpoint: dict = {}      # group_key → endpoint_key (for retrieving recs)
     no_rec_count = 0
     for i, t in enumerate(triples):
-        key = (t.get("head_cui", ""), t.get("tail_id", ""),
-               t.get("head_name", "").lower().strip(),
-               t.get("tail_name", "").lower().strip())
-        if key not in pair_cache:
-            pair_cache[key] = find_relevant_recommendations(t, recommendations, rec_index)
-        if pair_cache[key]:
-            groups.setdefault(key, []).append(i)
-        else:
+        head_name = t.get("head_name", "").lower().strip()
+        tail_name = t.get("tail_name", "").lower().strip()
+
+        # Endpoint validity gate — both endpoints must exist.
+        if not head_name or not tail_name:
             _apply_no_conditions(t)
             no_rec_count += 1
+            continue
+
+        endpoint_key = (
+            t.get("head_cui", ""),
+            t.get("tail_id", ""),
+            head_name,
+            tail_name,
+        )
+        if endpoint_key not in rec_cache:
+            rec_cache[endpoint_key] = find_relevant_recommendations(
+                t, recommendations, rec_index
+            )
+        if not rec_cache[endpoint_key]:
+            _apply_no_conditions(t)
+            no_rec_count += 1
+            continue
+
+        group_key = endpoint_key + (t.get("relation", ""),)
+        groups.setdefault(group_key, []).append(i)
+        group_to_endpoint.setdefault(group_key, endpoint_key)
 
     group_keys = list(groups.keys())
     group_originals = [groups[k] for k in group_keys]
     rep_triples = [triples[oi[0]] for oi in group_originals]
-    rep_recs = [pair_cache[k] for k in group_keys]
+    rep_recs = [rec_cache[group_to_endpoint[k]] for k in group_keys]
 
     candidates = sum(len(oi) for oi in group_originals)
-    logger.info(f"  Pair cache: {len(pair_cache)} unique endpoint pairs")
+    logger.info(f"  Endpoint cache: {len(rec_cache)} unique endpoint pairs")
     logger.info(
         f"  LLM dedup: {candidates} candidate triples → "
-        f"{len(rep_triples)} unique groups (saved {candidates - len(rep_triples)})"
+        f"{len(rep_triples)} unique (endpoint, relation) groups "
+        f"(saved {candidates - len(rep_triples)})"
     )
 
     # Step 2: Submit one LLM call per group, parallelized.
@@ -525,7 +877,9 @@ def run_stage3(
                 if completed % progress_every == 0 or completed == len(chunks):
                     logger.info(f"  LLM progress: {completed}/{len(chunks)} chunks")
 
-    # Step 3: Apply each group's LLM result to all triples sharing that pair.
+    # Step 3: Apply each group's LLM result to triples sharing the same
+    # (endpoints, relation). Recs are looked up via the endpoint key since
+    # the rec set depends on endpoints only.
     parse_failed = 0
     with_cond = 0
     total_cond = 0
@@ -535,7 +889,7 @@ def run_stage3(
                 _apply_parse_failed(triples[i])
             parse_failed += len(orig_indices)
             continue
-        recs = pair_cache[key]
+        recs = rec_cache[group_to_endpoint[key]]
         for i in orig_indices:
             _apply_cr(triples[i], cr, recs)
             if triples[i]["has_conditions"]:

@@ -67,9 +67,16 @@ def build_1hop_subgraph(
             "tail_name": related_name,
             "root_source": root_source,
             "seed_cui": seed_cui,
+            # Stage 3 populates these fields. Keeping the shape here makes
+            # downstream JSON stable even for triples that never reach the LLM.
             "conditions": [],
-            "condition_source": [],
+            "condition_logic": None,
+            "condition_source": {"guideline_id": "", "evidence_level": "", "evidence_texts": []},
             "recommendation_strength": None,
+            "conditions_json": "[]",
+            "has_conditions": False,
+            "parse_failed": False,
+            "condition_schema_version": "condition_schema_v2",
         })
 
     return triples

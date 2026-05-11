@@ -240,8 +240,6 @@ class UMLSClient:
             page += 1
 
         return all_relations
-<<<<<<< HEAD:UMLS_KG/umls_client.py
-<<<<<<< HEAD:UMLS_KG/umls_client.py
 
     # ──────────────────────────────────────────────────────────────────
     # Definitions API (auxiliary)
@@ -303,7 +301,3 @@ class UMLSClient:
         if data and "result" in data:
             return data["result"]
         return None
-=======
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b:umls_client.py
-=======
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b:umls_client.py

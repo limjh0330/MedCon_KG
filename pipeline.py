@@ -22,11 +22,7 @@ Usage:
 
     # partial range or test slice
     python pipeline.py all --start-stage 1 --end-stage 2
-<<<<<<< HEAD
     python pipeline.py all --max-guideline-text 10 --max-triples 50
-=======
-    python pipeline.py all --max-recs 10 --max-triples 50
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
 
     # backgrounded
     nohup python -u pipeline.py stage3 --output-dir ./output \\
@@ -43,29 +39,19 @@ from typing import Any
 
 import condition_augmenter
 import config
-<<<<<<< HEAD
 
 from cli_utils import load_json, require_files, save_json, setup_logging
 from crest_parser import extract_from_both_sources
 from dataset.Pubmed.get_pubmed_data import extract_from_sqlite
-=======
-from cli_utils import load_json, require_files, save_json, setup_logging
-from crest_parser import extract_from_both_sources
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
 from entity_extractor import deduplicate_entities, extract_entities_batch
 from entity_matcher import match_entities_batch
 from semantic_types import load_semantic_groups_from_file
 from subgraph_builder import build_subgraphs_batch, deduplicate_triples
-<<<<<<< HEAD
 from UMLS_KG.umls_client import UMLSClient
-=======
-from umls_client import UMLSClient
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
 
 logger = logging.getLogger(__name__)
 
 
-<<<<<<< HEAD
 def _build_stage0_outputs(
     db_name: str,
     max_guideline_text: int = None,
@@ -122,30 +108,20 @@ def _build_stage0_outputs(
     documents = list(documents_by_id.values())
     return records, documents, documents_by_id
 
-=======
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
 # ──────────────────────────────────────────────────────────────────────
 # Stage 0: CREST Parsing & Recommendation/Context Extraction
 # ──────────────────────────────────────────────────────────────────────
 
 def run_stage0(
-<<<<<<< HEAD
     db_name: list = None, 
     output_dir: str = None,
     max_guideline_text: int = None,
-=======
-    xml_dir: str = None,
-    primary_dir: str = None,
-    output_dir: str = None,
-    max_recs: int = None,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
 ) -> list[dict]:
     """Stage 0: parse CREST → save recommendations file. Returns the list."""
     output_dir = output_dir or config.OUTPUT_DIR
     os.makedirs(output_dir, exist_ok=True)
 
     logger.info("=" * 60)
-<<<<<<< HEAD
     logger.info("STAGE 0: Guideline parsing & extraction")
     logger.info("=" * 60)
 
@@ -182,48 +158,6 @@ def run_stage0(
     logger.info(f"Next: python pipeline.py stage1 --output-dir {output_dir}")
     return records
 
-=======
-    logger.info("STAGE 0: CREST Parsing")
-    logger.info("=" * 60)
-
-    start = time.time()
-    recs = extract_from_both_sources(
-        xml_dir=xml_dir,
-        primary_dir=primary_dir,
-    )
-
-    if not recs:
-        logger.error("No recommendations extracted. Check CREST paths.")
-        sys.exit(1)
-
-    if max_recs:
-        recs = recs[:max_recs]
-        logger.info(f"Limited to {max_recs} recommendations (test mode)")
-
-    elapsed = time.time() - start
-    output_path = os.path.join(output_dir, config.OUTPUT_RECOMMENDATIONS_FILE)
-
-    save_json(
-        {
-            "metadata": {
-                "stage": 0,
-                "total_recommendations": len(recs),
-                "elapsed_seconds": round(elapsed, 1),
-                "timestamp": datetime.now().isoformat(),
-            },
-            "recommendations": recs,
-        },
-        output_path,
-    )
-
-    logger.info(f"Stage 0 complete in {elapsed:.1f}s")
-    logger.info(f"  Recommendations: {len(recs)}")
-    logger.info(f"  Output: {output_path}")
-    logger.info(f"Next: python pipeline.py stage1 --output-dir {output_dir}")
-    return recs
-
-
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
 # ──────────────────────────────────────────────────────────────────────
 # Stage 1: Entity Candidate Extraction (LLM)
 # ──────────────────────────────────────────────────────────────────────
@@ -232,17 +166,10 @@ def run_stage1(
     output_dir: str = None,
     openai_api_key: str = None,
     max_workers: int = None,
-<<<<<<< HEAD
     max_guideline_text: int = None,
     progress_interval: int = 10,
 ) -> tuple[list[dict], dict]:
     """Stage 1: load Stage 0 records, run LLM extraction, save entities."""
-=======
-    max_recs: int = None,
-    progress_interval: int = 10,
-) -> tuple[list[dict], dict]:
-    """Stage 1: load Stage 0 recs, run LLM extraction, save entities."""
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
     output_dir = output_dir or config.OUTPUT_DIR
 
     if openai_api_key:
@@ -259,7 +186,6 @@ def run_stage1(
     logger.info("=" * 60)
 
     recs_data = load_json(recs_path)
-<<<<<<< HEAD
     records = recs_data.get("records") or recs_data.get("recommendations", [])
     documents = recs_data.get("documents", [])
     logger.info(f"  Loaded {len(records)} raw-text records from Stage 0")
@@ -273,18 +199,6 @@ def run_stage1(
     start = time.time()
     all_entities = extract_entities_batch(
         records,
-=======
-    recommendations = recs_data.get("recommendations", [])
-    logger.info(f"  Loaded {len(recommendations)} recommendations from Stage 0")
-
-    if max_recs:
-        recommendations = recommendations[:max_recs]
-        logger.info(f"  Limited to {max_recs} recommendations (test mode)")
-
-    start = time.time()
-    all_entities = extract_entities_batch(
-        recommendations,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
         progress_interval=progress_interval,
         max_workers=max_workers,
     )
@@ -296,12 +210,8 @@ def run_stage1(
         {
             "metadata": {
                 "stage": 1,
-<<<<<<< HEAD
                 "input_records": len(records),
                 "input_documents": len(documents),
-=======
-                "input_recommendations": len(recommendations),
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
                 "total_raw_entities": len(all_entities),
                 "total_unique_entities": len(unique_entities),
                 "elapsed_seconds": round(elapsed, 1),
@@ -694,11 +604,7 @@ def run_pipeline(
     umls_api_key: str = None,
     openai_api_key: str = None,
     output_dir: str = None,
-<<<<<<< HEAD
     max_guideline_text: int = None,
-=======
-    max_recs: int = None,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
     max_triples: int = None,
     batch_size: int = None,
     max_workers_umls: int = None,
@@ -723,16 +629,9 @@ def run_pipeline(
 
     if start_stage <= 0 <= end_stage:
         run_stage0(
-<<<<<<< HEAD
             db_name=db_name,
             output_dir=output_dir,
             max_guideline_text=max_guideline_text,
-=======
-            xml_dir=xml_dir,
-            primary_dir=primary_dir,
-            output_dir=output_dir,
-            max_recs=max_recs,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
         )
 
     if start_stage <= 1 <= end_stage:
@@ -740,11 +639,7 @@ def run_pipeline(
             output_dir=output_dir,
             openai_api_key=openai_api_key,
             max_workers=max_workers_llm,
-<<<<<<< HEAD
             max_guideline_text=max_guideline_text,
-=======
-            max_recs=max_recs,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
         )
 
     if start_stage <= 2 <= end_stage:
@@ -797,25 +692,17 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # ── stage0 ──
     p0 = sub.add_parser("stage0", help="CREST parsing & recommendation extraction")
-<<<<<<< HEAD
     p0.add_argument("--db-name", default=["PUBMED"], 
                     help="Database name for record/document IDs "
                          "(default: 'CREST', 'PUBMED')")
-=======
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
     p0.add_argument("--xml-dir", default=None,
                     help=f"CREST xml/ folder (default: {config.CREST_XML_DIR})")
     p0.add_argument("--primary-dir", default=None,
                     help=f"CREST primary/ folder (default: {config.CREST_PRIMARY_DIR})")
-<<<<<<< HEAD
     p0.add_argument("--pubmed-sqlite-path", default=None,
                     help=f"Path to PubMed SQLite (default: {config.PUBMED_SQLITE_PATH})")
     p0.add_argument("--output-dir", default=config.OUTPUT_DIR)
     p0.add_argument("--max-guideline-text", type=int, default=10,
-=======
-    p0.add_argument("--output-dir", default=config.OUTPUT_DIR)
-    p0.add_argument("--max-recs", type=int, default=None,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
                     help="Limit number of recommendations (test mode)")
     p0.add_argument("--log-level", default="INFO")
 
@@ -825,11 +712,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p1.add_argument("--openai-key", default=None)
     p1.add_argument("--max-workers", type=int, default=None,
                     help=f"Parallel LLM workers (default: {config.LLM_MAX_WORKERS})")
-<<<<<<< HEAD
     p1.add_argument("--max-guideline-text", type=int, default=None,
-=======
-    p1.add_argument("--max-recs", type=int, default=None,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
                     help="Limit recommendations to process (test mode)")
     p1.add_argument("--log-level", default="INFO")
 
@@ -877,19 +760,12 @@ def _build_parser() -> argparse.ArgumentParser:
     pall = sub.add_parser("all", help="End-to-end pipeline (Stages 0-4)")
     pall.add_argument("--xml-dir", default=None)
     pall.add_argument("--primary-dir", default=None)
-<<<<<<< HEAD
     pall.add_argument("--pubmed-sqlite-path", default=None)
-=======
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
     pall.add_argument("--semantic-groups", default=None)
     pall.add_argument("--umls-key", default=None)
     pall.add_argument("--openai-key", default=None)
     pall.add_argument("--output-dir", default=config.OUTPUT_DIR)
-<<<<<<< HEAD
     pall.add_argument("--max-guideline-text", type=int, default=None,
-=======
-    pall.add_argument("--max-recs", type=int, default=None,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
                       help="Limit recommendations at Stage 0/1")
     pall.add_argument("--max-triples", type=int, default=None,
                       help="Limit triples at Stage 3")
@@ -926,27 +802,16 @@ def main():
 
     if args.stage == "stage0":
         run_stage0(
-<<<<<<< HEAD
             db_name=args.db_name,
             output_dir=args.output_dir,
             max_guideline_text=args.max_guideline_text,
-=======
-            xml_dir=args.xml_dir,
-            primary_dir=args.primary_dir,
-            output_dir=args.output_dir,
-            max_recs=args.max_recs,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
         )
     elif args.stage == "stage1":
         run_stage1(
             output_dir=args.output_dir,
             openai_api_key=args.openai_key,
             max_workers=args.max_workers,
-<<<<<<< HEAD
             max_guideline_text=args.max_guideline_text,
-=======
-            max_recs=args.max_recs,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
         )
     elif args.stage == "stage2":
         run_stage2(
@@ -977,22 +842,13 @@ def main():
         if args.start_stage > args.end_stage:
             parser.error("--start-stage must be <= --end-stage")
         run_pipeline(
-<<<<<<< HEAD
             db_name=args.db_name,
             pubmed_sqlite_path=args.pubmed_sqlite_path,
-=======
-            xml_dir=args.xml_dir,
-            primary_dir=args.primary_dir,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
             semantic_groups_file=args.semantic_groups,
             umls_api_key=args.umls_key,
             openai_api_key=args.openai_key,
             output_dir=args.output_dir,
-<<<<<<< HEAD
             max_guideline_text=args.max_guideline_text,
-=======
-            max_recs=args.max_recs,
->>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
             max_triples=args.max_triples,
             batch_size=args.batch_size,
             max_workers_umls=args.max_workers_umls,

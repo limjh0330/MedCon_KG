@@ -9,6 +9,8 @@ Design rationale (from research proposal §2.4 Step 2):
 """
 
 import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Optional
 
 from UMLS_KG.umls_client import UMLSClient
 import config
@@ -28,7 +30,6 @@ def build_1hop_subgraph(
     client: UMLSClient,
     seed_cui: str,
     seed_name: str = "",
-    skip_relations: set = None,
 ) -> list[dict]:
     """
     Collect 1-hop subgraph for a seed CUI as a list of triples.
@@ -36,8 +37,6 @@ def build_1hop_subgraph(
     The seed CUI is always the head. The neighbor entity becomes the tail.
     Each triple includes empty condition fields for Stage 3 to populate.
     """
-    skip_relations = skip_relations or config.SKIP_RELATION_LABELS
-
     if not seed_name:
         concept = client.get_concept(seed_cui)
         seed_name = concept.get("name", seed_cui) if concept else seed_cui
@@ -47,9 +46,6 @@ def build_1hop_subgraph(
     triples = []
     for rel in relations:
         rel_label = rel.get("relationLabel", "")
-        if rel_label in skip_relations:
-            continue
-
         additional_label = rel.get("additionalRelationLabel", "")
         related_name = rel.get("relatedIdName", "")
         related_uri = rel.get("relatedId", "")
@@ -71,9 +67,16 @@ def build_1hop_subgraph(
             "tail_name": related_name,
             "root_source": root_source,
             "seed_cui": seed_cui,
+            # Stage 3 populates these fields. Keeping the shape here makes
+            # downstream JSON stable even for triples that never reach the LLM.
             "conditions": [],
-            "condition_source": [],
+            "condition_logic": None,
+            "condition_source": {"guideline_id": "", "evidence_level": "", "evidence_texts": []},
             "recommendation_strength": None,
+            "conditions_json": "[]",
+            "has_conditions": False,
+            "parse_failed": False,
+            "condition_schema_version": "condition_schema_v2",
         })
 
     return triples
@@ -83,24 +86,48 @@ def build_subgraphs_batch(
     client: UMLSClient,
     matched_cuis: dict,
     progress_interval: int = 50,
+    max_workers: int = None,
 ) -> list[dict]:
-    """Build 1-hop subgraphs for all matched CUIs."""
-    all_triples = []
+    """Build 1-hop subgraphs for all matched CUIs, parallelized across CUIs.
+
+    The UMLSClient's shared rate limiter keeps total request rate within the
+    UMLS ceiling regardless of worker count.
+    """
+    max_workers = max_workers or config.UMLS_MAX_WORKERS
     cui_list = list(matched_cuis.items())
+    n = len(cui_list)
+    per_cui_triples: list[Optional[list[dict]]] = [None] * n
 
-    for i, (cui, info) in enumerate(cui_list):
-        triples = build_1hop_subgraph(client, cui, seed_name=info.get("name", ""))
-        all_triples.extend(triples)
+    completed = 0
+    running_total = 0
+    with ThreadPoolExecutor(max_workers=max_workers) as ex:
+        futures = {
+            ex.submit(
+                build_1hop_subgraph, client, cui, info.get("name", "")
+            ): i
+            for i, (cui, info) in enumerate(cui_list)
+        }
+        for fut in as_completed(futures):
+            i = futures[fut]
+            triples = fut.result()
+            per_cui_triples[i] = triples
+            running_total += len(triples)
+            completed += 1
+            if completed % progress_interval == 0:
+                logger.info(
+                    f"  Subgraph progress: {completed}/{n} CUIs, "
+                    f"{running_total} triples collected"
+                )
 
-        if (i + 1) % progress_interval == 0:
-            logger.info(
-                f"  Subgraph progress: {i + 1}/{len(cui_list)} CUIs, "
-                f"{len(all_triples)} triples collected"
-            )
+    # Flatten in deterministic CUI order
+    all_triples: list[dict] = []
+    for triples in per_cui_triples:
+        if triples:
+            all_triples.extend(triples)
 
     logger.info(
         f"Subgraph collection complete: {len(all_triples)} triples "
-        f"from {len(cui_list)} seed CUIs"
+        f"from {n} seed CUIs"
     )
 
     if all_triples:

@@ -108,16 +108,24 @@ def build_prompt_semantic_section() -> str:
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 def load_semantic_groups_from_file(filepath: str = None) -> tuple[dict, dict]:
     """
     Load TUI -> group_abbr and TUI -> type_name mappings from semantic_type_of_UMLS.json.
 =======
 def load_semantic_groups_from_file(filepath: str) -> tuple[dict, dict]:
     """
+=======
+def load_semantic_groups_from_file(filepath: str) -> tuple[dict, dict]:
+    """
+>>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
     Load TUI mappings from the UMLS semantic groups file.
     File format: GROUP_ABBR|Group Name|TUI|Semantic Type Name
 
     Returns: (tui_to_group, tui_to_name)
+<<<<<<< HEAD
+>>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
+=======
 >>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
     """
     semantic_types_path = Path(filepath) if filepath else SEMANTIC_TYPES_JSON
@@ -135,6 +143,7 @@ def load_semantic_groups_from_file(filepath: str) -> tuple[dict, dict]:
 
     return tui_to_group, tui_to_name
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 def get_all_tuis() -> set[str]:
@@ -144,5 +153,7 @@ def get_all_tuis() -> set[str]:
         for tui, _type_name, _definition in group_data["types"]:
             tuis.add(tui)
     return tuis
+=======
+>>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
 =======
 >>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b

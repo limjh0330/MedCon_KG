@@ -15,8 +15,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 from UMLS_KG.umls_client import UMLSClient
 =======
+=======
+>>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b
 import config
 from umls_client import UMLSClient
 >>>>>>> ef981f763af833d1d3ec3d40710fae0cac0e979b

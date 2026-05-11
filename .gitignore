@@ -201,9 +201,6 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-# Claude
-.claude/
-
 # Marimo
 marimo/_static/
 marimo/_lsp/
@@ -280,3 +277,4 @@ dataset/Pubmed/*.xml
 dataset/Pubmed/*.xml.gz
 dataset/Pubmed/*.csv
 dataset/Pubmed/*.tsv
+dataeet/Pubmed/*.xml.gz.md5

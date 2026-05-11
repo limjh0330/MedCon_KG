@@ -12,7 +12,7 @@ import logging
 import requests
 from typing import Optional
 
-import config_copy as config
+import config
 
 logger = logging.getLogger(__name__)
 

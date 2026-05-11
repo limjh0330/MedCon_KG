@@ -1,0 +1,18 @@
+# Additional dependencies for the full RAG experiment.
+# Assumes the base project requirements are already installed
+# (requests, beautifulsoup4, lxml, openai>=1.70.0, neo4j>=5.14.0).
+
+# Llama-3.1 inference (HuggingFace transformers).
+# Tested against PyTorch 2.4.0 on CUDA 12.4 (H100).
+transformers>=4.43.0,<5.0
+accelerate>=0.33.0
+safetensors>=0.4.3
+sentencepiece>=0.2.0
+tokenizers>=0.19.0
+huggingface-hub>=0.24.0
+
+# Vector RAG (cosine similarity).
+numpy>=1.26.0
+
+# Progress + diagnostics.
+tqdm>=4.66.0

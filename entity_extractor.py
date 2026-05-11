@@ -281,6 +281,7 @@ def call_openai(
             instructions=_build_system_prompt(),
             input=input_messages,
             reasoning={"effort": config.LLM_REASONING_EFFORT},
+            text={"format": {"type": "json_object"}},
             store=False,
         )
         return _parse_llm_response(response.output_text)

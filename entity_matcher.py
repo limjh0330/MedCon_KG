@@ -10,8 +10,11 @@ Design rationale (from research proposal §2.4 Step 2):
 
 import re
 import logging
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional
 
+import config
 from UMLS_KG.umls_client import UMLSClient
 
 logger = logging.getLogger(__name__)
@@ -194,12 +197,20 @@ class EntityMatcher:
         self.client = umls_client
         self.tui_to_group = tui_to_group
         self._concept_cache: dict[str, Optional[dict]] = {}
+        # Lock guards the concept-cache dict when match_entity runs across
+        # threads. The API call itself is left outside the lock so cache
+        # misses for different CUIs don't serialize on each other.
+        self._cache_lock = threading.Lock()
 
     def _get_concept_cached(self, cui: str) -> Optional[dict]:
         """Retrieve concept info with caching to reduce API calls."""
-        if cui not in self._concept_cache:
-            self._concept_cache[cui] = self.client.get_concept(cui)
-        return self._concept_cache[cui]
+        with self._cache_lock:
+            if cui in self._concept_cache:
+                return self._concept_cache[cui]
+        concept = self.client.get_concept(cui)
+        with self._cache_lock:
+            self._concept_cache.setdefault(cui, concept)
+            return self._concept_cache[cui]
 
     def match_entity(self, entity: dict) -> dict:
         """
@@ -222,7 +233,6 @@ class EntityMatcher:
                     return self._build_result(
                         entity, filtered, match_type="exact", match_query=term,
                     )
-                # group 불일치 → 다음 candidate로 계속 시도
 
             results = self.client.search_normalized(term)
             if results:
@@ -368,36 +378,53 @@ def match_entities_batch(
     umls_client: UMLSClient,
     tui_to_group: dict,
     progress_interval: int = 50,
+    max_workers: int = None,
 ) -> tuple[list[dict], dict]:
-    """Run UMLS matching on all unique entities."""
+    """Run UMLS matching on all unique entities, parallelized across entities.
+
+    The UMLSClient's shared rate limiter keeps total request rate within the
+    UMLS ceiling regardless of worker count.
+    """
+    max_workers = max_workers or config.UMLS_MAX_WORKERS
     matcher = EntityMatcher(umls_client, tui_to_group)
 
-    match_results = []
-    matched_cuis = {}
-
     entities_list = list(unique_entities.values())
+    n = len(entities_list)
+    match_results: list[Optional[dict]] = [None] * n
+    completed = 0
 
-    for i, entity in enumerate(entities_list):
-        result = matcher.match_entity(entity)
-        match_results.append(result)
+    with ThreadPoolExecutor(max_workers=max_workers) as ex:
+        futures = {
+            ex.submit(matcher.match_entity, entity): i
+            for i, entity in enumerate(entities_list)
+        }
+        for fut in as_completed(futures):
+            i = futures[fut]
+            match_results[i] = fut.result()
+            completed += 1
+            if completed % progress_interval == 0:
+                matched_so_far = sum(
+                    1 for r in match_results if r is not None and r["matched"]
+                )
+                logger.info(
+                    f"  Matching progress: {completed}/{n} entities, "
+                    f"{matched_so_far} matched"
+                )
 
-        if result["matched"]:
-            for m in result["matches"]:
-                cui = m["cui"]
-                if cui.startswith("C") and cui not in matched_cuis:
-                    matched_cuis[cui] = {
-                        "cui": cui,
-                        "name": m["name"],
-                        "match_type": m["match_type"],
-                        "root_source": m.get("root_source", ""),
-                    }
-
-        if (i + 1) % progress_interval == 0:
-            matched_so_far = sum(1 for r in match_results if r["matched"])
-            logger.info(
-                f"  Matching progress: {i + 1}/{len(entities_list)} entities, "
-                f"{matched_so_far} matched, {len(matched_cuis)} unique CUIs"
-            )
+    # Aggregate matched_cuis in deterministic input order.
+    matched_cuis: dict = {}
+    for result in match_results:
+        if not result["matched"]:
+            continue
+        for m in result["matches"]:
+            cui = m["cui"]
+            if cui.startswith("C") and cui not in matched_cuis:
+                matched_cuis[cui] = {
+                    "cui": cui,
+                    "name": m["name"],
+                    "match_type": m["match_type"],
+                    "root_source": m.get("root_source", ""),
+                }
 
     matched_count = sum(1 for r in match_results if r["matched"])
     total = len(match_results)

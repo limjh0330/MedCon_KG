@@ -18,17 +18,29 @@ UMLS_RATE_LIMIT_SLEEP = 0.05  # 20 req/s
 # ── LLM API (OpenAI GPT) ──
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "YOUR_OPENAI_API_KEY_HERE")
 LLM_MODEL = "gpt-5.4-mini"
-LLM_REASONING_EFFORT = "low"  # none | low | medium | high | xhigh
+# OpenAI reasoning-model effort levels: minimal | low | medium | high.
+# Consumed by entity_extractor (Responses API: reasoning={"effort": ...}) and
+# condition_augmenter (Chat Completions: reasoning_effort=...).
+LLM_REASONING_EFFORT = "low"
 
 # ── Corpus Paths ──
 CREST_XML_DIR = os.environ.get("CREST_XML_DIR", "./dataset/crest/xml")
 CREST_PRIMARY_DIR = os.environ.get("CREST_PRIMARY_DIR", "./dataset/crest/primary")
 PUBMED_SQLITE_PATH = os.environ.get("PUBMED_SQLITE_PATH", "./dataset/Pubmed/pubmed.sqlite")
 
-# ── Semantic Groups File ──
+# ── Semantic Types / Groups File ──
+# `semantic_types.py` parses a JSON payload with definitions (group_abbreviation,
+# semanticTypeGroup, TUI, name, definition); the pipe-delimited
+# UMLS_semantic_network_semantic_groups.txt file lacks `definition`, so the
+# JSON at UMLS_KG/semantic_type_of_UMLS.json is the only source the code can
+# consume. Both names below point at that JSON for callers that read either.
+SEMANTIC_TYPES_FILE = os.environ.get(
+    "SEMANTIC_TYPES_FILE",
+    "./UMLS_KG/semantic_type_of_UMLS.json",
+)
 SEMANTIC_GROUPS_FILE = os.environ.get(
     "SEMANTIC_GROUPS_FILE",
-    "./UMLS_semantic_network_semantic_groups.txt",
+    SEMANTIC_TYPES_FILE,
 )
 
 # ── Output ──

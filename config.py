@@ -20,9 +20,10 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "YOUR_OPENAI_API_KEY_HERE")
 LLM_MODEL = "gpt-5.4-mini"
 LLM_REASONING_EFFORT = "low"  # none | low | medium | high | xhigh
 
-# ── CREST Corpus Paths ──
-CREST_XML_DIR = os.environ.get("CREST_XML_DIR", "./crest/xml")
-CREST_PRIMARY_DIR = os.environ.get("CREST_PRIMARY_DIR", "./crest/primary")
+# ── Corpus Paths ──
+CREST_XML_DIR = os.environ.get("CREST_XML_DIR", "./dataset/crest/xml")
+CREST_PRIMARY_DIR = os.environ.get("CREST_PRIMARY_DIR", "./dataset/crest/primary")
+PUBMED_SQLITE_PATH = os.environ.get("PUBMED_SQLITE_PATH", "./dataset/Pubmed/pubmed.sqlite")
 
 # ── Semantic Groups File ──
 SEMANTIC_GROUPS_FILE = os.environ.get(

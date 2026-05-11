@@ -208,3 +208,76 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+#DS_Store
+.DS_Store
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log.*
+*.out
+*.err
+
+# Runtime / cache
+.cache/
+tmp/
+temp/
+.tmp/
+*.tmp
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.sqlite-journal
+
+# Compressed / downloaded data
+*.gz
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.bz2
+*.xz
+
+# Data / model artifacts
+*.pkl
+*.pickle
+*.joblib
+*.npy
+*.npz
+*.pt
+*.pth
+*.bin
+*.parquet
+*.feather
+
+# Pipeline outputs
+outputs/
+output/
+results/
+result/
+checkpoints/
+models/
+
+# PubMed / dataset generated files
+dataset/Pubmed/*.sqlite
+dataset/Pubmed/*.db
+dataset/Pubmed/*.json
+dataset/Pubmed/*.jsonl
+dataset/Pubmed/*.xml
+dataset/Pubmed/*.xml.gz
+dataset/Pubmed/*.csv
+dataset/Pubmed/*.tsv
+dataeet/Pubmed/*.xml.gz.md5

@@ -12,7 +12,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional
 
-from umls_client import UMLSClient
+from UMLS_KG.umls_client import UMLSClient
 import config
 
 logger = logging.getLogger(__name__)

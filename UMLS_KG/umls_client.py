@@ -9,7 +9,6 @@ Ref: https://documentation.uts.nlm.nih.gov/rest/home.html
 
 import time
 import logging
-import threading
 import requests
 from typing import Optional
 
@@ -19,14 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class UMLSClient:
-    """Thread-safe UMLS REST API client with shared rate limiting.
-
-    The rate limiter is global across threads: regardless of how many workers
-    call _get concurrently, requests are spaced by at least rate_limit_sleep
-    seconds. The HTTP request itself runs without holding the lock so multiple
-    requests can be in flight simultaneously, which is what allows parallelism
-    to actually saturate the UMLS 20 req/s ceiling.
-    """
+    """Thread-safe UMLS REST API client with rate limiting."""
 
     def __init__(
         self,
@@ -40,26 +32,12 @@ class UMLSClient:
         self.rate_limit_sleep = rate_limit_sleep or config.UMLS_RATE_LIMIT_SLEEP
 
         self._request_count = 0
-        self._rate_lock = threading.Lock()
-        self._last_request_t = 0.0
         self._session = requests.Session()
         self._session.headers.update({"Accept": "application/json"})
 
     @property
     def request_count(self) -> int:
         return self._request_count
-
-    def _wait_for_rate_limit(self):
-        """Block until the next request slot is available, then claim it."""
-        with self._rate_lock:
-            now = time.monotonic()
-            wait = self._last_request_t + self.rate_limit_sleep - now
-            if wait > 0:
-                time.sleep(wait)
-                self._last_request_t = now + wait
-            else:
-                self._last_request_t = now
-            self._request_count += 1
 
     def _get(
         self,
@@ -79,7 +57,8 @@ class UMLSClient:
         url = f"{self.base_url}{endpoint}"
 
         for attempt in range(retries + 1):
-            self._wait_for_rate_limit()
+            time.sleep(self.rate_limit_sleep)
+            self._request_count += 1
 
             try:
                 r = self._session.get(url, params=params, timeout=30)

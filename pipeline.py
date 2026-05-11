@@ -192,13 +192,13 @@ def run_stage1(
     if documents:
         logger.info(f"  Loaded {len(documents)} document IDs from Stage 0")
 
-    if max_guideline_text:
-        records = records[:max_guideline_text]
-        logger.info(f"  Limited to {max_guideline_text} raw-text records (test mode)")
+    if max_recs:
+        recommendations = recommendations[:max_recs]
+        logger.info(f"  Limited to {max_recs} recommendations (test mode)")
 
     start = time.time()
     all_entities = extract_entities_batch(
-        records,
+        recommendations,
         progress_interval=progress_interval,
         max_workers=max_workers,
     )
@@ -210,8 +210,7 @@ def run_stage1(
         {
             "metadata": {
                 "stage": 1,
-                "input_records": len(records),
-                "input_documents": len(documents),
+                "input_recommendations": len(recommendations),
                 "total_raw_entities": len(all_entities),
                 "total_unique_entities": len(unique_entities),
                 "elapsed_seconds": round(elapsed, 1),
@@ -604,7 +603,7 @@ def run_pipeline(
     umls_api_key: str = None,
     openai_api_key: str = None,
     output_dir: str = None,
-    max_guideline_text: int = None,
+    max_recs: int = None,
     max_triples: int = None,
     batch_size: int = None,
     max_workers_umls: int = None,
@@ -629,9 +628,10 @@ def run_pipeline(
 
     if start_stage <= 0 <= end_stage:
         run_stage0(
-            db_name=db_name,
+            xml_dir=xml_dir,
+            primary_dir=primary_dir,
             output_dir=output_dir,
-            max_guideline_text=max_guideline_text,
+            max_recs=max_recs,
         )
 
     if start_stage <= 1 <= end_stage:
@@ -639,7 +639,7 @@ def run_pipeline(
             output_dir=output_dir,
             openai_api_key=openai_api_key,
             max_workers=max_workers_llm,
-            max_guideline_text=max_guideline_text,
+            max_recs=max_recs,
         )
 
     if start_stage <= 2 <= end_stage:
@@ -712,7 +712,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p1.add_argument("--openai-key", default=None)
     p1.add_argument("--max-workers", type=int, default=None,
                     help=f"Parallel LLM workers (default: {config.LLM_MAX_WORKERS})")
-    p1.add_argument("--max-guideline-text", type=int, default=None,
+    p1.add_argument("--max-recs", type=int, default=None,
                     help="Limit recommendations to process (test mode)")
     p1.add_argument("--log-level", default="INFO")
 
@@ -765,7 +765,7 @@ def _build_parser() -> argparse.ArgumentParser:
     pall.add_argument("--umls-key", default=None)
     pall.add_argument("--openai-key", default=None)
     pall.add_argument("--output-dir", default=config.OUTPUT_DIR)
-    pall.add_argument("--max-guideline-text", type=int, default=None,
+    pall.add_argument("--max-recs", type=int, default=None,
                       help="Limit recommendations at Stage 0/1")
     pall.add_argument("--max-triples", type=int, default=None,
                       help="Limit triples at Stage 3")
@@ -802,16 +802,17 @@ def main():
 
     if args.stage == "stage0":
         run_stage0(
-            db_name=args.db_name,
+            xml_dir=args.xml_dir,
+            primary_dir=args.primary_dir,
             output_dir=args.output_dir,
-            max_guideline_text=args.max_guideline_text,
+            max_recs=args.max_recs,
         )
     elif args.stage == "stage1":
         run_stage1(
             output_dir=args.output_dir,
             openai_api_key=args.openai_key,
             max_workers=args.max_workers,
-            max_guideline_text=args.max_guideline_text,
+            max_recs=args.max_recs,
         )
     elif args.stage == "stage2":
         run_stage2(
@@ -842,13 +843,13 @@ def main():
         if args.start_stage > args.end_stage:
             parser.error("--start-stage must be <= --end-stage")
         run_pipeline(
-            db_name=args.db_name,
-            pubmed_sqlite_path=args.pubmed_sqlite_path,
+            xml_dir=args.xml_dir,
+            primary_dir=args.primary_dir,
             semantic_groups_file=args.semantic_groups,
             umls_api_key=args.umls_key,
             openai_api_key=args.openai_key,
             output_dir=args.output_dir,
-            max_guideline_text=args.max_guideline_text,
+            max_recs=args.max_recs,
             max_triples=args.max_triples,
             batch_size=args.batch_size,
             max_workers_umls=args.max_workers_umls,

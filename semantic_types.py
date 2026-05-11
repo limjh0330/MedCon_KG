@@ -106,9 +106,9 @@ def build_prompt_semantic_section() -> str:
 
     return "\n".join(lines)
 
-def load_semantic_groups_from_file(filepath: str = None) -> tuple[dict, dict]:
+
+def load_semantic_groups_from_file(filepath: str) -> tuple[dict, dict]:
     """
-    Load TUI -> group_abbr and TUI -> type_name mappings from semantic_type_of_UMLS.json.
     Load TUI mappings from the UMLS semantic groups file.
     File format: GROUP_ABBR|Group Name|TUI|Semantic Type Name
 
@@ -128,12 +128,3 @@ def load_semantic_groups_from_file(filepath: str = None) -> tuple[dict, dict]:
             tui_to_name[tui] = type_name
 
     return tui_to_group, tui_to_name
-
-
-def get_all_tuis() -> set[str]:
-    """Return the set of all TUIs defined in the semantic types mapping."""
-    tuis = set()
-    for group_data in SEMANTIC_GROUPS_WITH_EXAMPLES.values():
-        for tui, _type_name, _definition in group_data["types"]:
-            tuis.add(tui)
-    return tuis

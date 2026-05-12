@@ -206,6 +206,29 @@ def init_db(conn: sqlite3.Connection) -> None:
 
         CREATE INDEX IF NOT EXISTS idx_pubmed_articles_source_file
         ON pubmed_articles(source_file);
+
+        CREATE TRIGGER IF NOT EXISTS trg_pubmed_articles_require_abstract_insert
+        BEFORE INSERT ON pubmed_articles
+        FOR EACH ROW
+        WHEN NEW.abstract IS NULL OR TRIM(NEW.abstract) = ''
+        BEGIN
+            SELECT RAISE(IGNORE);
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS trg_pubmed_articles_require_abstract_update
+        BEFORE UPDATE ON pubmed_articles
+        FOR EACH ROW
+        WHEN NEW.abstract IS NULL OR TRIM(NEW.abstract) = ''
+        BEGIN
+            SELECT RAISE(IGNORE);
+        END;
+        """
+    )
+    conn.execute(
+        """
+        DELETE FROM pubmed_articles
+        WHERE abstract IS NULL
+           OR TRIM(abstract) = ''
         """
     )
     conn.commit()
@@ -462,29 +485,29 @@ ON CONFLICT(pmid) DO UPDATE SET
 
 
 def upsert_article(conn: sqlite3.Connection, article: Dict[str, Optional[str]]) -> None:
+    abstract = article.get("abstract")
+    if abstract is None or not abstract.strip():
+        return
+
     conn.execute(UPSERT_SQL, article)
 
 
-def mark_deleted(conn: sqlite3.Connection, pmids: List[str], source_file: str) -> None:
+def mark_deleted(conn: sqlite3.Connection, pmids: List[str], source_file: str) -> int:
     if not pmids:
-        return
+        return 0
 
+    before_changes = conn.total_changes
     conn.executemany(
         """
-        INSERT INTO pubmed_articles (
-            pmid,
-            is_deleted,
-            source_file,
-            updated_at
-        )
-        VALUES (?, 1, ?, ?)
-        ON CONFLICT(pmid) DO UPDATE SET
-            is_deleted = 1,
-            source_file = excluded.source_file,
-            updated_at = excluded.updated_at
+        UPDATE pubmed_articles
+        SET is_deleted = 1,
+            source_file = ?,
+            updated_at = ?
+        WHERE pmid = ?
         """,
-        [(pmid, source_file, now_utc()) for pmid in pmids],
+        [(source_file, now_utc(), pmid) for pmid in pmids],
     )
+    return conn.total_changes - before_changes
 
 
 # -----------------------------
@@ -531,14 +554,15 @@ def process_xml_gz_file(
             article = parse_pubmed_article(elem, source_file=file_name)
             if article:
                 upsert_article(conn, article)
-                article_count += 1
-                pending += 1
+                if article.get("abstract") and article["abstract"].strip():
+                    article_count += 1
+                    pending += 1
 
         elif record_type == "delete":
             pmids = parse_deleted_pmids(elem)
-            mark_deleted(conn, pmids, source_file=file_name)
-            deleted_count += len(pmids)
-            pending += len(pmids)
+            affected_rows = mark_deleted(conn, pmids, source_file=file_name)
+            deleted_count += affected_rows
+            pending += affected_rows
 
         if pending >= commit_every:
             conn.commit()

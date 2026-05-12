@@ -48,7 +48,7 @@ from entity_extractor import deduplicate_entities, extract_entities_batch
 from entity_matcher import match_entities_batch
 from semantic_types import load_semantic_groups_from_file
 from subgraph_builder import build_subgraphs_batch, deduplicate_triples
-from umls_client import UMLSClient
+from UMLS_KG.umls_client import UMLSClient
 
 logger = logging.getLogger(__name__)
 
@@ -63,12 +63,14 @@ def _build_stage0_outputs(
     """Normalize Stage 0 rows into DB/document-centric sentence records."""
     records: list[dict] = []
     documents_by_id: dict[str, dict[str, Any]] = {}
+    db_name = db_name
 
     guideline_text = None
     if "CREST" in db_name:
         guideline_text = extract_from_both_sources(
             xml_dir=xml_dir or config.CREST_XML_DIR,
             primary_dir=primary_dir or config.CREST_PRIMARY_DIR,
+            max_guideline_text=max_guideline_text,
         )
 
         if not guideline_text:
@@ -76,53 +78,41 @@ def _build_stage0_outputs(
             sys.exit(1)
 
     if "PUBMED" in db_name:
-        pubmed_guideline_text = list(
-            extract_from_sqlite(pubmed_sqlite_path or config.PUBMED_SQLITE_PATH)
-        )
+        for pubmed_guideline_text in extract_from_sqlite(
+            db_path=config.PUBMED_SQLITE_PATH,
+            max_guideline_text=max_guideline_text,
+            batch_size=10,
+        ):
+            print(f"Extracted PubMed record: {len(pubmed_guideline_text)}")
 
-        # Normalize PubMed rows (pmid/title/abstract) into the shape downstream
-        # stages expect (guideline_id/text/guideline_context/strength).
-        for rec in pubmed_guideline_text:
-            pmid = str(rec.get("pmid", "")).strip()
-            title = (rec.get("title") or "").strip()
-            abstract = (rec.get("abstract") or "").strip()
-            if title and abstract:
-                merged_text = f"{title}\n\n{abstract}"
+            # Normalize PubMed rows (pmid/title/abstract) into the shape downstream
+            # stages expect (guideline_id/text/guideline_context/strength).
+            for rec in pubmed_guideline_text:
+                pmid = str(rec.get("pmid", "")).strip()
+                title = (rec.get("title") or "").strip()
+                abstract = (rec.get("abstract") or "").strip()
+                rec["guideline_id"] = f"PUBMED_{pmid}"
+                rec["text"] = f"{title}\n\n{abstract}"
+                rec.setdefault("tag", "")
+                rec.setdefault("strength", "")
+
+            if guideline_text is None:
+                guideline_text = pubmed_guideline_text
             else:
-                merged_text = title or abstract
-            rec["guideline_id"] = pmid or rec.get("guideline_id", "")
-            rec["text"] = merged_text
-            rec.setdefault("guideline_context", "")
-            rec.setdefault("strength", "")
-
-        if guideline_text is None:
-            guideline_text = pubmed_guideline_text
-        else:
-            guideline_text.extend(pubmed_guideline_text)
+                guideline_text.extend(pubmed_guideline_text)
 
     if not guideline_text:
         logger.error(f"No records extracted for db_name={db_name}")
         sys.exit(1)
 
-    if max_guideline_text:
-        guideline_text = guideline_text[:max_guideline_text]
-        logger.info(f"Limited to {max_guideline_text} recommendations (test mode)")
-
-    # `db_name` may be a list (e.g. ["PUBMED"]) or a string — flatten to a stable
-    # prefix so the resulting db_guideline_id is readable in either case.
-    if isinstance(db_name, (list, tuple)):
-        db_prefix = "+".join(db_name) if db_name else "UNKNOWN"
-    else:
-        db_prefix = str(db_name)
-
     for sentence_index, rec in enumerate(guideline_text, start=1):
-        guideline_id = str(rec.get("guideline_id", "")).strip() or f"doc_{sentence_index}"
-        db_guideline_id = f"{db_prefix}_{guideline_id}"
-        raw_text = (rec.get("guideline_context") or "").strip()
+        db_guideline_id = str(rec.get("guideline_id", "")).strip()
+        raw_text = (rec.get("text") or "").strip()
+        strength = (rec.get("strength") or "").strip()
 
         normalized = dict(rec)
-        normalized["db_guideline_id"] = db_guideline_id
-        normalized["raw_text"] = raw_text
+        # normalized["db_guideline_id"] = db_guideline_id
+        # normalized["raw_text"] = raw_text
         records.append(normalized)
 
         if db_guideline_id not in documents_by_id:
@@ -134,11 +124,10 @@ def _build_stage0_outputs(
             }
 
         doc_entry = documents_by_id[db_guideline_id]
-        doc_entry["raw_texts"].append(raw_text)
+        doc_entry["raw_texts"].append(f"{strength} : {raw_text}")
         doc_entry["sentence_count"] += 1
 
-    documents = list(documents_by_id.values())
-    return records, documents, documents_by_id
+    return records, documents_by_id
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -155,6 +144,7 @@ def run_stage0(
 ) -> list[dict]:
     """Stage 0: parse CREST → save recommendations file. Returns the list."""
     output_dir = output_dir or config.OUTPUT_DIR
+    db_name = db_name
     os.makedirs(output_dir, exist_ok=True)
 
     logger.info("=" * 60)
@@ -163,7 +153,7 @@ def run_stage0(
 
     start = time.time()
 
-    records, documents, documents_by_id = _build_stage0_outputs(
+    records, documents_by_id = _build_stage0_outputs(
         db_name,
         max_guideline_text,
         xml_dir=xml_dir,
@@ -180,13 +170,10 @@ def run_stage0(
                 "stage": 0,
                 "db_name": db_name,
                 "total_recommendations": len(records),
-                "total_documents": len(documents),
                 "elapsed_seconds": round(elapsed, 1),
                 "timestamp": datetime.now().isoformat(),
             },
-            "recommendations": records,
             "records": records,
-            "documents": documents,
             "documents_by_id": documents_by_id,
         },
         output_path,
@@ -195,7 +182,7 @@ def run_stage0(
     logger.info(f"Stage 0 complete in {elapsed:.1f}s")
     logger.info(f"  DB name: {db_name}")
     logger.info(f"  Raw-text records: {len(records)}")
-    logger.info(f"  Document IDs: {len(documents)}")
+    logger.info(f"  Document IDs: {len(documents_by_id)}")
     logger.info(f"  Output: {output_path}")
     logger.info(f"Next: python pipeline.py stage1 --output-dir {output_dir}")
     return records
@@ -237,11 +224,7 @@ def run_stage1(
 
     if max_guideline_text:
         records = records[:max_guideline_text]
-<<<<<<< Updated upstream
-        logger.info(f"  Limited to {max_guideline_text} records (test mode)")
-=======
         logger.info(f"  Limited to {max_guideline_text} raw-text records (test mode)")
->>>>>>> Stashed changes
 
     start = time.time()
     all_entities = extract_entities_batch(
@@ -258,10 +241,6 @@ def run_stage1(
             "metadata": {
                 "stage": 1,
                 "input_records": len(records),
-<<<<<<< Updated upstream
-=======
-                "input_documents": len(documents),
->>>>>>> Stashed changes
                 "total_raw_entities": len(all_entities),
                 "total_unique_entities": len(unique_entities),
                 "elapsed_seconds": round(elapsed, 1),
@@ -461,10 +440,69 @@ def run_stage3(
     total_parse_failed = sum(1 for t in augmented_triples if t.get("parse_failed"))
 
     cond_type_dist: dict = {}
+    cond_subtype_dist: dict = {}
+    cond_qualifies_dist: dict = {}
+    cond_status_dist: dict = {}  # legacy medication_history.status / backward compatibility
+    cond_clinical_status_dist: dict = {}
+    cond_verification_status_dist: dict = {}
+    cond_severity_dist: dict = {}
+    cond_body_site_dist: dict = {}
+    cond_temporal_relation_dist: dict = {}
+    cond_frequency_dist: dict = {}
+    cond_route_dist: dict = {}
+    cond_range_count = 0
+    cond_value_operator_dist: dict = {}
     for t in augmented_triples:
         for c in t.get("conditions", []):
             ct = c.get("type", "unknown")
             cond_type_dist[ct] = cond_type_dist.get(ct, 0) + 1
+
+            st = c.get("subtype")
+            if st:
+                cond_subtype_dist[st] = cond_subtype_dist.get(st, 0) + 1
+
+            q = c.get("qualifies")
+            if q:
+                cond_qualifies_dist[q] = cond_qualifies_dist.get(q, 0) + 1
+
+            status = c.get("status")
+            if status:
+                cond_status_dist[status] = cond_status_dist.get(status, 0) + 1
+
+            clinical_status = c.get("clinical_status")
+            if clinical_status:
+                cond_clinical_status_dist[clinical_status] = cond_clinical_status_dist.get(clinical_status, 0) + 1
+
+            verification_status = c.get("verification_status")
+            if verification_status:
+                cond_verification_status_dist[verification_status] = cond_verification_status_dist.get(verification_status, 0) + 1
+
+            severity = c.get("severity")
+            if severity:
+                cond_severity_dist[severity] = cond_severity_dist.get(severity, 0) + 1
+
+            body_site = c.get("body_site")
+            if body_site:
+                cond_body_site_dist[body_site] = cond_body_site_dist.get(body_site, 0) + 1
+
+            temporal_relation = c.get("temporal_relation")
+            if temporal_relation:
+                cond_temporal_relation_dist[temporal_relation] = cond_temporal_relation_dist.get(temporal_relation, 0) + 1
+
+            frequency = c.get("frequency")
+            if frequency:
+                cond_frequency_dist[frequency] = cond_frequency_dist.get(frequency, 0) + 1
+
+            route = c.get("route")
+            if route:
+                cond_route_dist[route] = cond_route_dist.get(route, 0) + 1
+
+            if c.get("value_min") is not None or c.get("value_max") is not None:
+                cond_range_count += 1
+
+            vo = c.get("value_operator")
+            if vo:
+                cond_value_operator_dist[vo] = cond_value_operator_dist.get(vo, 0) + 1
 
     strength_dist: dict = {}
     for t in augmented_triples:
@@ -481,6 +519,18 @@ def run_stage3(
             "triples_parse_failed": total_parse_failed,
             "total_conditions": total_cond,
             "condition_type_distribution": cond_type_dist,
+            "condition_subtype_distribution": cond_subtype_dist,
+            "condition_qualifies_distribution": cond_qualifies_dist,
+            "condition_status_distribution": cond_status_dist,
+            "condition_clinical_status_distribution": cond_clinical_status_dist,
+            "condition_verification_status_distribution": cond_verification_status_dist,
+            "condition_severity_distribution": cond_severity_dist,
+            "condition_body_site_distribution": cond_body_site_dist,
+            "condition_temporal_relation_distribution": cond_temporal_relation_dist,
+            "condition_frequency_distribution": cond_frequency_dist,
+            "condition_route_distribution": cond_route_dist,
+            "condition_numeric_range_count": cond_range_count,
+            "condition_value_operator_distribution": cond_value_operator_dist,
             "recommendation_strength_distribution": strength_dist,
             "elapsed_seconds": round(elapsed, 1),
             "timestamp": datetime.now().isoformat(),
@@ -494,6 +544,18 @@ def run_stage3(
     logger.info(f"Stage 3 complete in {elapsed:.1f}s")
     logger.info(f"  Output: {augmented_path}")
     logger.info(f"  Condition types: {cond_type_dist}")
+    logger.info(f"  Condition subtypes: {cond_subtype_dist}")
+    logger.info(f"  Condition qualifies: {cond_qualifies_dist}")
+    logger.info(f"  Condition medication/legacy statuses: {cond_status_dist}")
+    logger.info(f"  Condition clinical statuses: {cond_clinical_status_dist}")
+    logger.info(f"  Condition verification statuses: {cond_verification_status_dist}")
+    logger.info(f"  Condition severities: {cond_severity_dist}")
+    logger.info(f"  Condition body sites: {cond_body_site_dist}")
+    logger.info(f"  Condition temporal relations: {cond_temporal_relation_dist}")
+    logger.info(f"  Condition medication frequencies: {cond_frequency_dist}")
+    logger.info(f"  Condition medication routes: {cond_route_dist}")
+    logger.info(f"  Condition numeric ranges: {cond_range_count}")
+    logger.info(f"  Condition value operators: {cond_value_operator_dist}")
     logger.info(f"  Recommendation strengths: {strength_dist}")
     return augmented_triples
 
@@ -589,6 +651,7 @@ def run_pipeline(
 ):
     """Run the inclusive range [start_stage, end_stage] of pipeline stages."""
     output_dir = output_dir or config.OUTPUT_DIR
+    db_name = db_name or ["PUBMED"]
     overall_start = time.time()
 
     logger.info("=" * 60)
@@ -600,14 +663,10 @@ def run_pipeline(
         run_stage0(
             db_name=db_name,
             output_dir=output_dir,
-<<<<<<< Updated upstream
-            max_guideline_text=max_recs,
+            max_guideline_text=max_guideline_text,
             xml_dir=xml_dir,
             primary_dir=primary_dir,
             pubmed_sqlite_path=pubmed_sqlite_path,
-=======
-            max_guideline_text=max_guideline_text,
->>>>>>> Stashed changes
         )
 
     if start_stage <= 1 <= end_stage:
@@ -615,11 +674,7 @@ def run_pipeline(
             output_dir=output_dir,
             openai_api_key=openai_api_key,
             max_workers=max_workers_llm,
-<<<<<<< Updated upstream
-            max_guideline_text=max_recs,
-=======
             max_guideline_text=max_guideline_text,
->>>>>>> Stashed changes
         )
 
     if start_stage <= 2 <= end_stage:
@@ -672,7 +727,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # ── stage0 ──
     p0 = sub.add_parser("stage0", help="CREST parsing & recommendation extraction")
-    p0.add_argument("--db-name", default=["PUBMED"], nargs="+",
+    p0.add_argument("--db-name", default=["CREST", "PUBMED"], nargs="+",
                     choices=["CREST", "PUBMED"],
                     help="One or more database sources for record/document IDs "
                          "(default: PUBMED). Pass multiple to combine, e.g. "
@@ -684,7 +739,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p0.add_argument("--pubmed-sqlite-path", default=None,
                     help=f"Path to PubMed SQLite (default: {config.PUBMED_SQLITE_PATH})")
     p0.add_argument("--output-dir", default=config.OUTPUT_DIR)
-    p0.add_argument("--max-guideline-text", type=int, default=10,
+    p0.add_argument("--max-guideline-text", type=int, default=100,
                     help="Limit number of recommendations (test mode)")
     p0.add_argument("--log-level", default="INFO")
 
@@ -740,7 +795,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # ── all ──
     pall = sub.add_parser("all", help="End-to-end pipeline (Stages 0-4)")
-    pall.add_argument("--db-name", default=["PUBMED"], nargs="+",
+    pall.add_argument("--db-name", default=["CREST"], nargs="+",
                       choices=["CREST", "PUBMED"],
                       help="One or more database sources passed through to Stage 0 "
                            "(default: PUBMED)")
@@ -751,7 +806,7 @@ def _build_parser() -> argparse.ArgumentParser:
     pall.add_argument("--umls-key", default=None)
     pall.add_argument("--openai-key", default=None)
     pall.add_argument("--output-dir", default=config.OUTPUT_DIR)
-    pall.add_argument("--max-guideline-text", type=int, default=None,
+    pall.add_argument("--max-guideline-text", type=int, default=10,
                       help="Limit recommendations at Stage 0/1")
     pall.add_argument("--max-triples", type=int, default=None,
                       help="Limit triples at Stage 3")
@@ -791,23 +846,16 @@ def main():
             db_name=args.db_name,
             output_dir=args.output_dir,
             max_guideline_text=args.max_guideline_text,
-<<<<<<< Updated upstream
             xml_dir=args.xml_dir,
             primary_dir=args.primary_dir,
             pubmed_sqlite_path=args.pubmed_sqlite_path,
-=======
->>>>>>> Stashed changes
         )
     elif args.stage == "stage1":
         run_stage1(
             output_dir=args.output_dir,
             openai_api_key=args.openai_key,
             max_workers=args.max_workers,
-<<<<<<< Updated upstream
-            max_guideline_text=args.max_recs,
-=======
             max_guideline_text=args.max_guideline_text,
->>>>>>> Stashed changes
         )
     elif args.stage == "stage2":
         run_stage2(
@@ -839,11 +887,8 @@ def main():
             parser.error("--start-stage must be <= --end-stage")
         run_pipeline(
             db_name=args.db_name,
-<<<<<<< Updated upstream
             xml_dir=args.xml_dir,
             primary_dir=args.primary_dir,
-=======
->>>>>>> Stashed changes
             pubmed_sqlite_path=args.pubmed_sqlite_path,
             semantic_groups_file=args.semantic_groups,
             umls_api_key=args.umls_key,

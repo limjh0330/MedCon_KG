@@ -8,6 +8,13 @@ Stage 3: Condition Augmentation (LLM + CREST context)
 """
 
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+PROJECT_ROOT = Path(__file__).resolve().parent
+load_dotenv(PROJECT_ROOT / ".env", override=False)
+
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "YOUR_OPENAI_API_KEY_HERE")
 
 # ── UMLS REST API ──
 UMLS_API_KEY = os.environ.get("UMLS_API_KEY", "YOUR_UMLS_API_KEY_HERE")
@@ -72,6 +79,10 @@ OUTPUT_NEO4J_SUMMARY_FILE = "stage4_neo4j_summary.json"
 UMLS_MAX_WORKERS = 8
 # OpenAI tier-dependent; conservative default keeps us under most RPM limits.
 LLM_MAX_WORKERS = 8          # doubled for better parallelism
+LLM_RATE_LIMIT_MAX_RETRIES = 6
+LLM_RATE_LIMIT_BACKOFF_BASE_SEC = 1.0
+LLM_RATE_LIMIT_BACKOFF_MAX_SEC = 15.0
+LLM_RATE_LIMIT_BUFFER_SEC = 0.25
 
 # ── Entity Matcher Settings ──
 MAX_SEARCH_RESULTS_EXACT = 200

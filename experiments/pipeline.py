@@ -178,7 +178,8 @@ CONDITION_FEW_SHOT_ASSISTANT = json.dumps({
 
 ANSWER_SYSTEM_PROMPT = (
     "You are answering a medical multiple-choice question. "
-    "Use the retrieved knowledge below as supporting evidence "
+    "Base your reasoning on the patient case described in [CONTEXT], "
+    "and use the [RETRIEVAL] block below as additional supporting evidence "
     "(it may be partially relevant). Pick exactly one option symbol "
     "such as A, B, C, or D. "
     'Output ONLY a JSON object: {"answer": "<option symbol>"}. '
@@ -186,6 +187,7 @@ ANSWER_SYSTEM_PROMPT = (
 
 BASELINE_SYSTEM_PROMPT = (
     "You are answering a medical multiple-choice question. "
+    "Base your reasoning on the patient case described in [CONTEXT]. "
     "Pick exactly one option symbol such as A, B, C, or D. "
     'Output ONLY a JSON object: {"answer": "<option symbol>"}. '
 )
@@ -378,7 +380,9 @@ def conditions_to_keywords(
 
 def build_answer_user_prompt(retrieval_text: str, sample: Sample) -> str:
     options_block = "\n".join(f"{k}. {v}" for k, v in sample.options.items())
+    context_block = sample.joined_context() or "(no patient context provided)"
     return (
+        f"[CONTEXT]\n{context_block}\n\n"
         f"[RETRIEVAL]\n{retrieval_text}\n\n"
         f"[QUESTION]\n{sample.question}\n\n"
         f"[OPTIONS]\n{options_block}"
@@ -386,9 +390,14 @@ def build_answer_user_prompt(retrieval_text: str, sample: Sample) -> str:
 
 
 def build_baseline_user_prompt(sample: Sample) -> str:
-    """Variant 1: no retrieval block. Mirrors mediq_graphrag_test.py baseline."""
+    """Variant 1: context + question + options, no retrieval block."""
     options_block = "\n".join(f"{k}. {v}" for k, v in sample.options.items())
-    return f"[QUESTION]\n{sample.question}\n\n[OPTIONS]\n{options_block}"
+    context_block = sample.joined_context() or "(no patient context provided)"
+    return (
+        f"[CONTEXT]\n{context_block}\n\n"
+        f"[QUESTION]\n{sample.question}\n\n"
+        f"[OPTIONS]\n{options_block}"
+    )
 
 
 def parse_answer(raw: str, options: dict[str, str]) -> str:

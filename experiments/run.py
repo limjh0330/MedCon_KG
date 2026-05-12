@@ -24,7 +24,7 @@ Usage (single GPU H100 80GB, Ubuntu 22.04, CUDA 12.4, PyTorch 2.4, Python 3.11):
 Outputs in --output-dir:
   results.json   : per-sample × per-variant records (predicted, gold, correct, elapsed_seconds, retrieval debug)
   summary.json   : aggregate accuracy + total/mean elapsed per variant + config snapshot
-  trace.log      : human-readable trace (mirrors mediq_graphrag_test.py style)
+  trace.log      : human-readable per-sample trace
   cache/         : OpenAI embeddings + UMLS match results (persistent across runs)
 """
 
@@ -61,7 +61,7 @@ logger = logging.getLogger(__name__)
 
 
 # ──────────────────────────────────────────────────────────────────────
-# Trace log helper (same shape as mediq_graphrag_test.TraceLog)
+# Trace log helper
 # ──────────────────────────────────────────────────────────────────────
 
 class TraceLog:

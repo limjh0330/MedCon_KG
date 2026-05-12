@@ -1,0 +1,49 @@
+The Corpus of REcommendation STrength is a collection of HTML-formatted
+clinical guidelines annotated with the location of recommendations.
+Recommendations are labelled with an author-provided indicator of their
+strength of importance. As data is drawn from many disparate authors, a unified
+scheme of importance labels is defined, together with a mapping for each
+guideline.
+
+Please see the original paper for a detailed description of the corpus:
+
+@InProceedings{Rea:Vel:Cav:Geo:16,
+  author = {Jonathon Read and Erik Velldal and Marc Cavazza and Gersende
+            Georg},
+  title = {A Corpus of Clinical Practice Guidelines Annotated with the
+           Importance of Recommendations},
+  booktitle = {Proceedings of the Tenth International Conference on Language
+               Resources and Evaluation (LREC 2016)},
+  year = {2016},
+  month = {may},
+  date = {23-28},
+  address = {Portorož, Slovenia},
+  editor = {Nicoletta Calzolari (Conference Chair) and Khalid Choukri and
+            Thierry Declerck and Marko Grobelnik and Bente Maegaard and Joseph
+            Mariani and Asuncion Moreno and Jan Odijk and Stelios Piperidis},
+  publisher = {European Language Resources Association (ELRA)},
+  isbn = {978-2-9517408-9-1},
+  language = {english}
+ }
+
+Available at http://www.lrec-conf.org/proceedings/lrec2016/summaries/521.html
+
+CONTENTS =====================================================================
+
+ partitions.xml   : The assignment of guidelines used in experiments described
+                    in the paper above, with guideline identifiers assigned to
+                    either heldout or development partitions (together with
+                    development's folds for cross-validation).
+ primary/         : HTML aquired from www.guidelines.gov (named according to
+                    the guideline identifier).
+ schemes.xml      : The recommendation strength schemes used by individual
+                    guidelines, which also contain attributes mapping to the
+                    unified scheme described in the paper above.
+ xml/             : XML encoding of the recommendations section in guidelines,
+                    with explicit labels of importance removed from the text
+                    and instead indicated with XML attributes (named according
+                    to the guideline identifier).
+
+
+
+

@@ -127,6 +127,7 @@ def _resolve_guideline_id(filename: str) -> str:
 def extract_from_both_sources(
     xml_dir: str = None,
     primary_dir: str = None,
+    max_guideline_text: int = None,
     primary_context_max_chars: int = None,
 ) -> list[dict]:
     """
@@ -149,9 +150,13 @@ def extract_from_both_sources(
 
     # ── Step 1: Build guideline context from primary/ ──
     guideline_contexts = {}
-
     if os.path.isdir(primary_dir):
         for fname in sorted(os.listdir(primary_dir)):
+            if len(guideline_contexts) > max_guideline_text:
+                logger.info(
+                    f"Reached max_guideline_text={max_guideline_text} for primary/ context loading"
+                )
+                break
             fpath = os.path.join(primary_dir, fname)
             if not os.path.isfile(fpath):
                 continue
@@ -159,6 +164,7 @@ def extract_from_both_sources(
             ctx = _extract_context_from_primary(fpath, primary_context_max_chars)
             if ctx:
                 guideline_contexts[gid] = ctx
+            
         logger.info(
             f"Loaded context from {len(guideline_contexts)} primary/ guidelines"
         )

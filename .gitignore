@@ -266,6 +266,9 @@ temp/
 *.bin
 *.parquet
 *.feather
+*.DS_Store
+*.html
+*.xml
 
 # Pipeline outputs
 outputs/

@@ -43,6 +43,7 @@ import config
 from cli_utils import load_json, require_files, save_json, setup_logging
 from crest_parser import extract_from_both_sources
 from dataset.Pubmed.get_pubmed_data import extract_from_sqlite
+
 from entity_extractor import deduplicate_entities, extract_entities_batch
 from entity_matcher import match_entities_batch
 from semantic_types import load_semantic_groups_from_file
@@ -62,12 +63,14 @@ def _build_stage0_outputs(
     """Normalize Stage 0 rows into DB/document-centric sentence records."""
     records: list[dict] = []
     documents_by_id: dict[str, dict[str, Any]] = {}
+    db_name = db_name
 
     guideline_text = None
     if "CREST" in db_name:
         guideline_text = extract_from_both_sources(
             xml_dir=xml_dir or config.CREST_XML_DIR,
             primary_dir=primary_dir or config.CREST_PRIMARY_DIR,
+            max_guideline_text=max_guideline_text,
         )
 
         if not guideline_text:
@@ -75,53 +78,41 @@ def _build_stage0_outputs(
             sys.exit(1)
 
     if "PUBMED" in db_name:
-        pubmed_guideline_text = list(
-            extract_from_sqlite(pubmed_sqlite_path or config.PUBMED_SQLITE_PATH)
-        )
+        for pubmed_guideline_text in extract_from_sqlite(
+            db_path=config.PUBMED_SQLITE_PATH,
+            max_guideline_text=max_guideline_text,
+            batch_size=10,
+        ):
+            print(f"Extracted PubMed record: {len(pubmed_guideline_text)}")
 
-        # Normalize PubMed rows (pmid/title/abstract) into the shape downstream
-        # stages expect (guideline_id/text/guideline_context/strength).
-        for rec in pubmed_guideline_text:
-            pmid = str(rec.get("pmid", "")).strip()
-            title = (rec.get("title") or "").strip()
-            abstract = (rec.get("abstract") or "").strip()
-            if title and abstract:
-                merged_text = f"{title}\n\n{abstract}"
+            # Normalize PubMed rows (pmid/title/abstract) into the shape downstream
+            # stages expect (guideline_id/text/guideline_context/strength).
+            for rec in pubmed_guideline_text:
+                pmid = str(rec.get("pmid", "")).strip()
+                title = (rec.get("title") or "").strip()
+                abstract = (rec.get("abstract") or "").strip()
+                rec["guideline_id"] = f"PUBMED_{pmid}"
+                rec["text"] = f"{title}\n\n{abstract}"
+                rec.setdefault("tag", "")
+                rec.setdefault("strength", "")
+
+            if guideline_text is None:
+                guideline_text = pubmed_guideline_text
             else:
-                merged_text = title or abstract
-            rec["guideline_id"] = pmid or rec.get("guideline_id", "")
-            rec["text"] = merged_text
-            rec.setdefault("guideline_context", "")
-            rec.setdefault("strength", "")
-
-        if guideline_text is None:
-            guideline_text = pubmed_guideline_text
-        else:
-            guideline_text.extend(pubmed_guideline_text)
+                guideline_text.extend(pubmed_guideline_text)
 
     if not guideline_text:
         logger.error(f"No records extracted for db_name={db_name}")
         sys.exit(1)
 
-    if max_guideline_text:
-        guideline_text = guideline_text[:max_guideline_text]
-        logger.info(f"Limited to {max_guideline_text} recommendations (test mode)")
-
-    # `db_name` may be a list (e.g. ["PUBMED"]) or a string — flatten to a stable
-    # prefix so the resulting db_guideline_id is readable in either case.
-    if isinstance(db_name, (list, tuple)):
-        db_prefix = "+".join(db_name) if db_name else "UNKNOWN"
-    else:
-        db_prefix = str(db_name)
-
     for sentence_index, rec in enumerate(guideline_text, start=1):
-        guideline_id = str(rec.get("guideline_id", "")).strip() or f"doc_{sentence_index}"
-        db_guideline_id = f"{db_prefix}_{guideline_id}"
-        raw_text = (rec.get("guideline_context") or "").strip()
+        db_guideline_id = str(rec.get("guideline_id", "")).strip()
+        raw_text = (rec.get("text") or "").strip()
+        strength = (rec.get("strength") or "").strip()
 
         normalized = dict(rec)
-        normalized["db_guideline_id"] = db_guideline_id
-        normalized["raw_text"] = raw_text
+        # normalized["db_guideline_id"] = db_guideline_id
+        # normalized["raw_text"] = raw_text
         records.append(normalized)
 
         if db_guideline_id not in documents_by_id:
@@ -133,11 +124,11 @@ def _build_stage0_outputs(
             }
 
         doc_entry = documents_by_id[db_guideline_id]
-        doc_entry["raw_texts"].append(raw_text)
+        doc_entry["raw_texts"].append(f"{strength} : {raw_text}")
         doc_entry["sentence_count"] += 1
 
-    documents = list(documents_by_id.values())
-    return records, documents, documents_by_id
+    return records, documents_by_id
+
 
 # ──────────────────────────────────────────────────────────────────────
 # Stage 0: CREST Parsing & Recommendation/Context Extraction
@@ -153,6 +144,7 @@ def run_stage0(
 ) -> list[dict]:
     """Stage 0: parse CREST → save recommendations file. Returns the list."""
     output_dir = output_dir or config.OUTPUT_DIR
+    db_name = db_name
     os.makedirs(output_dir, exist_ok=True)
 
     logger.info("=" * 60)
@@ -161,7 +153,7 @@ def run_stage0(
 
     start = time.time()
 
-    records, documents, documents_by_id = _build_stage0_outputs(
+    records, documents_by_id = _build_stage0_outputs(
         db_name,
         max_guideline_text,
         xml_dir=xml_dir,
@@ -178,13 +170,10 @@ def run_stage0(
                 "stage": 0,
                 "db_name": db_name,
                 "total_recommendations": len(records),
-                "total_documents": len(documents),
                 "elapsed_seconds": round(elapsed, 1),
                 "timestamp": datetime.now().isoformat(),
             },
-            "recommendations": records,
             "records": records,
-            "documents": documents,
             "documents_by_id": documents_by_id,
         },
         output_path,
@@ -193,10 +182,11 @@ def run_stage0(
     logger.info(f"Stage 0 complete in {elapsed:.1f}s")
     logger.info(f"  DB name: {db_name}")
     logger.info(f"  Raw-text records: {len(records)}")
-    logger.info(f"  Document IDs: {len(documents)}")
+    logger.info(f"  Document IDs: {len(documents_by_id)}")
     logger.info(f"  Output: {output_path}")
     logger.info(f"Next: python pipeline.py stage1 --output-dir {output_dir}")
     return records
+
 
 # ──────────────────────────────────────────────────────────────────────
 # Stage 1: Entity Candidate Extraction (LLM)
@@ -234,7 +224,7 @@ def run_stage1(
 
     if max_guideline_text:
         records = records[:max_guideline_text]
-        logger.info(f"  Limited to {max_guideline_text} records (test mode)")
+        logger.info(f"  Limited to {max_guideline_text} raw-text records (test mode)")
 
     start = time.time()
     all_entities = extract_entities_batch(
@@ -645,7 +635,7 @@ def run_pipeline(
     umls_api_key: str = None,
     openai_api_key: str = None,
     output_dir: str = None,
-    max_recs: int = None,
+    max_guideline_text: int = None,
     max_triples: int = None,
     batch_size: int = None,
     max_workers_umls: int = None,
@@ -661,6 +651,7 @@ def run_pipeline(
 ):
     """Run the inclusive range [start_stage, end_stage] of pipeline stages."""
     output_dir = output_dir or config.OUTPUT_DIR
+    db_name = db_name or ["PUBMED"]
     overall_start = time.time()
 
     logger.info("=" * 60)
@@ -672,7 +663,7 @@ def run_pipeline(
         run_stage0(
             db_name=db_name,
             output_dir=output_dir,
-            max_guideline_text=max_recs,
+            max_guideline_text=max_guideline_text,
             xml_dir=xml_dir,
             primary_dir=primary_dir,
             pubmed_sqlite_path=pubmed_sqlite_path,
@@ -683,7 +674,7 @@ def run_pipeline(
             output_dir=output_dir,
             openai_api_key=openai_api_key,
             max_workers=max_workers_llm,
-            max_guideline_text=max_recs,
+            max_guideline_text=max_guideline_text,
         )
 
     if start_stage <= 2 <= end_stage:
@@ -736,7 +727,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # ── stage0 ──
     p0 = sub.add_parser("stage0", help="CREST parsing & recommendation extraction")
-    p0.add_argument("--db-name", default=["PUBMED"], nargs="+",
+    p0.add_argument("--db-name", default=["CREST", "PUBMED"], nargs="+",
                     choices=["CREST", "PUBMED"],
                     help="One or more database sources for record/document IDs "
                          "(default: PUBMED). Pass multiple to combine, e.g. "
@@ -748,7 +739,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p0.add_argument("--pubmed-sqlite-path", default=None,
                     help=f"Path to PubMed SQLite (default: {config.PUBMED_SQLITE_PATH})")
     p0.add_argument("--output-dir", default=config.OUTPUT_DIR)
-    p0.add_argument("--max-guideline-text", type=int, default=10,
+    p0.add_argument("--max-guideline-text", type=int, default=100,
                     help="Limit number of recommendations (test mode)")
     p0.add_argument("--log-level", default="INFO")
 
@@ -758,7 +749,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p1.add_argument("--openai-key", default=None)
     p1.add_argument("--max-workers", type=int, default=None,
                     help=f"Parallel LLM workers (default: {config.LLM_MAX_WORKERS})")
-    p1.add_argument("--max-recs", type=int, default=None,
+    p1.add_argument("--max-guideline-text", type=int, default=None,
                     help="Limit recommendations to process (test mode)")
     p1.add_argument("--log-level", default="INFO")
 
@@ -804,7 +795,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # ── all ──
     pall = sub.add_parser("all", help="End-to-end pipeline (Stages 0-4)")
-    pall.add_argument("--db-name", default=["PUBMED"], nargs="+",
+    pall.add_argument("--db-name", default=["CREST"], nargs="+",
                       choices=["CREST", "PUBMED"],
                       help="One or more database sources passed through to Stage 0 "
                            "(default: PUBMED)")
@@ -815,7 +806,7 @@ def _build_parser() -> argparse.ArgumentParser:
     pall.add_argument("--umls-key", default=None)
     pall.add_argument("--openai-key", default=None)
     pall.add_argument("--output-dir", default=config.OUTPUT_DIR)
-    pall.add_argument("--max-recs", type=int, default=None,
+    pall.add_argument("--max-guideline-text", type=int, default=10,
                       help="Limit recommendations at Stage 0/1")
     pall.add_argument("--max-triples", type=int, default=None,
                       help="Limit triples at Stage 3")
@@ -864,7 +855,7 @@ def main():
             output_dir=args.output_dir,
             openai_api_key=args.openai_key,
             max_workers=args.max_workers,
-            max_guideline_text=args.max_recs,
+            max_guideline_text=args.max_guideline_text,
         )
     elif args.stage == "stage2":
         run_stage2(
@@ -903,7 +894,7 @@ def main():
             umls_api_key=args.umls_key,
             openai_api_key=args.openai_key,
             output_dir=args.output_dir,
-            max_recs=args.max_recs,
+            max_guideline_text=args.max_guideline_text,
             max_triples=args.max_triples,
             batch_size=args.batch_size,
             max_workers_umls=args.max_workers_umls,

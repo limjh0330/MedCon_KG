@@ -269,6 +269,26 @@ def _parse_entity_response(raw: str) -> list[dict]:
     return out
 
 
+_PARTIAL_RESULT_RE = re.compile(
+    r'\{\s*"sentence_index"\s*:\s*(\d+)\s*,\s*"conditions"\s*:\s*(\[.*?\])\s*\}',
+    re.DOTALL,
+)
+
+
+def _extract_partial_results(raw: str, n_sentences: int) -> list[list[dict]]:
+    """Recover complete per-sentence condition objects from partial JSON output."""
+    per_sent: list[list[dict]] = [[] for _ in range(n_sentences)]
+    for m in _PARTIAL_RESULT_RE.finditer(raw):
+        try:
+            idx = int(m.group(1))
+            conds = json.loads(m.group(2))
+        except (ValueError, json.JSONDecodeError):
+            continue
+        if 0 <= idx < n_sentences and isinstance(conds, list):
+            per_sent[idx] = [c for c in conds if isinstance(c, dict)]
+    return per_sent
+
+
 class LlamaConditionExtractor:
     """Joint condition extraction across all sentences in a single call."""
 
@@ -278,7 +298,58 @@ class LlamaConditionExtractor:
 
     # One condition entry is roughly 80-120 output tokens; budget ~100 per sentence.
     _TOKENS_PER_SENTENCE = 100
+    _TOKENS_PER_SENTENCE_RETRY = 160
     _SENTENCE_WARN_THRESHOLD = 10
+
+    def _extract_joint(
+        self,
+        sentences: list[str],
+        max_new_tokens: int,
+    ) -> Optional[list[list[dict]]]:
+        """Extract all sentence conditions in one call; return None on malformed output."""
+        user_lines = ["[SENTENCES]"]
+        for i, s in enumerate(sentences):
+            user_lines.append(f'Sentence {i}: "{s}"')
+        messages = [
+            {"role": "system", "content": CONDITION_SYSTEM_PROMPT},
+            {"role": "user", "content": CONDITION_FEW_SHOT_USER},
+            {"role": "assistant", "content": CONDITION_FEW_SHOT_ASSISTANT},
+            {"role": "user", "content": "\n".join(user_lines)},
+        ]
+        raw = self.llm.generate(
+            messages,
+            max_new_tokens=max_new_tokens,
+            json_mode=True,
+        )
+        data = parse_json_object(raw)
+        if not isinstance(data, dict):
+            partial = _extract_partial_results(raw, len(sentences))
+            recovered = sum(1 for p in partial if p)
+            if recovered:
+                logger.warning(
+                    f"LlamaConditionExtractor: JSON parse failed but recovered "
+                    f"{recovered}/{len(sentences)} sentences via partial extraction."
+                )
+                return partial
+            return None
+
+        per_sent: list[list[dict]] = [[] for _ in sentences]
+        seen_idxs: set[int] = set()
+        for r in data.get("results", []) or []:
+            if not isinstance(r, dict):
+                continue
+            idx = r.get("sentence_index")
+            if isinstance(idx, int) and 0 <= idx < len(sentences):
+                seen_idxs.add(idx)
+                for cond in r.get("conditions", []) or []:
+                    if isinstance(cond, dict):
+                        per_sent[idx].append(cond)
+
+        # Prompt requires one result entry per sentence; missing indices usually
+        # indicate malformed/truncated generation and should trigger a fallback.
+        if len(seen_idxs) < len(sentences):
+            return None
+        return per_sent
 
     def extract_per_sentence(self, sentences: list[str]) -> list[list[dict]]:
         if not sentences:
@@ -295,39 +366,36 @@ class LlamaConditionExtractor:
             self.cfg.llm_max_new_tokens_extraction,
             n * self._TOKENS_PER_SENTENCE,
         )
-        user_lines = ["[SENTENCES]"]
-        for i, s in enumerate(sentences):
-            user_lines.append(f'Sentence {i}: "{s}"')
-        messages = [
-            {"role": "system", "content": CONDITION_SYSTEM_PROMPT},
-            {"role": "user", "content": CONDITION_FEW_SHOT_USER},
-            {"role": "assistant", "content": CONDITION_FEW_SHOT_ASSISTANT},
-            {"role": "user", "content": "\n".join(user_lines)},
-        ]
-        raw = self.llm.generate(
-            messages,
-            max_new_tokens=max_new_tokens,
-            json_mode=True,
-        )
-        data = parse_json_object(raw)
-        per_sent: list[list[dict]] = [[] for _ in sentences]
-        if not isinstance(data, dict):
+        parsed = self._extract_joint(sentences, max_new_tokens)
+        if parsed is not None:
+            return parsed
+
+        retry_tokens = max(max_new_tokens, n * self._TOKENS_PER_SENTENCE_RETRY)
+        if retry_tokens > max_new_tokens:
             logger.warning(
-                f"LlamaConditionExtractor: failed to parse JSON response "
-                f"(possibly truncated). sentences={n}, "
-                f"max_new_tokens={max_new_tokens}. "
-                f"Returning empty conditions for all sentences."
+                f"LlamaConditionExtractor: malformed/truncated output detected. "
+                f"Retrying once with higher max_new_tokens={retry_tokens} "
+                f"(sentences={n})."
             )
-            return per_sent
-        for r in data.get("results", []) or []:
-            if not isinstance(r, dict):
-                continue
-            idx = r.get("sentence_index")
-            if isinstance(idx, int) and 0 <= idx < len(sentences):
-                for cond in r.get("conditions", []) or []:
-                    if isinstance(cond, dict):
-                        per_sent[idx].append(cond)
-        return per_sent
+            parsed = self._extract_joint(sentences, retry_tokens)
+            if parsed is not None:
+                return parsed
+
+        if n == 1:
+            logger.warning(
+                "LlamaConditionExtractor: failed to recover valid JSON for a "
+                "single sentence after retry. Returning empty conditions."
+            )
+            return [[]]
+
+        mid = n // 2
+        logger.warning(
+            f"LlamaConditionExtractor: falling back to split extraction "
+            f"({n} -> {mid}+{n - mid} sentences) after malformed output."
+        )
+        left = self.extract_per_sentence(sentences[:mid])
+        right = self.extract_per_sentence(sentences[mid:])
+        return left + right
 
 
 def conditions_to_keywords(

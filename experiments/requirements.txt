@@ -10,6 +10,7 @@ safetensors>=0.4.3
 sentencepiece>=0.2.0
 tokenizers>=0.19.0
 huggingface-hub>=0.24.0
+peft>=0.14.0
 
 # Vector RAG (cosine similarity).
 numpy>=1.26.0

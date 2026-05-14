@@ -111,7 +111,7 @@ def _build_parser() -> argparse.ArgumentParser:
         description=(
             "Full RAG experiment over a clinical QA dataset "
             "(default: MediQ); compares Only-LLM, Vector-RAG, "
-            "KG-no-cond, and KG-with-cond using Llama-3.1-8B."
+            "KG-no-cond, and KG-with-cond using a local instruction LLM."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -204,8 +204,8 @@ def _build_runners(cfg: ExperimentConfig) -> tuple[dict, dict]:
     runners: dict = {}
     handles: dict = {}
 
-    # All four variants share one Llama backend.
-    logger.info("Loading Llama-3.1 model…")
+    # All four variants share one local HF backend.
+    logger.info("Loading local model…")
     llm = LocalLLM(
         model_name=cfg.llm_model_name,
         dtype=cfg.llm_dtype,

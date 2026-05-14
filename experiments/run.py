@@ -24,7 +24,7 @@ Usage (single GPU H100 80GB, Ubuntu 22.04, CUDA 12.4, PyTorch 2.4, Python 3.11):
 Outputs in --output-dir:
   results.json   : per-sample × per-variant records (predicted, gold, correct, elapsed_seconds, retrieval debug)
   summary.json   : aggregate accuracy + total/mean elapsed per variant + config snapshot
-  trace.log      : human-readable trace (mirrors mediq_graphrag_test.py style)
+  trace.log      : human-readable per-sample trace
   cache/         : OpenAI embeddings + UMLS match results (persistent across runs)
 """
 
@@ -61,7 +61,7 @@ logger = logging.getLogger(__name__)
 
 
 # ──────────────────────────────────────────────────────────────────────
-# Trace log helper (same shape as mediq_graphrag_test.TraceLog)
+# Trace log helper
 # ──────────────────────────────────────────────────────────────────────
 
 class TraceLog:
@@ -111,7 +111,7 @@ def _build_parser() -> argparse.ArgumentParser:
         description=(
             "Full RAG experiment over a clinical QA dataset "
             "(default: MediQ); compares Only-LLM, Vector-RAG, "
-            "KG-no-cond, and KG-with-cond using Llama-3.1-8B."
+            "KG-no-cond, and KG-with-cond using a local instruction LLM."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -204,8 +204,8 @@ def _build_runners(cfg: ExperimentConfig) -> tuple[dict, dict]:
     runners: dict = {}
     handles: dict = {}
 
-    # All four variants share one Llama backend.
-    logger.info("Loading Llama-3.1 model…")
+    # All four variants share one local HF backend.
+    logger.info("Loading local model…")
     llm = LocalLLM(
         model_name=cfg.llm_model_name,
         dtype=cfg.llm_dtype,

@@ -1,9 +1,8 @@
 """LLM and embedding backends.
 
-LocalLLM is a thin HuggingFace `transformers` wrapper for Llama-3.1-8B-Instruct
-with deterministic decoding and JSON-safe parsing. Switch to a different model
-by passing model_name; switch to vLLM by writing a parallel backend that exposes
-the same .generate / .generate_batch signature.
+LocalLLM is a thin HuggingFace `transformers` wrapper for local instruction
+models with deterministic decoding and JSON-safe parsing. It supports both
+plain CausalLM checkpoints and PEFT LoRA adapters.
 
 OpenAIEmbedder caches Stage-0 recommendation embeddings to disk (npz). Per-query
 embeddings are also cached to amortize re-runs.
@@ -51,11 +50,11 @@ class BaseLLM(ABC):
 
 
 # ──────────────────────────────────────────────────────────────────────
-# Llama-3.1 backend (HF transformers, bf16, sdpa)
+# Local instruction-model backend (HF transformers)
 # ──────────────────────────────────────────────────────────────────────
 
 class LocalLLM(BaseLLM):
-    """Llama-3.1 family via HuggingFace transformers."""
+    """Instruction-tuned local models via HuggingFace transformers."""
 
     JSON_INSTRUCTION = (
         "Respond with a single valid JSON object. "
@@ -84,9 +83,15 @@ class LocalLLM(BaseLLM):
             "float32": torch.float32,
         }.get(dtype, torch.bfloat16)
 
-        logger.info(f"Loading tokenizer: {model_name}")
         tok_kwargs = {"token": hf_token} if hf_token else {}
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, **tok_kwargs)
+        load_name, base_name, is_peft_adapter = self._resolve_model_names(model_name)
+
+        if is_peft_adapter:
+            logger.info(f"Detected PEFT adapter model: {model_name}")
+            logger.info(f"Using base model for tokenizer/model load: {base_name}")
+
+        logger.info(f"Loading tokenizer: {load_name}")
+        self.tokenizer = AutoTokenizer.from_pretrained(load_name, **tok_kwargs)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
             self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
@@ -94,27 +99,66 @@ class LocalLLM(BaseLLM):
         self.tokenizer.padding_side = "left"
 
         logger.info(
-            f"Loading model: {model_name} (dtype={dtype}, attn={attn_impl}, "
+            f"Loading model: {load_name} (dtype={dtype}, attn={attn_impl}, "
             f"device={device})"
         )
         device_map = device if device != "cpu" else None
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_name,
+        base_model = AutoModelForCausalLM.from_pretrained(
+            load_name,
             torch_dtype=torch_dtype,
             device_map=device_map if device != "cpu" else None,
             attn_implementation=attn_impl,
             **tok_kwargs,
         )
+        self.model = self._attach_peft_adapter(base_model, model_name, is_peft_adapter)
         self.model.eval()
-        # Resolve EOS for Llama-3.1 chat (multiple terminators).
+        self.max_context_tokens = self._resolve_context_window()
+        # Keep chat-safe terminators for Llama-style instruct models.
         self.eos_token_ids = self._resolve_eos_tokens()
-        logger.info(f"Model loaded. EOS terminators: {self.eos_token_ids}")
+        logger.info(
+            f"Model loaded. context_window={self.max_context_tokens}, "
+            f"EOS terminators={self.eos_token_ids}"
+        )
+
+    def _resolve_model_names(self, model_name: str) -> tuple[str, str, bool]:
+        """Returns (load_name, base_name, is_peft_adapter)."""
+        try:
+            from peft import PeftConfig
+            peft_cfg = PeftConfig.from_pretrained(model_name)
+        except Exception:
+            return model_name, model_name, False
+
+        base_name = getattr(peft_cfg, "base_model_name_or_path", None) or model_name
+        return base_name, base_name, True
+
+    def _attach_peft_adapter(self, base_model, adapter_name: str, enabled: bool):
+        if not enabled:
+            return base_model
+        try:
+            from peft import PeftModel
+        except ImportError as e:
+            raise ImportError(
+                "`peft` is required to load LoRA adapters. Install with: pip install peft"
+            ) from e
+        logger.info(f"Attaching PEFT adapter: {adapter_name}")
+        return PeftModel.from_pretrained(base_model, adapter_name)
+
+    def _resolve_context_window(self) -> int:
+        """Returns usable max sequence length for generation."""
+        for src in (getattr(self.model, "config", None), self.tokenizer):
+            if src is None:
+                continue
+            for attr in ("max_position_embeddings", "n_positions", "model_max_length"):
+                val = getattr(src, attr, None)
+                if isinstance(val, int) and 0 < val < 10_000_000:
+                    return val
+        return 4096
 
     def _resolve_eos_tokens(self) -> list[int]:
         ids = []
         if self.tokenizer.eos_token_id is not None:
             ids.append(self.tokenizer.eos_token_id)
-        # Llama-3.1 Instruct also terminates on <|eot_id|>
+        # Llama-style instruct models also terminate on <|eot_id|>
         for special in ("<|eot_id|>", "<|end_of_text|>"):
             tid = self.tokenizer.convert_tokens_to_ids(special)
             if isinstance(tid, int) and tid >= 0 and tid not in ids:
@@ -188,16 +232,29 @@ class LocalLLM(BaseLLM):
 
         torch = self._torch
         prompts = [self._build_prompt(m, json_mode) for m in batch_messages]
+
+        safe_max_new_tokens = max_new_tokens
+        if safe_max_new_tokens >= self.max_context_tokens:
+            safe_max_new_tokens = max(1, self.max_context_tokens - 1)
+            logger.warning(
+                "Requested max_new_tokens=%s exceeds context window=%s; clamped to %s",
+                max_new_tokens,
+                self.max_context_tokens,
+                safe_max_new_tokens,
+            )
+
+        max_input_tokens = max(1, self.max_context_tokens - safe_max_new_tokens)
         enc = self.tokenizer(
             prompts,
             return_tensors="pt",
             padding=True,
-            truncation=False,
+            truncation=True,
+            max_length=max_input_tokens,
             add_special_tokens=False,
         ).to(self.model.device)
 
         gen_kwargs = {
-            "max_new_tokens": max_new_tokens,
+            "max_new_tokens": safe_max_new_tokens,
             "eos_token_id": self.eos_token_ids,
             "pad_token_id": self.tokenizer.pad_token_id,
             "use_cache": True,
@@ -237,21 +294,70 @@ def strip_to_json(text: str) -> str:
     return t
 
 
+def _repair_truncated_json(text: str) -> str:
+    """Close unclosed brackets/braces to recover JSON cut off mid-output."""
+    t = text.rstrip()
+    # Strip trailing comma or partial token that prevents parsing
+    t = re.sub(r',\s*$', '', t)
+    stack = []
+    in_string = False
+    escape_next = False
+    for ch in t:
+        if escape_next:
+            escape_next = False
+            continue
+        if ch == '\\' and in_string:
+            escape_next = True
+            continue
+        if ch == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if ch in ('{', '['):
+            stack.append('}' if ch == '{' else ']')
+        elif ch in ('}', ']'):
+            if stack and stack[-1] == ch:
+                stack.pop()
+    return t + ''.join(reversed(stack))
+
+
 def parse_json_object(text: str) -> Optional[dict]:
-    """Robust JSON object parse. Tries direct, then first {…} match, then None."""
+    """Robust JSON object parse.
+
+    Tries in order:
+    1. Direct parse after stripping fences.
+    2. First {…} greedy match.
+    3. Truncation repair (close unclosed brackets) then parse.
+    """
     t = strip_to_json(text)
     if not t:
         return None
+    # 1. Direct
     try:
         return json.loads(t)
     except json.JSONDecodeError:
         pass
+    # 2. First {…} match
     m = re.search(r"\{[\s\S]*\}", t)
     if m:
         try:
             return json.loads(m.group())
         except json.JSONDecodeError:
-            return None
+            pass
+    # 3. Repair truncated JSON
+    repaired = _repair_truncated_json(t)
+    if repaired != t:
+        try:
+            return json.loads(repaired)
+        except json.JSONDecodeError:
+            pass
+        m2 = re.search(r"\{[\s\S]*\}", repaired)
+        if m2:
+            try:
+                return json.loads(m2.group())
+            except json.JSONDecodeError:
+                pass
     return None
 
 

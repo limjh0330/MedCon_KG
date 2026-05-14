@@ -3,7 +3,7 @@
 In-memory KG implementation:
   - stage2 (1.68M triples) → adjacency lists for fast 1-hop / 2-hop queries.
   - stage3 (same triples, with conditions) → same adjacency + edge-with-conditions
-    inverted list, replicating mediq_graphrag_test.py CYPHER_31 / 32 / 33.
+    inverted list for the 3-1 / 3-2 / 3-3 retrieval cascade.
 
 UMLS matching reuses the project's EntityMatcher with a persistent disk cache
 keyed by (surface_form, normalized_form, semantic_group) so repeated entities
@@ -411,9 +411,9 @@ class KGWithConditionsRetriever(BaseRetriever):
     def _scan_conditions(self, keywords: list[str], limit: int) -> list[int]:
         """Variant 4 / 3-3: scan condition-bearing edges by keyword.
 
-        Mirrors CYPHER_33 in mediq_graphrag_test.py: returns at most one
-        sample triple per unique conditions_json string, so the model sees
-        diverse conditions rather than many edges sharing the same condition.
+        Returns at most one sample triple per unique conditions_json string,
+        so the model sees diverse conditions rather than many edges sharing
+        the same condition.
         """
         seen_conds: set[str] = set()
         hits: list[int] = []

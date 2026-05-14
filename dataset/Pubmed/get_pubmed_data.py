@@ -760,26 +760,41 @@ def command_stats(args):
 def extract_from_sqlite(
     db_path: Path,
     max_guideline_text: int,
-    batch_size: int = 10,
+    batch_size: int,
 ) -> Iterator[List[Dict[str, Any]]]:
     conn = connect_db(Path(db_path))
 
     try:
-        cursor = conn.execute(
-            """
-            SELECT 
-                pmid, 
-                title,
-                abstract,
-                doi
-            FROM pubmed_articles 
-            WHERE is_deleted = 0
-              AND abstract IS NOT NULL
-              AND TRIM(abstract) != ''
-            LIMIT ?
-            """,
-            (max_guideline_text,),
-        )
+        if max_guideline_text is not None:
+            cursor = conn.execute(
+                """
+                SELECT 
+                    pmid, 
+                    title,
+                    abstract,
+                    doi
+                FROM pubmed_articles 
+                WHERE is_deleted = 0
+                AND abstract IS NOT NULL
+                AND TRIM(abstract) != ''
+                LIMIT ?
+                """,
+                (max_guideline_text,),
+            )
+        else:
+            cursor = conn.execute(
+                """
+                SELECT 
+                    pmid, 
+                    title,
+                    abstract,
+                    doi
+                FROM pubmed_articles 
+                WHERE is_deleted = 0
+                AND abstract IS NOT NULL
+                AND TRIM(abstract) != ''
+                """,
+            )
 
         columns = [description[0] for description in cursor.description]
 

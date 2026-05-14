@@ -207,19 +207,19 @@ class LlamaEntityExtractor:
     def extract_per_sentence(self, sentences: list[str]) -> list[list[dict]]:
         if not sentences:
             return []
-        batch = [
-            [
-                {"role": "system", "content": ENTITY_SYSTEM_PROMPT},
-                {"role": "user", "content": ENTITY_FEW_SHOT_USER},
-                {"role": "assistant", "content": ENTITY_FEW_SHOT_ASSISTANT},
-                {"role": "user", "content": f'[SENTENCE]\n"{s}"'},
-            ]
-            for s in sentences
-        ]
         outputs: list[list[dict]] = []
         bs = max(1, self.cfg.llm_batch_size)
-        for i in range(0, len(batch), bs):
-            chunk = batch[i : i + bs]
+        for i in range(0, len(sentences), bs):
+            chunk_sentences = sentences[i : i + bs]
+            chunk = [
+                [
+                    {"role": "system", "content": ENTITY_SYSTEM_PROMPT},
+                    {"role": "user", "content": ENTITY_FEW_SHOT_USER},
+                    {"role": "assistant", "content": ENTITY_FEW_SHOT_ASSISTANT},
+                    {"role": "user", "content": f'[SENTENCE]\n"{s}"'},
+                ]
+                for s in chunk_sentences
+            ]
             raws = self.llm.generate_batch(
                 chunk,
                 max_new_tokens=self.cfg.llm_max_new_tokens_extraction,
@@ -354,6 +354,17 @@ class LlamaConditionExtractor:
     def extract_per_sentence(self, sentences: list[str]) -> list[list[dict]]:
         if not sentences:
             return []
+        chunk_size = max(1, getattr(self.cfg, "llm_condition_sentence_chunk_size", 8))
+        if len(sentences) > chunk_size:
+            logger.info(
+                "LlamaConditionExtractor: chunking %d sentences into groups of %d",
+                len(sentences),
+                chunk_size,
+            )
+            out: list[list[dict]] = []
+            for i in range(0, len(sentences), chunk_size):
+                out.extend(self.extract_per_sentence(sentences[i : i + chunk_size]))
+            return out
         n = len(sentences)
         if n > self._SENTENCE_WARN_THRESHOLD:
             logger.warning(

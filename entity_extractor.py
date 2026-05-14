@@ -7,15 +7,22 @@ calls OpenAI GPT via the Responses API.
 Ref: https://developers.openai.com/api/docs/guides/migrate-to-responses
 """
 
+import asyncio
+import inspect
 import json
 import logging
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from itertools import islice
 
 import config
 from semantic_types import build_prompt_semantic_section
 
 logger = logging.getLogger(__name__)
+
+_STRENGTH_PREFIXES = {"strong", "weak"}
+_DEFAULT_SENTENCE_BATCH_SIZE = 256
+_RATE_LIMIT_RETRY_RE = re.compile(r"try again in ([0-9.]+)s", re.IGNORECASE)
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -188,7 +195,10 @@ def _build_system_prompt() -> str:
 
 def _build_user_message(recommendation: dict) -> str:
     """Build user message from a recommendation dict."""
-    parts = [f"[RECOMMENDATION]\n{recommendation['text']}"]
+    parts = [
+        "Return a valid json object only.",
+        f"[RECOMMENDATION]\n{recommendation['text']}",
+    ]
 
     context = recommendation.get("guideline_context", "")
     if context:
@@ -243,51 +253,117 @@ def _parse_llm_response(response_text: str) -> list[dict]:
 # LLM Call (OpenAI Responses API)
 # ──────────────────────────────────────────────────────────────────────
 
-# Module-level client singleton (reuse for connection pooling)
-_openai_client = None
+# Module-level async client singleton (reuse for connection pooling)
+_openai_async_client = None
+_openai_async_client_key = None
+_rate_limit_until = 0.0
+_rate_limit_lock = asyncio.Lock()
 
 
-def _get_openai_client(api_key: str = None):
-    """Get or create the OpenAI client singleton."""
-    global _openai_client
-    if _openai_client is None:
+def _get_async_openai_client(api_key: str = None):
+    """Get or create the AsyncOpenAI client singleton."""
+    global _openai_async_client, _openai_async_client_key
+    api_key = api_key or config.OPENAI_API_KEY
+    if _openai_async_client is None or _openai_async_client_key != api_key:
         try:
-            from openai import OpenAI
+            from openai import AsyncOpenAI
         except ImportError:
             raise ImportError(
                 "Install the OpenAI SDK: pip install openai>=1.70.0"
             )
-        api_key = api_key or config.OPENAI_API_KEY
-        _openai_client = OpenAI(api_key=api_key)
-    return _openai_client
+        _openai_async_client = AsyncOpenAI(api_key=api_key)
+        _openai_async_client_key = api_key
+    return _openai_async_client
 
 
-def call_openai(
+def _is_rate_limit_error(exc: Exception) -> bool:
+    status_code = getattr(exc, "status_code", None)
+    if status_code == 429:
+        return True
+
+    message = str(exc).lower()
+    return "rate limit" in message or "rate_limit_exceeded" in message
+
+
+def _extract_retry_delay_seconds(exc: Exception, attempt: int) -> float:
+    message = str(exc)
+    match = _RATE_LIMIT_RETRY_RE.search(message)
+    if match:
+        try:
+            return max(
+                float(match.group(1)) + config.LLM_RATE_LIMIT_BUFFER_SEC,
+                config.LLM_RATE_LIMIT_BACKOFF_BASE_SEC,
+            )
+        except ValueError:
+            pass
+
+    return min(
+        config.LLM_RATE_LIMIT_BACKOFF_BASE_SEC * (2 ** attempt),
+        config.LLM_RATE_LIMIT_BACKOFF_MAX_SEC,
+    )
+
+
+async def _wait_for_rate_limit_window() -> None:
+    while True:
+        async with _rate_limit_lock:
+            wait_seconds = _rate_limit_until - asyncio.get_running_loop().time()
+
+        if wait_seconds <= 0:
+            return
+
+        await asyncio.sleep(wait_seconds)
+
+
+async def _extend_rate_limit_window(wait_seconds: float) -> None:
+    global _rate_limit_until
+    wait_seconds = max(wait_seconds, 0.0)
+    async with _rate_limit_lock:
+        loop_time = asyncio.get_running_loop().time()
+        _rate_limit_until = max(_rate_limit_until, loop_time + wait_seconds)
+
+
+async def call_openai(
     recommendation: dict,
     api_key: str = None,
     model: str = None,
 ) -> list[dict]:
-    """Call OpenAI Responses API for entity extraction; return parsed entities."""
-    client = _get_openai_client(api_key)
+    """Call OpenAI Responses API asynchronously for entity extraction."""
+    client = _get_async_openai_client(api_key)
     model = model or config.LLM_MODEL
 
     input_messages = list(FEW_SHOT_EXAMPLES) + [
         {"role": "user", "content": _build_user_message(recommendation)},
     ]
 
-    try:
-        response = client.responses.create(
-            model=model,
-            instructions=_build_system_prompt(),
-            input=input_messages,
-            reasoning={"effort": config.LLM_REASONING_EFFORT},
-            text={"format": {"type": "json_object"}},
-            store=False,
-        )
-        return _parse_llm_response(response.output_text)
-    except Exception as e:
-        logger.error(f"OpenAI Responses API call failed: {e}")
-        return []
+    for attempt in range(config.LLM_RATE_LIMIT_MAX_RETRIES + 1):
+        await _wait_for_rate_limit_window()
+        try:
+            response = await client.responses.create(
+                model=model,
+                instructions=_build_system_prompt(),
+                input=input_messages,
+                reasoning={"effort": config.LLM_REASONING_EFFORT},
+                text={"format": {"type": "json_object"}},
+                store=False,
+            )
+            return _parse_llm_response(response.output_text)
+        except Exception as e:
+            if _is_rate_limit_error(e):
+                wait_seconds = _extract_retry_delay_seconds(e, attempt)
+                await _extend_rate_limit_window(wait_seconds)
+                if attempt < config.LLM_RATE_LIMIT_MAX_RETRIES:
+                    logger.warning(
+                        "OpenAI rate limit hit; retrying in %.2fs "
+                        "(attempt %d/%d)",
+                        wait_seconds,
+                        attempt + 1,
+                        config.LLM_RATE_LIMIT_MAX_RETRIES + 1,
+                    )
+                    await asyncio.sleep(wait_seconds)
+                    continue
+
+            logger.error(f"OpenAI Responses API call failed: {e}")
+            return []
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -305,40 +381,90 @@ def _extract_one(i: int, rec: dict, llm_fn) -> tuple[list[dict], bool]:
     gid = rec.get("guideline_id", "")
     strength = rec.get("strength", "")
     text = rec.get("text", "")
+    sentence_index = rec.get("sentence_index")
     for ent in entities:
         ent["source_guideline_id"] = gid
         ent["source_strength"] = strength
         ent["source_text"] = text
+        if sentence_index is not None:
+            ent["source_sentence_index"] = sentence_index
     return entities, False
 
 
-def extract_entities_batch(
+def _iter_sentence_inputs(input_data):
+    """Yield sentence-level extraction items from records or document dicts."""
+    if input_data is None:
+        return
+
+    if isinstance(input_data, dict):
+        items_iter = input_data.values()
+    else:
+        items_iter = iter(input_data)
+
+    for doc in items_iter:
+        if not isinstance(doc, dict):
+            continue
+
+        # Backward compatibility: allow sentence-level records to pass through.
+        if "text" in doc and "raw_texts" not in doc:
+            yield doc
+            continue
+
+        guideline_id = (
+            str(doc.get("db_guideline_id", "")).strip()
+            or str(doc.get("guideline_id", "")).strip()
+        )
+        context = doc.get("guideline_context", "")
+        raw_texts = doc.get("raw_texts") or []
+        if isinstance(raw_texts, str):
+            raw_texts = [raw_texts]
+
+        for sentence_index, raw_text in enumerate(raw_texts, start=1):
+            text = str(raw_text or "").strip()
+            if not text:
+                continue
+
+            # Stage 0 may serialize empty strength as a leading " : ".
+            if text.startswith(":"):
+                text = text[1:].strip()
+
+            strength = doc.get("strength", "")
+            prefix, separator, remainder = text.partition(" : ")
+            if (
+                not strength
+                and separator
+                and prefix.strip().lower() in _STRENGTH_PREFIXES
+                and remainder.strip()
+            ):
+                strength = prefix.strip()
+                text = remainder.strip()
+
+            yield {
+                "guideline_id": guideline_id,
+                "guideline_context": context,
+                "text": text,
+                "strength": strength,
+                "sentence_index": sentence_index,
+            }
+
+
+def _extract_sentence_batch(
     recommendations: list[dict],
-    llm_fn=None,
-    progress_interval: int = 10,
-    max_workers: int = None,
-) -> list[dict]:
-    """
-    Run entity extraction on a batch of recommendations, parallelized.
-
-    Args:
-        recommendations: list of recommendation dicts from crest_parser
-        llm_fn: callable(recommendation_dict) -> list[entity_dicts]
-                defaults to call_openai (Responses API)
-        progress_interval: log progress every N sentences
-        max_workers: parallel LLM workers (defaults to config.LLM_MAX_WORKERS)
-
-    Returns:
-        list of entity dicts in original recommendation order, each augmented
-        with source metadata
-    """
-    if llm_fn is None:
-        llm_fn = call_openai
-    max_workers = max_workers or config.LLM_MAX_WORKERS
+    llm_fn,
+    max_workers: int,
+) -> tuple[list[dict], int]:
+    """Extract entities for one bounded sentence batch."""
+    if inspect.iscoroutinefunction(llm_fn):
+        return asyncio.run(
+            _extract_sentence_batch_async(
+                recommendations,
+                llm_fn=llm_fn,
+                max_workers=max_workers,
+            )
+        )
 
     n = len(recommendations)
     per_rec: list[tuple[list[dict], bool]] = [([], False)] * n
-    completed = 0
 
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
         futures = {
@@ -348,13 +474,6 @@ def extract_entities_batch(
         for fut in as_completed(futures):
             i = futures[fut]
             per_rec[i] = fut.result()
-            completed += 1
-            if completed % progress_interval == 0:
-                running_total = sum(len(r[0]) for r in per_rec)
-                logger.info(
-                    f"  Entity extraction progress: {completed}/{n} "
-                    f"sentences, {running_total} entities so far"
-                )
 
     all_entities: list[dict] = []
     failed_count = 0
@@ -363,21 +482,144 @@ def extract_entities_batch(
         if failed:
             failed_count += 1
 
+    return all_entities, failed_count
+
+
+async def _extract_one_async(i: int, rec: dict, llm_fn) -> tuple[list[dict], bool]:
+    """Async worker: extract entities from one recommendation."""
+    try:
+        result = llm_fn(rec)
+        entities = await result if inspect.isawaitable(result) else result
+    except Exception as e:
+        logger.error(f"Entity extraction failed for rec #{i}: {e}")
+        return [], True
+
+    gid = rec.get("guideline_id", "")
+    strength = rec.get("strength", "")
+    text = rec.get("text", "")
+    sentence_index = rec.get("sentence_index")
+    for ent in entities:
+        ent["source_guideline_id"] = gid
+        ent["source_strength"] = strength
+        ent["source_text"] = text
+        if sentence_index is not None:
+            ent["source_sentence_index"] = sentence_index
+    return entities, False
+
+
+async def _extract_sentence_batch_async(
+    recommendations: list[dict],
+    llm_fn,
+    max_workers: int,
+) -> tuple[list[dict], int]:
+    """Extract entities for one bounded sentence batch using async OpenAI calls."""
+    semaphore = asyncio.Semaphore(max_workers)
+
+    async def _bounded_extract(i: int, rec: dict):
+        async with semaphore:
+            return await _extract_one_async(i, rec, llm_fn)
+
+    tasks = [
+        asyncio.create_task(_bounded_extract(i, rec))
+        for i, rec in enumerate(recommendations)
+    ]
+    per_rec = await asyncio.gather(*tasks)
+
+    all_entities: list[dict] = []
+    failed_count = 0
+    for ents, failed in per_rec:
+        all_entities.extend(ents)
+        if failed:
+            failed_count += 1
+
+    return all_entities, failed_count
+
+
+def iter_entity_extraction_batches(
+    input_data,
+    llm_fn=None,
+    progress_interval: int = 10,
+    max_workers: int = None,
+    sentence_batch_size: int = None,
+):
+    """Yield extracted entity batches without materializing all sentences at once."""
+    if llm_fn is None:
+        llm_fn = call_openai
+    max_workers = max_workers or config.LLM_MAX_WORKERS
+    sentence_batch_size = sentence_batch_size or _DEFAULT_SENTENCE_BATCH_SIZE
+
+    sentence_iter = _iter_sentence_inputs(input_data)
+    processed_sentences = 0
+    total_entities = 0
+    failed_count = 0
+    next_progress_at = progress_interval if progress_interval else None
+
+    while True:
+        sentence_batch = list(islice(sentence_iter, sentence_batch_size))
+        if not sentence_batch:
+            break
+
+        batch_entities, batch_failed = _extract_sentence_batch(
+            sentence_batch,
+            llm_fn=llm_fn,
+            max_workers=max_workers,
+        )
+        processed_sentences += len(sentence_batch)
+        total_entities += len(batch_entities)
+        failed_count += batch_failed
+
+        if next_progress_at is not None and processed_sentences >= next_progress_at:
+            logger.info(
+                f"  Entity extraction progress: {processed_sentences} "
+                f"sentences, {total_entities} entities so far"
+            )
+            while processed_sentences >= next_progress_at:
+                next_progress_at += progress_interval
+
+        yield batch_entities, len(sentence_batch), batch_failed
+
     logger.info(
-        f"Entity extraction complete: {len(all_entities)} entities "
-        f"from {n} sentences ({failed_count} failures)"
+        f"Entity extraction complete: {total_entities} entities "
+        f"from {processed_sentences} sentences ({failed_count} failures)"
     )
+
+
+def extract_entities_batch(
+    input_data,
+    llm_fn=None,
+    progress_interval: int = 10,
+    max_workers: int = None,
+    sentence_batch_size: int = None,
+) -> list[dict]:
+    """
+    Run entity extraction on Stage 1 input, parallelized.
+
+    Args:
+        input_data: either sentence-level recommendation records or document-level
+                    dicts containing `raw_texts`
+        llm_fn: callable(recommendation_dict) -> list[entity_dicts]
+                defaults to call_openai (Responses API)
+        progress_interval: log progress every N sentences
+        max_workers: parallel LLM workers (defaults to config.LLM_MAX_WORKERS)
+
+    Returns:
+        list of entity dicts in original recommendation order, each augmented
+        with source metadata
+    """
+    all_entities: list[dict] = []
+    for batch_entities, _batch_sentence_count, _batch_failed in iter_entity_extraction_batches(
+        input_data,
+        llm_fn=llm_fn,
+        progress_interval=progress_interval,
+        max_workers=max_workers,
+        sentence_batch_size=sentence_batch_size,
+    ):
+        all_entities.extend(batch_entities)
     return all_entities
 
 
-def deduplicate_entities(entities: list[dict]) -> dict:
-    """
-    Deduplicate entities by normalized_form (case-insensitive).
-
-    Returns: dict mapping normalized_key -> entity dict with aggregated sources
-    """
-    unique = {}
-
+def merge_unique_entities(unique: dict, entities: list[dict]) -> dict:
+    """Merge raw entities into an existing normalized-form index."""
     for ent in entities:
         key = ent.get("normalized_form", ent["surface_form"]).lower().strip()
 
@@ -397,6 +639,17 @@ def deduplicate_entities(entities: list[dict]) -> dict:
         if gid and gid not in entry["source_guidelines"]:
             entry["source_guidelines"].append(gid)
         entry["source_count"] += 1
+
+    return unique
+
+
+def deduplicate_entities(entities: list[dict]) -> dict:
+    """
+    Deduplicate entities by normalized_form (case-insensitive).
+
+    Returns: dict mapping normalized_key -> entity dict with aggregated sources
+    """
+    unique = merge_unique_entities({}, entities)
 
     logger.info(
         f"Deduplication: {len(entities)} total → {len(unique)} unique entities"

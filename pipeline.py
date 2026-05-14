@@ -30,11 +30,13 @@ Usage:
 """
 
 import argparse
+import json
 import logging
 import os
 import sys
 import time
 from datetime import datetime
+from itertools import islice
 from typing import Any
 
 import condition_augmenter
@@ -44,90 +46,251 @@ from cli_utils import load_json, require_files, save_json, setup_logging
 from crest_parser import extract_from_both_sources
 from dataset.Pubmed.get_pubmed_data import extract_from_sqlite
 
-from entity_extractor import deduplicate_entities, extract_entities_batch
+from entity_extractor import (
+    iter_entity_extraction_batches,
+    merge_unique_entities,
+)
 from entity_matcher import match_entities_batch
 from semantic_types import load_semantic_groups_from_file
 from subgraph_builder import build_subgraphs_batch, deduplicate_triples
 from UMLS_KG.umls_client import UMLSClient
 
 logger = logging.getLogger(__name__)
+STAGE0_DOCUMENTS_JSONL_FILE = "stage0_documents.jsonl"
+PUBMED_STAGE0_BATCH_SIZE = 1000
 
 
-def _build_stage0_outputs(
+def _stage0_documents_jsonl_path(output_dir: str) -> str:
+    return os.path.join(output_dir, STAGE0_DOCUMENTS_JSONL_FILE)
+
+
+def _stage0_dataset_name(doc: dict) -> str:
+    """Infer the source dataset name from a Stage 0 document row."""
+    doc_id = str(doc.get("db_guideline_id", "")).strip()
+    if doc_id.startswith("CREST_"):
+        return "CREST"
+    if doc_id.startswith("PUBMED_"):
+        return "PUBMED"
+    return "UNKNOWN"
+
+
+def _iter_crest_documents(
     db_name: str,
     max_guideline_text: int = None,
     xml_dir: str = None,
     primary_dir: str = None,
-    pubmed_sqlite_path: str = None,
-) -> tuple[list[dict], list[dict], dict[str, dict[str, Any]]]:
-    """Normalize Stage 0 rows into DB/document-centric sentence records."""
-    records: list[dict] = []
-    documents_by_id: dict[str, dict[str, Any]] = {}
-    db_name = db_name
-
-    guideline_text = None
-    if "CREST" in db_name:
-        guideline_text = extract_from_both_sources(
-            xml_dir=xml_dir or config.CREST_XML_DIR,
-            primary_dir=primary_dir or config.CREST_PRIMARY_DIR,
-            max_guideline_text=max_guideline_text,
-        )
-
-        if not guideline_text:
-            logger.error("No recommendations extracted. Check CREST paths.")
-            sys.exit(1)
-
-    if "PUBMED" in db_name:
-        for pubmed_guideline_text in extract_from_sqlite(
-            db_path=config.PUBMED_SQLITE_PATH,
-            max_guideline_text=max_guideline_text,
-            batch_size=10,
-        ):
-            print(f"Extracted PubMed record: {len(pubmed_guideline_text)}")
-
-            # Normalize PubMed rows (pmid/title/abstract) into the shape downstream
-            # stages expect (guideline_id/text/guideline_context/strength).
-            for rec in pubmed_guideline_text:
-                pmid = str(rec.get("pmid", "")).strip()
-                title = (rec.get("title") or "").strip()
-                abstract = (rec.get("abstract") or "").strip()
-                rec["guideline_id"] = f"PUBMED_{pmid}"
-                rec["text"] = f"{title}\n\n{abstract}"
-                rec.setdefault("tag", "")
-                rec.setdefault("strength", "")
-
-            if guideline_text is None:
-                guideline_text = pubmed_guideline_text
-            else:
-                guideline_text.extend(pubmed_guideline_text)
+):
+    """Yield grouped CREST guideline documents."""
+    grouped_documents: dict[str, dict[str, Any]] = {}
+    guideline_text = extract_from_both_sources(
+        xml_dir=xml_dir or config.CREST_XML_DIR,
+        primary_dir=primary_dir or config.CREST_PRIMARY_DIR,
+        max_guideline_text=max_guideline_text,
+    )
 
     if not guideline_text:
-        logger.error(f"No records extracted for db_name={db_name}")
+        logger.error("No recommendations extracted. Check CREST paths.")
         sys.exit(1)
 
     for sentence_index, rec in enumerate(guideline_text, start=1):
-        db_guideline_id = str(rec.get("guideline_id", "")).strip()
-        raw_text = (rec.get("text") or "").strip()
+        guideline_id = str(rec.get("guideline_id", "")).strip() or f"doc_{sentence_index}"
+        db_guideline_id = f"CREST_{guideline_id}"
+        raw_text = (rec.get("text") or rec.get("guideline_context") or "").strip()
         strength = (rec.get("strength") or "").strip()
 
-        normalized = dict(rec)
-        # normalized["db_guideline_id"] = db_guideline_id
-        # normalized["raw_text"] = raw_text
-        records.append(normalized)
-
-        if db_guideline_id not in documents_by_id:
-            documents_by_id[db_guideline_id] = {
+        if db_guideline_id not in grouped_documents:
+            grouped_documents[db_guideline_id] = {
                 "db_guideline_id": db_guideline_id,
                 "guideline_context": rec.get("guideline_context", ""),
                 "raw_texts": [],
                 "sentence_count": 0,
             }
 
-        doc_entry = documents_by_id[db_guideline_id]
+        doc_entry = grouped_documents[db_guideline_id]
         doc_entry["raw_texts"].append(f"{strength} : {raw_text}")
         doc_entry["sentence_count"] += 1
 
-    return records, documents_by_id
+    yield from grouped_documents.values()
+
+
+def _iter_pubmed_documents(
+    max_guideline_text: int = None,
+    pubmed_sqlite_path: str = None,
+):
+    """Yield one document per PubMed abstract row from SQLite."""
+    db_path = pubmed_sqlite_path or config.PUBMED_SQLITE_PATH
+    for pubmed_batch in extract_from_sqlite(
+        db_path=db_path,
+        max_guideline_text=max_guideline_text,
+        batch_size=PUBMED_STAGE0_BATCH_SIZE,
+    ):
+        for rec in pubmed_batch:
+            pmid = str(rec.get("pmid", "")).strip()
+            title = (rec.get("title") or "").strip()
+            abstract = (rec.get("abstract") or "").strip()
+            merged_text = f"{title}\n\n{abstract}" if title and abstract else title or abstract
+            if not merged_text:
+                continue
+
+            yield {
+                "db_guideline_id": f"PUBMED_{pmid}" if pmid else "",
+                "guideline_context": "",
+                "raw_texts": [merged_text],
+                "sentence_count": 1,
+            }
+
+
+def _iter_stage0_documents(
+    db_name: list[str],
+    max_guideline_text: int = None,
+    xml_dir: str = None,
+    primary_dir: str = None,
+    pubmed_sqlite_path: str = None,
+):
+    """Yield Stage 0 documents without materializing the whole corpus."""
+    db_name = db_name or ["PUBMED"]
+    if "CREST" in db_name:
+        yield from _iter_crest_documents(
+            db_name=db_name,
+            max_guideline_text=max_guideline_text,
+            xml_dir=xml_dir,
+            primary_dir=primary_dir,
+        )
+
+    if "PUBMED" in db_name:
+        yield from _iter_pubmed_documents(
+            max_guideline_text=max_guideline_text,
+            pubmed_sqlite_path=pubmed_sqlite_path,
+        )
+
+
+def _write_stage0_documents(
+    output_dir: str,
+    db_name: list[str],
+    max_guideline_text: int = None,
+    xml_dir: str = None,
+    primary_dir: str = None,
+    pubmed_sqlite_path: str = None,
+) -> tuple[str, int, int, dict[str, dict[str, Any]] | None, dict[str, dict[str, Any]]]:
+    """Persist Stage 0 documents to JSONL and optionally inline small sources."""
+    documents_jsonl_path = _stage0_documents_jsonl_path(output_dir)
+    inline_documents_by_id = {} if "PUBMED" not in (db_name or []) else None
+    total_document_count = 0
+    total_sentence_count = 0
+    dataset_examples: dict[str, dict[str, Any]] = {}
+
+    with open(documents_jsonl_path, "w", encoding="utf-8") as jsonl_file:
+        for doc in _iter_stage0_documents(
+            db_name=db_name,
+            max_guideline_text=max_guideline_text,
+            xml_dir=xml_dir,
+            primary_dir=primary_dir,
+            pubmed_sqlite_path=pubmed_sqlite_path,
+        ):
+            doc_id = str(doc.get("db_guideline_id", "")).strip()
+            if not doc_id:
+                continue
+
+            jsonl_file.write(json.dumps(doc, ensure_ascii=False, default=str))
+            jsonl_file.write("\n")
+
+            total_document_count += 1
+            total_sentence_count += doc.get("sentence_count", len(doc.get("raw_texts") or []))
+
+            if inline_documents_by_id is not None:
+                inline_documents_by_id[doc_id] = doc
+
+            dataset_name = _stage0_dataset_name(doc)
+            if dataset_name not in dataset_examples:
+                dataset_examples[dataset_name] = dict(doc)
+
+            if total_document_count % PUBMED_STAGE0_BATCH_SIZE == 0:
+                logger.info(
+                    f"  Stage 0 progress: wrote {total_document_count} documents "
+                    f"({total_sentence_count} sentences)"
+                )
+
+    if total_document_count == 0:
+        logger.error(f"No records extracted for db_name={db_name}")
+        sys.exit(1)
+
+    return (
+        documents_jsonl_path,
+        total_document_count,
+        total_sentence_count,
+        inline_documents_by_id,
+        dataset_examples,
+    )
+
+
+def _iter_documents_from_jsonl(documents_jsonl_path: str):
+    with open(documents_jsonl_path, "r", encoding="utf-8") as jsonl_file:
+        for line in jsonl_file:
+            line = line.strip()
+            if not line:
+                continue
+            yield json.loads(line)
+
+
+def _resolve_stage0_documents_jsonl_path(stage0_data: dict, output_dir: str) -> str | None:
+    """Resolve the Stage 0 JSONL sidecar path recorded in stage0_recommendations.json."""
+    documents_jsonl_path = stage0_data.get("documents_jsonl")
+    if not documents_jsonl_path:
+        return None
+
+    if not os.path.isabs(documents_jsonl_path):
+        documents_jsonl_path = os.path.join(output_dir, documents_jsonl_path)
+
+    return documents_jsonl_path
+
+
+def _normalize_stage_db_names(db_name: list[str] | str | None) -> list[str]:
+    if db_name is None:
+        return []
+    if isinstance(db_name, str):
+        return [db_name]
+    return [str(name) for name in db_name if str(name).strip()]
+
+
+def _document_matches_db_names(doc: dict, db_names: list[str]) -> bool:
+    if not db_names:
+        return True
+
+    db_guideline_id = str(doc.get("db_guideline_id", "")).strip()
+    return any(db_guideline_id.startswith(f"{name}_") for name in db_names)
+
+
+def _filter_documents_by_db_name(documents_input, db_names: list[str]):
+    for doc in documents_input:
+        if not isinstance(doc, dict):
+            continue
+        if _document_matches_db_names(doc, db_names):
+            yield doc
+
+
+def _load_stage0_documents_input(stage0_data: dict, output_dir: str, db_name: list[str] | str | None = None):
+    db_names = _normalize_stage_db_names(db_name)
+    documents_jsonl_path = _resolve_stage0_documents_jsonl_path(stage0_data, output_dir)
+    if documents_jsonl_path:
+        if not os.path.isfile(documents_jsonl_path):
+            logger.error("Stage 0 documents JSONL referenced by stage0_recommendations.json was not found:")
+            logger.error(f"  - documents_jsonl: {documents_jsonl_path}")
+            logger.error("Re-run `python pipeline.py stage0` to regenerate the Stage 0 outputs.")
+            sys.exit(1)
+        return _filter_documents_by_db_name(
+            _iter_documents_from_jsonl(documents_jsonl_path),
+            db_names,
+        )
+
+    documents_by_id: dict[str, dict[str, Any]] = {}
+    documents_by_id = stage0_data.get("documents_by_id", {})
+    if isinstance(documents_by_id, dict):
+        return _filter_documents_by_db_name(documents_by_id.values(), db_names)
+    if documents_by_id:
+        return _filter_documents_by_db_name(documents_by_id, db_names)
+
+    legacy_records = stage0_data.get("records") or stage0_data.get("recommendations", [])
+    return _filter_documents_by_db_name(legacy_records or [], db_names)
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -143,8 +306,7 @@ def run_stage0(
     pubmed_sqlite_path: str = None,
 ) -> list[dict]:
     """Stage 0: parse CREST → save recommendations file. Returns the list."""
-    output_dir = output_dir or config.OUTPUT_DIR
-    db_name = db_name
+
     os.makedirs(output_dir, exist_ok=True)
 
     logger.info("=" * 60)
@@ -153,9 +315,16 @@ def run_stage0(
 
     start = time.time()
 
-    records, documents_by_id = _build_stage0_outputs(
-        db_name,
-        max_guideline_text,
+    (
+        documents_jsonl_path,
+        total_document_count,
+        total_sentence_count,
+        inline_documents_by_id,
+        dataset_examples,
+    ) = _write_stage0_documents(
+        output_dir=output_dir,
+        db_name=db_name,
+        max_guideline_text=max_guideline_text,
         xml_dir=xml_dir,
         primary_dir=primary_dir,
         pubmed_sqlite_path=pubmed_sqlite_path,
@@ -164,28 +333,29 @@ def run_stage0(
     elapsed = time.time() - start
     output_path = os.path.join(output_dir, config.OUTPUT_RECOMMENDATIONS_FILE)
 
-    save_json(
-        {
-            "metadata": {
-                "stage": 0,
-                "db_name": db_name,
-                "total_recommendations": len(records),
-                "elapsed_seconds": round(elapsed, 1),
-                "timestamp": datetime.now().isoformat(),
-            },
-            "records": records,
-            "documents_by_id": documents_by_id,
+    stage0_output_data = {
+        "metadata": {
+            "stage": 0,
+            "db_name": db_name,
+            "total_document_count": total_document_count,
+            "total_sentence_count": total_sentence_count,
+            "elapsed_seconds": round(elapsed, 1),
+            "timestamp": datetime.now().isoformat(),
         },
-        output_path,
-    )
+        "documents_jsonl": os.path.basename(documents_jsonl_path),
+        "stage0_documents_jsonl_examples": dataset_examples,
+    }
+    if inline_documents_by_id is not None:
+        stage0_output_data["documents_by_id"] = inline_documents_by_id
 
     logger.info(f"Stage 0 complete in {elapsed:.1f}s")
     logger.info(f"  DB name: {db_name}")
-    logger.info(f"  Raw-text records: {len(records)}")
-    logger.info(f"  Document IDs: {len(documents_by_id)}")
+    logger.info(f"  Raw-text records: {total_sentence_count}")
+    logger.info(f"  Document IDs: {total_document_count}")
     logger.info(f"  Output: {output_path}")
+    logger.info(f"  Documents JSONL: {documents_jsonl_path}")
     logger.info(f"Next: python pipeline.py stage1 --output-dir {output_dir}")
-    return records
+    return save_json(stage0_output_data, output_path)
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -196,10 +366,11 @@ def run_stage1(
     output_dir: str = None,
     openai_api_key: str = None,
     max_workers: int = None,
-    max_guideline_text: int = None,
+    stage1_db_name: list[str] | str | None = None,
+    max_guideline_docs: int = None,
     progress_interval: int = 10,
-) -> tuple[list[dict], dict]:
-    """Stage 1: load Stage 0 records, run LLM extraction, save entities."""
+) -> tuple[int, dict]:
+    """Stage 1: load Stage 0 documents, extract entities, and deduplicate incrementally."""
     output_dir = output_dir or config.OUTPUT_DIR
 
     if openai_api_key:
@@ -216,23 +387,45 @@ def run_stage1(
     logger.info("=" * 60)
 
     recs_data = load_json(recs_path)
-    records = recs_data.get("records") or recs_data.get("recommendations", [])
-    documents = recs_data.get("documents", [])
-    logger.info(f"  Loaded {len(records)} raw-text records from Stage 0")
-    if documents:
-        logger.info(f"  Loaded {len(documents)} document IDs from Stage 0")
+    documents_input = _load_stage0_documents_input(
+        recs_data,
+        output_dir,
+        db_name=stage1_db_name,
+    )
 
-    if max_guideline_text:
-        records = records[:max_guideline_text]
-        logger.info(f"  Limited to {max_guideline_text} raw-text records (test mode)")
+    documents_jsonl_path = _resolve_stage0_documents_jsonl_path(recs_data, output_dir)
+    if documents_jsonl_path:
+        logger.info(f"  Using Stage 0 documents JSONL: {documents_jsonl_path}")
+    if stage1_db_name:
+        logger.info(f"  Filtering Stage 0 documents by db_name: {stage1_db_name}")
+
+    if max_guideline_docs:
+        documents_input = list(islice(documents_input, max_guideline_docs))
+        logger.info(f"  Limited to {max_guideline_docs} documents (test mode)")
+
+    if not isinstance(documents_input, list):
+        documents_input = list(documents_input)
+
+    input_document_count = len(documents_input)
+    input_sentence_count = sum(
+        len(doc.get("raw_texts") or [])
+        for doc in documents_input
+        if isinstance(doc, dict)
+    )
+    logger.info(f"  Loaded {input_document_count} documents from Stage 0")
+    logger.info(f"  Loaded {input_sentence_count} raw-text sentences from Stage 0")
 
     start = time.time()
-    all_entities = extract_entities_batch(
-        records,
+    total_raw_entities = 0
+    unique_entities: dict = {}
+    for batch_entities, _batch_sentence_count, _batch_failed_count in iter_entity_extraction_batches(
+        documents_input,
         progress_interval=progress_interval,
         max_workers=max_workers,
-    )
-    unique_entities = deduplicate_entities(all_entities)
+    ):
+        total_raw_entities += len(batch_entities)
+        merge_unique_entities(unique_entities, batch_entities)
+
     elapsed = time.time() - start
 
     output_path = os.path.join(output_dir, config.OUTPUT_ENTITIES_FILE)
@@ -240,8 +433,9 @@ def run_stage1(
         {
             "metadata": {
                 "stage": 1,
-                "input_records": len(records),
-                "total_raw_entities": len(all_entities),
+                "input_documents": input_document_count,
+                "input_sentences": input_sentence_count,
+                "total_raw_entities": total_raw_entities,
                 "total_unique_entities": len(unique_entities),
                 "elapsed_seconds": round(elapsed, 1),
                 "timestamp": datetime.now().isoformat(),
@@ -252,11 +446,11 @@ def run_stage1(
     )
 
     logger.info(f"Stage 1 complete in {elapsed:.1f}s")
-    logger.info(f"  Raw entities: {len(all_entities)}")
+    logger.info(f"  Raw entities: {total_raw_entities}")
     logger.info(f"  Unique entities: {len(unique_entities)}")
     logger.info(f"  Output: {output_path}")
     logger.info(f"Next: python pipeline.py stage2 --output-dir {output_dir}")
-    return all_entities, unique_entities
+    return total_raw_entities, unique_entities
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -636,6 +830,7 @@ def run_pipeline(
     openai_api_key: str = None,
     output_dir: str = None,
     max_guideline_text: int = None,
+    max_guideline_docs: int = None,
     max_triples: int = None,
     batch_size: int = None,
     max_workers_umls: int = None,
@@ -674,7 +869,8 @@ def run_pipeline(
             output_dir=output_dir,
             openai_api_key=openai_api_key,
             max_workers=max_workers_llm,
-            max_guideline_text=max_guideline_text,
+            db_name=db_name,
+            max_guideline_docs=max_guideline_docs,
         )
 
     if start_stage <= 2 <= end_stage:
@@ -727,7 +923,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # ── stage0 ──
     p0 = sub.add_parser("stage0", help="CREST parsing & recommendation extraction")
-    p0.add_argument("--db-name", default=["CREST", "PUBMED"], nargs="+",
+    p0.add_argument("--db-name", default=["CREST","PUBMED"], nargs="+",
                     choices=["CREST", "PUBMED"],
                     help="One or more database sources for record/document IDs "
                          "(default: PUBMED). Pass multiple to combine, e.g. "
@@ -739,18 +935,21 @@ def _build_parser() -> argparse.ArgumentParser:
     p0.add_argument("--pubmed-sqlite-path", default=None,
                     help=f"Path to PubMed SQLite (default: {config.PUBMED_SQLITE_PATH})")
     p0.add_argument("--output-dir", default=config.OUTPUT_DIR)
-    p0.add_argument("--max-guideline-text", type=int, default=100,
+    p0.add_argument("--max-guideline-text", type=int, default=None,
                     help="Limit number of recommendations (test mode)")
     p0.add_argument("--log-level", default="INFO")
 
     # ── stage1 ──
     p1 = sub.add_parser("stage1", help="Entity candidate extraction (LLM)")
     p1.add_argument("--output-dir", default=config.OUTPUT_DIR)
+    p1.add_argument("--stage1-db-name", default=["CREST"], nargs="+",
+                    choices=["CREST", "PUBMED"],
+                    help="Only process Stage 0 documents whose db_guideline_id matches these sources")
     p1.add_argument("--openai-key", default=None)
     p1.add_argument("--max-workers", type=int, default=None,
                     help=f"Parallel LLM workers (default: {config.LLM_MAX_WORKERS})")
-    p1.add_argument("--max-guideline-text", type=int, default=None,
-                    help="Limit recommendations to process (test mode)")
+    p1.add_argument("--max-guideline-docs", type=int, default=10,
+                    help="Limit documents to process at Stage 1 (test mode)")
     p1.add_argument("--log-level", default="INFO")
 
     # ── stage2 ──
@@ -799,6 +998,9 @@ def _build_parser() -> argparse.ArgumentParser:
                       choices=["CREST", "PUBMED"],
                       help="One or more database sources passed through to Stage 0 "
                            "(default: PUBMED)")
+    pall.add_argument("--stage1-db-name", default=["CREST"], nargs="+",
+                    choices=["CREST", "PUBMED"],
+                    help="Only process Stage 0 documents whose db_guideline_id matches these sources")
     pall.add_argument("--xml-dir", default=None)
     pall.add_argument("--primary-dir", default=None)
     pall.add_argument("--pubmed-sqlite-path", default=None)
@@ -806,8 +1008,10 @@ def _build_parser() -> argparse.ArgumentParser:
     pall.add_argument("--umls-key", default=None)
     pall.add_argument("--openai-key", default=None)
     pall.add_argument("--output-dir", default=config.OUTPUT_DIR)
-    pall.add_argument("--max-guideline-text", type=int, default=10,
-                      help="Limit recommendations at Stage 0/1")
+    pall.add_argument("--max-guideline-text", type=int, default=None,
+                      help="Limit recommendations/documents extracted at Stage 0")
+    pall.add_argument("--max-guideline-docs", type=int, default=None,
+                      help="Limit documents processed at Stage 1")
     pall.add_argument("--max-triples", type=int, default=None,
                       help="Limit triples at Stage 3")
     pall.add_argument("--batch-size", type=int, default=None,
@@ -848,14 +1052,15 @@ def main():
             max_guideline_text=args.max_guideline_text,
             xml_dir=args.xml_dir,
             primary_dir=args.primary_dir,
-            pubmed_sqlite_path=args.pubmed_sqlite_path,
+            pubmed_sqlite_path=args.pubmed_sqlite_path
         )
     elif args.stage == "stage1":
         run_stage1(
             output_dir=args.output_dir,
+            stage1_db_name=args.stage1_db_name,
             openai_api_key=args.openai_key,
             max_workers=args.max_workers,
-            max_guideline_text=args.max_guideline_text,
+            max_guideline_docs=args.max_guideline_docs
         )
     elif args.stage == "stage2":
         run_stage2(
@@ -887,6 +1092,7 @@ def main():
             parser.error("--start-stage must be <= --end-stage")
         run_pipeline(
             db_name=args.db_name,
+            stage1_db_name=args.stage1_db_name,
             xml_dir=args.xml_dir,
             primary_dir=args.primary_dir,
             pubmed_sqlite_path=args.pubmed_sqlite_path,
@@ -895,6 +1101,7 @@ def main():
             openai_api_key=args.openai_key,
             output_dir=args.output_dir,
             max_guideline_text=args.max_guideline_text,
+            max_guideline_docs=args.max_guideline_docs,
             max_triples=args.max_triples,
             batch_size=args.batch_size,
             max_workers_umls=args.max_workers_umls,

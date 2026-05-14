@@ -152,7 +152,7 @@ def extract_from_both_sources(
     guideline_contexts = {}
     if os.path.isdir(primary_dir):
         for fname in sorted(os.listdir(primary_dir)):
-            if len(guideline_contexts) > max_guideline_text:
+            if len(guideline_contexts) > max_guideline_text if max_guideline_text is not None else False:
                 logger.info(
                     f"Reached max_guideline_text={max_guideline_text} for primary/ context loading"
                 )

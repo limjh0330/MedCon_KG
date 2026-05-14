@@ -2,9 +2,15 @@
 
 import os
 from dataclasses import dataclass, field, asdict
+from pathlib import Path
 from typing import Optional
 
+from dotenv import load_dotenv
+
 import config as project_config
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+load_dotenv(PROJECT_ROOT / ".env", override=False)
 
 
 ALL_VARIANTS = ("only_llm", "vector_rag", "kg_no_cond", "kg_with_cond")
@@ -31,7 +37,13 @@ class ExperimentConfig:
     llm_max_new_tokens_extraction: int = 1024
     llm_max_new_tokens_answer: int = 256
     llm_batch_size: int = 4                 # for batched generation
-    llm_hf_token: Optional[str] = os.environ.get("HF_TOKEN", None)
+    llm_condition_sentence_chunk_size: int = int(
+        os.environ.get("LLM_CONDITION_SENTENCE_CHUNK_SIZE", "8")
+    )
+    llm_hf_token: Optional[str] = (
+        os.environ.get("HF_TOKEN")
+        or os.environ.get("HUGGINGFACE_HUB_TOKEN")
+    )
 
     # ── OpenAI embeddings (Variant 2) ──
     openai_api_key: Optional[str] = os.environ.get(

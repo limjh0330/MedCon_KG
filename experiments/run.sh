@@ -7,8 +7,8 @@ git lfs install
 
 # 3) 저장소 clone
 cd /workspace
-git clone https://github.com/doammii/M-PAGER.git
-cd M-PAGER
+git clone https://github.com/limjh0330/MedCon_KG.git
+cd MedCon_KG
 
 # 4) LFS 파일 내려받기
 git lfs pull

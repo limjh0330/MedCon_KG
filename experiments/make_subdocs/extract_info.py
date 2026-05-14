@@ -117,23 +117,13 @@ def _extract_sample_info(
     )
 
     return {
-        "meta_data": {
-            "sentence_count": len(sentences),
-            "entity_sentence_count": len(sentence_entities),
-            "total_entity_count": total_entity_count,
-            "unique_entity_count": len(unique_entities),
-            "total_condition_count": len(all_conditions),
-            "unique_condition_count": len(unique_conditions),
-        },
-        "info": {
             str(sample.sample_id): {
                 "sentence_entities": sentence_entities,
                 "entities": unique_entities,
                 "conditions": all_conditions,
                 "condition_keywords": condition_keywords,
             }
-        },
-    }
+        }
 
 
 def _iter_mediq_samples(

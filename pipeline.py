@@ -244,7 +244,32 @@ def _resolve_stage0_documents_jsonl_path(stage0_data: dict, output_dir: str) -> 
     return documents_jsonl_path
 
 
-def _load_stage0_documents_input(stage0_data: dict, output_dir: str):
+def _normalize_stage_db_names(db_name: list[str] | str | None) -> list[str]:
+    if db_name is None:
+        return []
+    if isinstance(db_name, str):
+        return [db_name]
+    return [str(name) for name in db_name if str(name).strip()]
+
+
+def _document_matches_db_names(doc: dict, db_names: list[str]) -> bool:
+    if not db_names:
+        return True
+
+    db_guideline_id = str(doc.get("db_guideline_id", "")).strip()
+    return any(db_guideline_id.startswith(f"{name}_") for name in db_names)
+
+
+def _filter_documents_by_db_name(documents_input, db_names: list[str]):
+    for doc in documents_input:
+        if not isinstance(doc, dict):
+            continue
+        if _document_matches_db_names(doc, db_names):
+            yield doc
+
+
+def _load_stage0_documents_input(stage0_data: dict, output_dir: str, db_name: list[str] | str | None = None):
+    db_names = _normalize_stage_db_names(db_name)
     documents_jsonl_path = _resolve_stage0_documents_jsonl_path(stage0_data, output_dir)
     if documents_jsonl_path:
         if not os.path.isfile(documents_jsonl_path):
@@ -252,17 +277,20 @@ def _load_stage0_documents_input(stage0_data: dict, output_dir: str):
             logger.error(f"  - documents_jsonl: {documents_jsonl_path}")
             logger.error("Re-run `python pipeline.py stage0` to regenerate the Stage 0 outputs.")
             sys.exit(1)
-        return _iter_documents_from_jsonl(documents_jsonl_path)
+        return _filter_documents_by_db_name(
+            _iter_documents_from_jsonl(documents_jsonl_path),
+            db_names,
+        )
 
     documents_by_id: dict[str, dict[str, Any]] = {}
     documents_by_id = stage0_data.get("documents_by_id", {})
     if isinstance(documents_by_id, dict):
-        return documents_by_id.values()
+        return _filter_documents_by_db_name(documents_by_id.values(), db_names)
     if documents_by_id:
-        return documents_by_id
+        return _filter_documents_by_db_name(documents_by_id, db_names)
 
     legacy_records = stage0_data.get("records") or stage0_data.get("recommendations", [])
-    return legacy_records or []
+    return _filter_documents_by_db_name(legacy_records or [], db_names)
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -278,8 +306,7 @@ def run_stage0(
     pubmed_sqlite_path: str = None,
 ) -> list[dict]:
     """Stage 0: parse CREST → save recommendations file. Returns the list."""
-    output_dir = output_dir or config.OUTPUT_DIR
-    db_name = db_name or ["PUBMED"]
+
     os.makedirs(output_dir, exist_ok=True)
 
     logger.info("=" * 60)
@@ -306,7 +333,7 @@ def run_stage0(
     elapsed = time.time() - start
     output_path = os.path.join(output_dir, config.OUTPUT_RECOMMENDATIONS_FILE)
 
-    output_data = {
+    stage0_output_data = {
         "metadata": {
             "stage": 0,
             "db_name": db_name,
@@ -319,9 +346,7 @@ def run_stage0(
         "stage0_documents_jsonl_examples": dataset_examples,
     }
     if inline_documents_by_id is not None:
-        output_data["documents_by_id"] = inline_documents_by_id
-
-    save_json(output_data, output_path)
+        stage0_output_data["documents_by_id"] = inline_documents_by_id
 
     logger.info(f"Stage 0 complete in {elapsed:.1f}s")
     logger.info(f"  DB name: {db_name}")
@@ -330,7 +355,7 @@ def run_stage0(
     logger.info(f"  Output: {output_path}")
     logger.info(f"  Documents JSONL: {documents_jsonl_path}")
     logger.info(f"Next: python pipeline.py stage1 --output-dir {output_dir}")
-    return inline_documents_by_id or []
+    return save_json(stage0_output_data, output_path)
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -341,6 +366,7 @@ def run_stage1(
     output_dir: str = None,
     openai_api_key: str = None,
     max_workers: int = None,
+    stage1_db_name: list[str] | str | None = None,
     max_guideline_docs: int = None,
     progress_interval: int = 10,
 ) -> tuple[int, dict]:
@@ -361,30 +387,33 @@ def run_stage1(
     logger.info("=" * 60)
 
     recs_data = load_json(recs_path)
-    metadata = recs_data.get("metadata", {})
-    input_document_count = metadata.get("total_document_count", 0)
-    input_sentence_count = metadata.get("total_sentence_count", 0)
-    documents_input = _load_stage0_documents_input(recs_data, output_dir)
+    documents_input = _load_stage0_documents_input(
+        recs_data,
+        output_dir,
+        db_name=stage1_db_name,
+    )
 
     documents_jsonl_path = _resolve_stage0_documents_jsonl_path(recs_data, output_dir)
     if documents_jsonl_path:
         logger.info(f"  Using Stage 0 documents JSONL: {documents_jsonl_path}")
+    if stage1_db_name:
+        logger.info(f"  Filtering Stage 0 documents by db_name: {stage1_db_name}")
 
     if max_guideline_docs:
         documents_input = list(islice(documents_input, max_guideline_docs))
-        input_document_count = len(documents_input)
-        input_sentence_count = sum(
-            len(doc.get("raw_texts") or [])
-            for doc in documents_input
-            if isinstance(doc, dict)
-        )
         logger.info(f"  Limited to {max_guideline_docs} documents (test mode)")
-        logger.info(f"  Loaded {input_document_count} documents from Stage 0")
-        logger.info(f"  Loaded {input_sentence_count} raw-text sentences from Stage 0")
-    else:
-        logger.info(f"  Loaded {input_document_count} documents from Stage 0")
-        logger.info(f"  Loaded {input_sentence_count} raw-text sentences from Stage 0")
-        
+
+    if not isinstance(documents_input, list):
+        documents_input = list(documents_input)
+
+    input_document_count = len(documents_input)
+    input_sentence_count = sum(
+        len(doc.get("raw_texts") or [])
+        for doc in documents_input
+        if isinstance(doc, dict)
+    )
+    logger.info(f"  Loaded {input_document_count} documents from Stage 0")
+    logger.info(f"  Loaded {input_sentence_count} raw-text sentences from Stage 0")
 
     start = time.time()
     total_raw_entities = 0
@@ -840,6 +869,7 @@ def run_pipeline(
             output_dir=output_dir,
             openai_api_key=openai_api_key,
             max_workers=max_workers_llm,
+            db_name=db_name,
             max_guideline_docs=max_guideline_docs,
         )
 
@@ -893,7 +923,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # ── stage0 ──
     p0 = sub.add_parser("stage0", help="CREST parsing & recommendation extraction")
-    p0.add_argument("--db-name", default=["CREST", "PUBMED"], nargs="+",
+    p0.add_argument("--db-name", default=["CREST","PUBMED"], nargs="+",
                     choices=["CREST", "PUBMED"],
                     help="One or more database sources for record/document IDs "
                          "(default: PUBMED). Pass multiple to combine, e.g. "
@@ -912,6 +942,9 @@ def _build_parser() -> argparse.ArgumentParser:
     # ── stage1 ──
     p1 = sub.add_parser("stage1", help="Entity candidate extraction (LLM)")
     p1.add_argument("--output-dir", default=config.OUTPUT_DIR)
+    p1.add_argument("--stage1-db-name", default=["CREST"], nargs="+",
+                    choices=["CREST", "PUBMED"],
+                    help="Only process Stage 0 documents whose db_guideline_id matches these sources")
     p1.add_argument("--openai-key", default=None)
     p1.add_argument("--max-workers", type=int, default=None,
                     help=f"Parallel LLM workers (default: {config.LLM_MAX_WORKERS})")
@@ -965,6 +998,9 @@ def _build_parser() -> argparse.ArgumentParser:
                       choices=["CREST", "PUBMED"],
                       help="One or more database sources passed through to Stage 0 "
                            "(default: PUBMED)")
+    pall.add_argument("--stage1-db-name", default=["CREST"], nargs="+",
+                    choices=["CREST", "PUBMED"],
+                    help="Only process Stage 0 documents whose db_guideline_id matches these sources")
     pall.add_argument("--xml-dir", default=None)
     pall.add_argument("--primary-dir", default=None)
     pall.add_argument("--pubmed-sqlite-path", default=None)
@@ -1021,6 +1057,7 @@ def main():
     elif args.stage == "stage1":
         run_stage1(
             output_dir=args.output_dir,
+            stage1_db_name=args.stage1_db_name,
             openai_api_key=args.openai_key,
             max_workers=args.max_workers,
             max_guideline_docs=args.max_guideline_docs
@@ -1055,6 +1092,7 @@ def main():
             parser.error("--start-stage must be <= --end-stage")
         run_pipeline(
             db_name=args.db_name,
+            stage1_db_name=args.stage1_db_name,
             xml_dir=args.xml_dir,
             primary_dir=args.primary_dir,
             pubmed_sqlite_path=args.pubmed_sqlite_path,

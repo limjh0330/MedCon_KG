@@ -80,7 +80,7 @@ class MediQDataset(BaseDataset):
         )
         self._slice = self._rows[start_index:end]
         logger.info(
-            f"Effective sample range: [{start_index}, {end}) "
+            f"Effective sample range: [{start_index}, {end}] "
             f"→ {len(self._slice)} samples"
         )
 

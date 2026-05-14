@@ -3,35 +3,33 @@
     "stage": 1,
     "input_documents": 10,
     "input_sentences": 95,
-    "total_raw_entities": 930,
-    "total_unique_entities": 491,
-    "elapsed_seconds": 135.1,
-    "timestamp": "2026-05-12T19:19:30.393948"
+    "total_raw_entities": 922,
+    "total_unique_entities": 478,
+    "elapsed_seconds": 138.1,
+    "timestamp": "2026-05-13T16:46:42.599066"
   },
   "entities": [
     {
       "surface_form": "greater than 20 pack year history of smoking",
       "normalized_form": "Smoking history greater than 20 pack-years",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T100",
-      "semantic_type_name": "Age Group",
+      "semantic_group": "PHYS",
+      "semantic_type_tui": "T201",
+      "semantic_type_name": "Clinical Attribute",
       "source_guidelines": [
         "CREST_46162"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "smoking",
-      "normalized_form": "Smoking",
-      "semantic_group": "ACTI",
-      "semantic_type_tui": "T053",
-      "semantic_type_name": "Behavior",
+      "surface_form": "history of smoking",
+      "normalized_form": "Smoking history",
+      "semantic_group": "PHYS",
+      "semantic_type_tui": "T201",
+      "semantic_type_name": "Clinical Attribute",
       "source_guidelines": [
-        "CREST_46162",
-        "CREST_46164",
-        "CREST_46168"
+        "CREST_46162"
       ],
-      "source_count": 4
+      "source_count": 1
     },
     {
       "surface_form": "history of lung cancer",
@@ -42,25 +40,11 @@
       "source_guidelines": [
         "CREST_46162"
       ],
-      "source_count": 7
-    },
-    {
-      "surface_form": "lung cancer",
-      "normalized_form": "Lung Neoplasms",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
-      "semantic_type_name": "Neoplastic Process",
-      "source_guidelines": [
-        "CREST_46162",
-        "CREST_46163",
-        "CREST_46167",
-        "CREST_46170"
-      ],
-      "source_count": 9
+      "source_count": 6
     },
     {
       "surface_form": "β-carotene supplementation",
-      "normalized_form": "Beta-Carotene Supplementation",
+      "normalized_form": "Beta-Carotene supplementation",
       "semantic_group": "CHEM",
       "semantic_type_tui": "T127",
       "semantic_type_name": "Vitamin",
@@ -70,7 +54,51 @@
       "source_count": 1
     },
     {
-      "surface_form": "primary, secondary, or tertiary chemoprevention",
+      "surface_form": "β-carotene",
+      "normalized_form": "Beta-Carotene",
+      "semantic_group": "CHEM",
+      "semantic_type_tui": "T127",
+      "semantic_type_name": "Vitamin",
+      "source_guidelines": [
+        "CREST_46162"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "primary chemoprevention",
+      "normalized_form": "Primary chemoprevention",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "source_guidelines": [
+        "CREST_46162"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "secondary chemoprevention",
+      "normalized_form": "Secondary chemoprevention",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "source_guidelines": [
+        "CREST_46162"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "tertiary chemoprevention",
+      "normalized_form": "Tertiary chemoprevention",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "source_guidelines": [
+        "CREST_46162"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "chemoprevention",
       "normalized_form": "Chemoprevention",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
@@ -81,28 +109,6 @@
       "source_count": 6
     },
     {
-      "surface_form": "individuals at risk for lung cancer",
-      "normalized_form": "At-Risk Population",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
-        "CREST_46162"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "patients with a history of lung cancer",
-      "normalized_form": "Patients with History of Lung Cancer",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
-        "CREST_46162"
-      ],
-      "source_count": 1
-    },
-    {
       "surface_form": "lung cancer",
       "normalized_form": "Lung Neoplasm",
       "semantic_group": "DISO",
@@ -110,7 +116,6 @@
       "semantic_type_name": "Neoplastic Process",
       "source_guidelines": [
         "CREST_46162",
-        "CREST_46163",
         "CREST_46164",
         "CREST_46165",
         "CREST_46166",
@@ -120,7 +125,18 @@
         "CREST_46170",
         "CREST_46171"
       ],
-      "source_count": 42
+      "source_count": 45
+    },
+    {
+      "surface_form": "individuals at risk for lung cancer",
+      "normalized_form": "At Risk Population for Lung Cancer",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T098",
+      "semantic_type_name": "Population Group",
+      "source_guidelines": [
+        "CREST_46162"
+      ],
+      "source_count": 3
     },
     {
       "surface_form": "vitamin E",
@@ -135,10 +151,10 @@
     },
     {
       "surface_form": "retinoids",
-      "normalized_form": "Retinoid",
+      "normalized_form": "Retinoids",
       "semantic_group": "CHEM",
-      "semantic_type_tui": "T121",
-      "semantic_type_name": "Pharmacologic Substance",
+      "semantic_type_tui": "T127",
+      "semantic_type_name": "Vitamin",
       "source_guidelines": [
         "CREST_46162"
       ],
@@ -175,7 +191,7 @@
       "source_guidelines": [
         "CREST_46162"
       ],
-      "source_count": 4
+      "source_count": 3
     },
     {
       "surface_form": "secondary prevention",
@@ -186,7 +202,7 @@
       "source_guidelines": [
         "CREST_46162"
       ],
-      "source_count": 4
+      "source_count": 3
     },
     {
       "surface_form": "tertiary prevention",
@@ -200,8 +216,20 @@
       "source_count": 3
     },
     {
-      "surface_form": "individuals at risk for lung cancer",
-      "normalized_form": "At Risk Population for Lung Cancer",
+      "surface_form": "individuals at risk",
+      "normalized_form": "At Risk Population",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
+      "source_guidelines": [
+        "CREST_46162",
+        "CREST_46164"
+      ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "patients with a history of lung cancer",
+      "normalized_form": "Patients with History of Lung Cancer",
       "semantic_group": "LIVB",
       "semantic_type_tui": "T101",
       "semantic_type_name": "Patient or Disabled Group",
@@ -222,7 +250,7 @@
       "source_count": 1
     },
     {
-      "surface_form": "well-designed clinical trial",
+      "surface_form": "clinical trial",
       "normalized_form": "Clinical Trial",
       "semantic_group": "PROC",
       "semantic_type_tui": "T062",
@@ -230,38 +258,37 @@
       "source_guidelines": [
         "CREST_46162"
       ],
-      "source_count": 5
+      "source_count": 7
     },
     {
       "surface_form": "individuals",
       "normalized_form": "Individuals",
       "semantic_group": "LIVB",
-      "semantic_type_tui": "T100",
-      "semantic_type_name": "Age Group",
+      "semantic_type_tui": "T098",
+      "semantic_type_name": "Population Group",
       "source_guidelines": [
         "CREST_46162",
-        "CREST_46165",
         "CREST_46170"
       ],
       "source_count": 4
     },
     {
-      "surface_form": "history of early stage NSCLC",
-      "normalized_form": "History of early-stage non-small cell lung cancer",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T033",
-      "semantic_type_name": "Finding",
+      "surface_form": "history",
+      "normalized_form": "History",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T079",
+      "semantic_type_name": "Temporal Concept",
       "source_guidelines": [
         "CREST_46162"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "early stage NSCLC",
-      "normalized_form": "Early-stage non-small cell lung cancer",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
-      "semantic_type_name": "Neoplastic Process",
+      "surface_form": "early stage",
+      "normalized_form": "Early Stage",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
       "source_guidelines": [
         "CREST_46162"
       ],
@@ -269,65 +296,28 @@
     },
     {
       "surface_form": "NSCLC",
-      "normalized_form": "Non-small cell lung cancer",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
-      "semantic_type_name": "Neoplastic Process",
-      "source_guidelines": [
-        "CREST_46162"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "selenium",
-      "normalized_form": "Selenium",
-      "semantic_group": "CHEM",
-      "semantic_type_tui": "T197",
-      "semantic_type_name": "Inorganic Chemical",
-      "source_guidelines": [
-        "CREST_46162"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "tertiary chemopreventive agent",
-      "normalized_form": "Chemopreventive agent",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
-      "source_guidelines": [
-        "CREST_46162"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "lung cancer",
-      "normalized_form": "Lung cancer",
+      "normalized_form": "Non-Small Cell Lung Carcinoma",
       "semantic_group": "DISO",
       "semantic_type_tui": "T191",
       "semantic_type_name": "Neoplastic Process",
       "source_guidelines": [
         "CREST_46162",
-        "CREST_46164",
-        "CREST_46165",
-        "CREST_46166",
         "CREST_46167",
         "CREST_46169",
-        "CREST_46170",
-        "CREST_46171"
+        "CREST_46170"
       ],
-      "source_count": 16
+      "source_count": 9
     },
     {
-      "surface_form": "individuals at risk for lung cancer",
-      "normalized_form": "At Risk for Lung Cancer",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T098",
-      "semantic_type_name": "Population Group",
+      "surface_form": "selenium",
+      "normalized_form": "Selenium",
+      "semantic_group": "CHEM",
+      "semantic_type_tui": "T196",
+      "semantic_type_name": "Element, Ion, or Isotope",
       "source_guidelines": [
         "CREST_46162"
       ],
-      "source_count": 3
+      "source_count": 1
     },
     {
       "surface_form": "prostaglandin I2",
@@ -338,14 +328,14 @@
       "source_guidelines": [
         "CREST_46162"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
-      "surface_form": "PGI2 analogs",
-      "normalized_form": "Prostaglandin I2 Analogs",
+      "surface_form": "analogs",
+      "normalized_form": "Analogs",
       "semantic_group": "CHEM",
-      "semantic_type_tui": "T123",
-      "semantic_type_name": "Biologically Active Substance",
+      "semantic_type_tui": "T121",
+      "semantic_type_name": "Pharmacologic Substance",
       "source_guidelines": [
         "CREST_46162"
       ],
@@ -364,21 +354,21 @@
     },
     {
       "surface_form": "cyclooxygenase-2",
-      "normalized_form": "Cyclooxygenase 2",
+      "normalized_form": "Cyclooxygenase-2",
       "semantic_group": "CHEM",
       "semantic_type_tui": "T126",
       "semantic_type_name": "Enzyme",
       "source_guidelines": [
         "CREST_46162"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
-      "surface_form": "COX-2 inhibitors",
-      "normalized_form": "Cyclooxygenase 2 Inhibitor",
+      "surface_form": "inhibitors",
+      "normalized_form": "Enzyme Inhibitor",
       "semantic_group": "CHEM",
-      "semantic_type_tui": "T120",
-      "semantic_type_name": "Chemical Viewed Functionally",
+      "semantic_type_tui": "T121",
+      "semantic_type_name": "Pharmacologic Substance",
       "source_guidelines": [
         "CREST_46162"
       ],
@@ -407,19 +397,43 @@
       "source_count": 1
     },
     {
-      "surface_form": "tertiary lung cancer chemoprevention",
-      "normalized_form": "Tertiary Prevention of Lung Cancer",
+      "surface_form": "primary, secondary, or tertiary lung cancer chemoprevention",
+      "normalized_form": "Lung Cancer Chemoprevention",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46162"
       ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "individuals at risk for lung cancer",
+      "normalized_form": "At risk for lung cancer population",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
+      "source_guidelines": [
+        "CREST_46162"
+      ],
       "source_count": 1
     },
     {
+      "surface_form": "lung cancer",
+      "normalized_form": "Lung Neoplasms",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T191",
+      "semantic_type_name": "Neoplastic Process",
+      "source_guidelines": [
+        "CREST_46162",
+        "CREST_46163",
+        "CREST_46170"
+      ],
+      "source_count": 11
+    },
+    {
       "surface_form": "inhaled steroids",
-      "normalized_form": "Inhaled Corticosteroids",
+      "normalized_form": "Inhaled corticosteroids",
       "semantic_group": "CHEM",
       "semantic_type_tui": "T121",
       "semantic_type_name": "Pharmacologic Substance",
@@ -430,7 +444,7 @@
     },
     {
       "surface_form": "steroids",
-      "normalized_form": "Corticosteroids",
+      "normalized_form": "Steroids",
       "semantic_group": "CHEM",
       "semantic_type_tui": "T121",
       "semantic_type_name": "Pharmacologic Substance",
@@ -440,46 +454,14 @@
       "source_count": 1
     },
     {
-      "surface_form": "primary",
-      "normalized_form": "Primary",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
+      "surface_form": "individuals at risk for lung cancer",
+      "normalized_form": "At risk for lung cancer",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
       "source_guidelines": [
-        "CREST_46162"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "secondary",
-      "normalized_form": "Secondary",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
-        "CREST_46162"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "tertiary",
-      "normalized_form": "Tertiary",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
-        "CREST_46162"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "lung cancer chemoprevention",
-      "normalized_form": "Lung Cancer Chemoprevention",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
-      "source_guidelines": [
-        "CREST_46162"
+        "CREST_46162",
+        "CREST_46164"
       ],
       "source_count": 2
     },
@@ -500,17 +482,6 @@
       "semantic_group": "CHEM",
       "semantic_type_tui": "T109",
       "semantic_type_name": "Organic Chemical",
-      "source_guidelines": [
-        "CREST_46162"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "individuals at risk for lung cancer",
-      "normalized_form": "At-Risk Individuals",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
       "source_guidelines": [
         "CREST_46162"
       ],
@@ -539,26 +510,15 @@
       "source_count": 1
     },
     {
-      "surface_form": "prevention",
-      "normalized_form": "Prevention",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
-      "source_guidelines": [
-        "CREST_46162"
-      ],
-      "source_count": 1
-    },
-    {
       "surface_form": "current smokers",
       "normalized_form": "Current Smokers",
       "semantic_group": "LIVB",
-      "semantic_type_tui": "T098",
-      "semantic_type_name": "Population Group",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
       "source_guidelines": [
         "CREST_46163"
       ],
-      "source_count": 2
+      "source_count": 1
     },
     {
       "surface_form": "low-dose computed tomography",
@@ -574,15 +534,15 @@
     },
     {
       "surface_form": "screening",
-      "normalized_form": "Screening",
+      "normalized_form": "Screening Procedure",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46163",
         "CREST_46164"
       ],
-      "source_count": 3
+      "source_count": 2
     },
     {
       "surface_form": "cessation interventions",
@@ -593,7 +553,7 @@
       "source_guidelines": [
         "CREST_46163"
       ],
-      "source_count": 4
+      "source_count": 5
     },
     {
       "surface_form": "counseling",
@@ -615,22 +575,22 @@
       "source_guidelines": [
         "CREST_46163"
       ],
-      "source_count": 6
+      "source_count": 7
     },
     {
-      "surface_form": "tobacco use",
-      "normalized_form": "Tobacco Use",
-      "semantic_group": "ACTI",
-      "semantic_type_tui": "T053",
-      "semantic_type_name": "Behavior",
+      "surface_form": "current smokers",
+      "normalized_form": "Current smoker",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
       "source_guidelines": [
         "CREST_46163"
       ],
-      "source_count": 3
+      "source_count": 1
     },
     {
       "surface_form": "smoking related pulmonary disease",
-      "normalized_form": "Smoking-Related Pulmonary Disease",
+      "normalized_form": "Smoking-related pulmonary disease",
       "semantic_group": "DISO",
       "semantic_type_tui": "T047",
       "semantic_type_name": "Disease or Syndrome",
@@ -641,7 +601,7 @@
     },
     {
       "surface_form": "pulmonary disease",
-      "normalized_form": "Pulmonary Disease",
+      "normalized_form": "Pulmonary disease",
       "semantic_group": "DISO",
       "semantic_type_tui": "T047",
       "semantic_type_name": "Disease or Syndrome",
@@ -652,18 +612,7 @@
     },
     {
       "surface_form": "intensive cessation interventions",
-      "normalized_form": "Intensive Smoking Cessation Intervention",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
-      "source_guidelines": [
-        "CREST_46163"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "cessation interventions",
-      "normalized_form": "Cessation Intervention",
+      "normalized_form": "Intensive smoking cessation intervention",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
@@ -674,7 +623,7 @@
     },
     {
       "surface_form": "smoking cessation",
-      "normalized_form": "Smoking Cessation",
+      "normalized_form": "Smoking cessation",
       "semantic_group": "ACTI",
       "semantic_type_tui": "T056",
       "semantic_type_name": "Daily or Recreational Activity",
@@ -682,35 +631,62 @@
         "CREST_46163",
         "CREST_46164"
       ],
-      "source_count": 7
+      "source_count": 6
     },
     {
-      "surface_form": "lung cancer patients",
-      "normalized_form": "Patients with Lung Neoplasms",
+      "surface_form": "smoking",
+      "normalized_form": "Smoking",
+      "semantic_group": "ACTI",
+      "semantic_type_tui": "T053",
+      "semantic_type_name": "Behavior",
+      "source_guidelines": [
+        "CREST_46163",
+        "CREST_46164",
+        "CREST_46168"
+      ],
+      "source_count": 4
+    },
+    {
+      "surface_form": "tobacco use",
+      "normalized_form": "Tobacco use",
+      "semantic_group": "ACTI",
+      "semantic_type_tui": "T053",
+      "semantic_type_name": "Behavior",
+      "source_guidelines": [
+        "CREST_46163"
+      ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "patients",
+      "normalized_form": "Patient Population",
       "semantic_group": "LIVB",
       "semantic_type_tui": "T101",
       "semantic_type_name": "Patient or Disabled Group",
       "source_guidelines": [
-        "CREST_46163"
+        "CREST_46163",
+        "CREST_46167",
+        "CREST_46168",
+        "CREST_46169"
       ],
-      "source_count": 1
+      "source_count": 5
     },
     {
-      "surface_form": "undergoing surgery",
-      "normalized_form": "Surgery",
+      "surface_form": "surgery",
+      "normalized_form": "Surgical Procedure",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46163",
-        "CREST_46167",
+        "CREST_46165",
         "CREST_46168"
       ],
-      "source_count": 3
+      "source_count": 13
     },
     {
       "surface_form": "perioperative cessation pharmacotherapy",
-      "normalized_form": "Perioperative Smoking Cessation Pharmacotherapy",
+      "normalized_form": "Perioperative Cessation Pharmacotherapy",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
@@ -732,38 +708,14 @@
     },
     {
       "surface_form": "surgery",
-      "normalized_form": "Surgical Procedure",
+      "normalized_form": "Surgery",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
-        "CREST_46163",
-        "CREST_46165",
-        "CREST_46168"
-      ],
-      "source_count": 12
-    },
-    {
-      "surface_form": "contraindicated",
-      "normalized_form": "Contraindication",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
         "CREST_46163"
       ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "refused",
-      "normalized_form": "Refusal",
-      "semantic_group": "ACTI",
-      "semantic_type_tui": "T053",
-      "semantic_type_name": "Behavior",
-      "source_guidelines": [
-        "CREST_46163"
-      ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "cessation counseling",
@@ -788,29 +740,15 @@
       "source_count": 1
     },
     {
-      "surface_form": "patients",
-      "normalized_form": "Patient or Disabled Group",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
-        "CREST_46163",
-        "CREST_46165",
-        "CREST_46169"
-      ],
-      "source_count": 6
-    },
-    {
       "surface_form": "risk",
       "normalized_form": "Risk",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
       "source_guidelines": [
-        "CREST_46163",
-        "CREST_46165"
+        "CREST_46163"
       ],
-      "source_count": 2
+      "source_count": 1
     },
     {
       "surface_form": "post-operative complications",
@@ -835,15 +773,41 @@
       "source_count": 1
     },
     {
+      "surface_form": "patients",
+      "normalized_form": "Patients",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
+      "source_guidelines": [
+        "CREST_46163",
+        "CREST_46167",
+        "CREST_46168",
+        "CREST_46169",
+        "CREST_46171"
+      ],
+      "source_count": 16
+    },
+    {
       "surface_form": "surgical interventions",
-      "normalized_form": "Surgical Intervention",
+      "normalized_form": "Surgical Procedures",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46163"
       ],
-      "source_count": 2
+      "source_count": 1
+    },
+    {
+      "surface_form": "patients",
+      "normalized_form": "Patient Group",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
+      "source_guidelines": [
+        "CREST_46163"
+      ],
+      "source_count": 1
     },
     {
       "surface_form": "chemotherapy",
@@ -855,18 +819,6 @@
         "CREST_46163"
       ],
       "source_count": 1
-    },
-    {
-      "surface_form": "lung cancer patients",
-      "normalized_form": "Patients with Lung Cancer",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
-        "CREST_46163",
-        "CREST_46170"
-      ],
-      "source_count": 2
     },
     {
       "surface_form": "depressive symptoms",
@@ -904,13 +856,36 @@
     {
       "surface_form": "quality of life",
       "normalized_form": "Quality of Life",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
+      "semantic_group": "PHYS",
+      "semantic_type_tui": "T201",
+      "semantic_type_name": "Clinical Attribute",
       "source_guidelines": [
         "CREST_46163"
       ],
       "source_count": 2
+    },
+    {
+      "surface_form": "contraindicated",
+      "normalized_form": "Contraindication",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
+      "source_guidelines": [
+        "CREST_46163",
+        "CREST_46165"
+      ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "refused",
+      "normalized_form": "Refusal",
+      "semantic_group": "ACTI",
+      "semantic_type_tui": "T053",
+      "semantic_type_name": "Behavior",
+      "source_guidelines": [
+        "CREST_46163"
+      ],
+      "source_count": 1
     },
     {
       "surface_form": "radiotherapy",
@@ -924,22 +899,22 @@
       "source_count": 1
     },
     {
-      "surface_form": "patients at risk for developing lung cancer",
-      "normalized_form": "At Risk Patients",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
+      "surface_form": "screening",
+      "normalized_form": "Screening",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46164"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
-      "surface_form": "screening for lung cancer",
+      "surface_form": "lung cancer screening",
       "normalized_form": "Lung Cancer Screening",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46164"
       ],
@@ -951,39 +926,6 @@
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46164"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "once",
-      "normalized_form": "Once",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T079",
-      "semantic_type_name": "Temporal Concept",
-      "source_guidelines": [
-        "CREST_46164"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "regular intervals",
-      "normalized_form": "Regular Intervals",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T079",
-      "semantic_type_name": "Temporal Concept",
-      "source_guidelines": [
-        "CREST_46164"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "patients at risk for developing lung cancer",
-      "normalized_form": "Patients at Risk for Developing Lung Cancer",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
       "source_guidelines": [
         "CREST_46164"
       ],
@@ -1004,7 +946,7 @@
     },
     {
       "surface_form": "regular intervals",
-      "normalized_form": "Regular Interval",
+      "normalized_form": "Regular interval",
       "semantic_group": "CONC",
       "semantic_type_tui": "T079",
       "semantic_type_name": "Temporal Concept",
@@ -1037,7 +979,7 @@
     },
     {
       "surface_form": "age 55–74",
-      "normalized_form": "Age 55-74 Years",
+      "normalized_form": "Aged 55 to 74 years",
       "semantic_group": "LIVB",
       "semantic_type_tui": "T100",
       "semantic_type_name": "Age Group",
@@ -1052,6 +994,28 @@
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
+      "source_guidelines": [
+        "CREST_46164"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "annual screening",
+      "normalized_form": "Annual Screening",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "source_guidelines": [
+        "CREST_46164"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "annual screening with CXR",
+      "normalized_form": "Annual Chest X-Ray Screening",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46164"
       ],
@@ -1081,17 +1045,6 @@
       "source_count": 1
     },
     {
-      "surface_form": "settings",
-      "normalized_form": "Clinical Setting",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T082",
-      "semantic_type_name": "Spatial Concept",
-      "source_guidelines": [
-        "CREST_46164"
-      ],
-      "source_count": 1
-    },
-    {
       "surface_form": "comprehensive care",
       "normalized_form": "Comprehensive Care",
       "semantic_group": "PROC",
@@ -1105,7 +1058,7 @@
     {
       "surface_form": "National Lung Screening Trial",
       "normalized_form": "National Lung Screening Trial",
-      "semantic_group": "PROC",
+      "semantic_group": "ACTI",
       "semantic_type_tui": "T062",
       "semantic_type_name": "Research Activity",
       "source_guidelines": [
@@ -1115,7 +1068,7 @@
     },
     {
       "surface_form": "participants",
-      "normalized_form": "Research Participants",
+      "normalized_form": "Study Participants",
       "semantic_group": "LIVB",
       "semantic_type_tui": "T101",
       "semantic_type_name": "Patient or Disabled Group",
@@ -1126,7 +1079,7 @@
     },
     {
       "surface_form": "fewer than 30 pack-years of smoking",
-      "normalized_form": "Smoking history less than 30 pack-years",
+      "normalized_form": "30 pack-years of smoking",
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
@@ -1137,7 +1090,7 @@
     },
     {
       "surface_form": "pack-years",
-      "normalized_form": "Pack-Year Smoking History",
+      "normalized_form": "Pack-Years",
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
@@ -1148,10 +1101,10 @@
     },
     {
       "surface_form": "younger than age 55",
-      "normalized_form": "Age less than 55 years",
+      "normalized_form": "Age 55 years or younger",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "semantic_type_tui": "T100",
+      "semantic_type_name": "Age Group",
       "source_guidelines": [
         "CREST_46164"
       ],
@@ -1159,21 +1112,10 @@
     },
     {
       "surface_form": "older than 74",
-      "normalized_form": "Age greater than 74 years",
+      "normalized_form": "Age 75 years or older",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
-      "source_guidelines": [
-        "CREST_46164"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "quit smoking more than 15 years ago",
-      "normalized_form": "Smoking cessation more than 15 years ago",
-      "semantic_group": "ACTI",
-      "semantic_type_tui": "T055",
-      "semantic_type_name": "Individual Behavior",
+      "semantic_type_tui": "T100",
+      "semantic_type_name": "Age Group",
       "source_guidelines": [
         "CREST_46164"
       ],
@@ -1181,7 +1123,7 @@
     },
     {
       "surface_form": "15 years ago",
-      "normalized_form": "15 years ago",
+      "normalized_form": "15 Years",
       "semantic_group": "CONC",
       "semantic_type_tui": "T079",
       "semantic_type_name": "Temporal Concept",
@@ -1192,7 +1134,7 @@
     },
     {
       "surface_form": "severe comorbidities",
-      "normalized_form": "Severe comorbidity",
+      "normalized_form": "Comorbidity",
       "semantic_group": "DISO",
       "semantic_type_tui": "T047",
       "semantic_type_name": "Disease or Syndrome",
@@ -1203,7 +1145,7 @@
     },
     {
       "surface_form": "potentially curative treatment",
-      "normalized_form": "Curative treatment",
+      "normalized_form": "Curative Treatment",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
@@ -1216,10 +1158,10 @@
     },
     {
       "surface_form": "life expectancy",
-      "normalized_form": "Life expectancy",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "normalized_form": "Life Expectancy",
+      "semantic_group": "PHYS",
+      "semantic_type_tui": "T201",
+      "semantic_type_name": "Clinical Attribute",
       "source_guidelines": [
         "CREST_46164"
       ],
@@ -1236,34 +1178,22 @@
         "CREST_46165",
         "CREST_46169"
       ],
-      "source_count": 15
-    },
-    {
-      "surface_form": "cancer",
-      "normalized_form": "Neoplasm",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
-      "semantic_type_name": "Neoplastic Process",
-      "source_guidelines": [
-        "CREST_46164",
-        "CREST_46169"
-      ],
-      "source_count": 3
+      "source_count": 17
     },
     {
       "surface_form": "indeterminate nodule",
-      "normalized_form": "Indeterminate pulmonary nodule",
+      "normalized_form": "Indeterminate Nodule",
       "semantic_group": "DISO",
       "semantic_type_tui": "T033",
       "semantic_type_name": "Finding",
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 9
+      "source_count": 2
     },
     {
-      "surface_form": "chest computed tomography (CT)",
-      "normalized_form": "Chest computed tomography",
+      "surface_form": "chest computed tomography",
+      "normalized_form": "Chest Computed Tomography",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -1271,11 +1201,11 @@
         "CREST_46165",
         "CREST_46169"
       ],
-      "source_count": 6
+      "source_count": 4
     },
     {
       "surface_form": "prior imaging tests",
-      "normalized_form": "Prior imaging tests",
+      "normalized_form": "Diagnostic Imaging Test",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -1285,43 +1215,7 @@
       "source_count": 1
     },
     {
-      "surface_form": "imaging tests",
-      "normalized_form": "Imaging tests",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "individual",
-      "normalized_form": "Patient",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
-        "CREST_46165",
-        "CREST_46166",
-        "CREST_46167",
-        "CREST_46168"
-      ],
-      "source_count": 14
-    },
-    {
-      "surface_form": "solid",
-      "normalized_form": "Solid",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 7
-    },
-    {
-      "surface_form": "nodule",
+      "surface_form": "solid, indeterminate nodule",
       "normalized_form": "Pulmonary Nodule",
       "semantic_group": "DISO",
       "semantic_type_tui": "T033",
@@ -1329,22 +1223,11 @@
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 19
+      "source_count": 14
     },
     {
-      "surface_form": "stable",
-      "normalized_form": "Stable",
-      "semantic_group": "PHYS",
-      "semantic_type_tui": "T201",
-      "semantic_type_name": "Clinical Attribute",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "2 years",
-      "normalized_form": "2 Years",
+      "surface_form": "stable for at least 2 years",
+      "normalized_form": "Stable for at least 2 years",
       "semantic_group": "CONC",
       "semantic_type_tui": "T079",
       "semantic_type_name": "Temporal Concept",
@@ -1355,15 +1238,37 @@
     },
     {
       "surface_form": "diagnostic evaluation",
-      "normalized_form": "Diagnostic Evaluation",
+      "normalized_form": "Diagnostic Procedure",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46165",
-        "CREST_46169"
+        "CREST_46167"
       ],
       "source_count": 3
+    },
+    {
+      "surface_form": "nodule",
+      "normalized_form": "Nodule",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 8
+    },
+    {
+      "surface_form": "CT of the chest",
+      "normalized_form": "Computed tomography of the chest",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
     },
     {
       "surface_form": "chest",
@@ -1375,7 +1280,7 @@
         "CREST_46165",
         "CREST_46169"
       ],
-      "source_count": 3
+      "source_count": 4
     },
     {
       "surface_form": "thin sections",
@@ -1389,26 +1294,37 @@
       "source_count": 1
     },
     {
-      "surface_form": "nodule",
-      "normalized_form": "Nodule",
+      "surface_form": "solid",
+      "normalized_form": "Solid",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 6
+    },
+    {
+      "surface_form": "indeterminate nodule",
+      "normalized_form": "Indeterminate Pulmonary Nodule",
       "semantic_group": "DISO",
       "semantic_type_tui": "T033",
       "semantic_type_name": "Finding",
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 7
+      "source_count": 6
     },
     {
       "surface_form": ">8 mm in diameter",
-      "normalized_form": "8 mm Diameter",
+      "normalized_form": "Greater than 8 millimeters in diameter",
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 2
+      "source_count": 8
     },
     {
       "surface_form": "pretest probability of malignancy",
@@ -1455,15 +1371,104 @@
       "source_count": 1
     },
     {
-      "surface_form": ">8 mm in diameter",
-      "normalized_form": "Greater than 8 millimeters in diameter",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "surface_form": "individual",
+      "normalized_form": "Patient",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
+      "source_guidelines": [
+        "CREST_46165",
+        "CREST_46167",
+        "CREST_46168",
+        "CREST_46169"
+      ],
+      "source_count": 16
+    },
+    {
+      "surface_form": "lung cancer",
+      "normalized_form": "Lung Cancer",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T191",
+      "semantic_type_name": "Neoplastic Process",
+      "source_guidelines": [
+        "CREST_46165",
+        "CREST_46166",
+        "CREST_46168",
+        "CREST_46169"
+      ],
+      "source_count": 7
+    },
+    {
+      "surface_form": "lung",
+      "normalized_form": "Lung",
+      "semantic_group": "ANAT",
+      "semantic_type_tui": "T023",
+      "semantic_type_name": "Body Part, Organ, or Organ Component",
+      "source_guidelines": [
+        "CREST_46165",
+        "CREST_46170"
+      ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "biopsy",
+      "normalized_form": "Biopsy",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "source_guidelines": [
+        "CREST_46165",
+        "CREST_46167",
+        "CREST_46171"
+      ],
+      "source_count": 11
+    },
+    {
+      "surface_form": "bronchoscopy",
+      "normalized_form": "Bronchoscopy",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
+      "source_guidelines": [
+        "CREST_46165",
+        "CREST_46167",
+        "CREST_46171"
+      ],
+      "source_count": 8
+    },
+    {
+      "surface_form": "thoracoscopy",
+      "normalized_form": "Thoracoscopy",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
+      "source_guidelines": [
+        "CREST_46165",
+        "CREST_46167"
+      ],
+      "source_count": 4
+    },
+    {
+      "surface_form": "solid, indeterminate nodule",
+      "normalized_form": "Solid Indeterminate Pulmonary Nodule",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 6
+      "source_count": 2
+    },
+    {
+      "surface_form": "low to moderate pretest probability of malignancy",
+      "normalized_form": "Low to moderate pretest probability of malignancy",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
     },
     {
       "surface_form": "functional imaging",
@@ -1490,6 +1495,18 @@
       "source_count": 13
     },
     {
+      "surface_form": "individual",
+      "normalized_form": "Individual",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
+      "source_guidelines": [
+        "CREST_46165",
+        "CREST_46170"
+      ],
+      "source_count": 4
+    },
+    {
       "surface_form": "high pretest probability of malignancy",
       "normalized_form": "High Pretest Probability of Malignancy",
       "semantic_group": "CONC",
@@ -1501,55 +1518,34 @@
       "source_count": 1
     },
     {
-      "surface_form": "pretest probability",
-      "normalized_form": "Pretest Probability",
+      "surface_form": "patient preferences",
+      "normalized_form": "Patient Preference",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "individual",
-      "normalized_form": "Individual",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 6
-    },
-    {
-      "surface_form": ">8 mm in diameter",
-      "normalized_form": "Greater than 8 Millimeters",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "semantic_type_tui": "T078",
+      "semantic_type_name": "Idea or Concept",
       "source_guidelines": [
         "CREST_46165"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "diameter",
-      "normalized_form": "Diameter",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "surface_form": "management",
+      "normalized_form": "Patient Management",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T058",
+      "semantic_type_name": "Health Care Activity",
       "source_guidelines": [
-        "CREST_46165"
+        "CREST_46165",
+        "CREST_46167"
       ],
-      "source_count": 4
+      "source_count": 2
     },
     {
-      "surface_form": "benefits",
-      "normalized_form": "Benefit",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
+      "surface_form": "management strategies",
+      "normalized_form": "Management Strategy",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T058",
+      "semantic_type_name": "Health Care Activity",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -1559,42 +1555,19 @@
       "surface_form": "alternative management strategies",
       "normalized_form": "Alternative Management Strategy",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "management",
-      "normalized_form": "Management",
-      "semantic_group": "PROC",
       "semantic_type_tui": "T058",
       "semantic_type_name": "Health Care Activity",
       "source_guidelines": [
-        "CREST_46165",
-        "CREST_46170"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "patient preferences",
-      "normalized_form": "Patient Preference",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
         "CREST_46165"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "solid, indeterminate nodule",
-      "normalized_form": "Solitary Pulmonary Nodule",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T033",
-      "semantic_type_name": "Finding",
+      "surface_form": "clinicians",
+      "normalized_form": "Clinician",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T097",
+      "semantic_type_name": "Professional or Occupational Group",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -1604,16 +1577,16 @@
       "surface_form": "surveillance",
       "normalized_form": "Surveillance",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T058",
-      "semantic_type_name": "Health Care Activity",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 2
+      "source_count": 3
     },
     {
       "surface_form": "serial CT scans",
-      "normalized_form": "Serial Computed Tomography Scans",
+      "normalized_form": "Serial computed tomography scans",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -1624,29 +1597,29 @@
     },
     {
       "surface_form": "CT scans",
-      "normalized_form": "Computed Tomography Scan",
+      "normalized_form": "Computed tomography scan",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 2
+      "source_count": 1
     },
     {
       "surface_form": "clinical probability of malignancy",
-      "normalized_form": "Clinical Probability of Malignancy",
+      "normalized_form": "Clinical probability of malignancy",
       "semantic_group": "CONC",
       "semantic_type_tui": "T201",
       "semantic_type_name": "Clinical Attribute",
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 2
+      "source_count": 1
     },
     {
       "surface_form": "functional imaging test",
-      "normalized_form": "Functional Imaging Test",
+      "normalized_form": "Functional imaging test",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -1670,17 +1643,28 @@
     {
       "surface_form": "hypermetabolic",
       "normalized_form": "Hypermetabolic",
-      "semantic_group": "PHYS",
-      "semantic_type_tui": "T039",
-      "semantic_type_name": "Physiologic Function",
+      "semantic_group": "PHEN",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
       "source_guidelines": [
         "CREST_46165"
       ],
       "source_count": 2
     },
     {
+      "surface_form": "does not enhance >15 HUs",
+      "normalized_form": "Lack of enhancement greater than 15 Hounsfield units",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T201",
+      "semantic_type_name": "Clinical Attribute",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
       "surface_form": "dynamic contrast CT",
-      "normalized_form": "Dynamic Contrast Computed Tomography",
+      "normalized_form": "Dynamic contrast-enhanced computed tomography",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -1690,31 +1674,8 @@
       "source_count": 1
     },
     {
-      "surface_form": "contrast",
-      "normalized_form": "Contrast Media",
-      "semantic_group": "CHEM",
-      "semantic_type_tui": "T130",
-      "semantic_type_name": "Indicator, Reagent, or Diagnostic Aid",
-      "source_guidelines": [
-        "CREST_46165",
-        "CREST_46169"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "HUs",
-      "normalized_form": "Hounsfield Units",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "posttest probability of malignancy",
-      "normalized_form": "Post-test Probability of Malignancy",
+      "surface_form": "very-low posttest probability of malignancy",
+      "normalized_form": "Very low posttest probability of malignancy",
       "semantic_group": "CONC",
       "semantic_type_tui": "T201",
       "semantic_type_name": "Clinical Attribute",
@@ -1725,45 +1686,55 @@
     },
     {
       "surface_form": "needle biopsy",
-      "normalized_form": "Needle Biopsy",
+      "normalized_form": "Needle biopsy",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46165"
       ],
       "source_count": 1
-    },
-    {
-      "surface_form": "biopsy",
-      "normalized_form": "Biopsy",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
-      "source_guidelines": [
-        "CREST_46165",
-        "CREST_46167",
-        "CREST_46171"
-      ],
-      "source_count": 10
     },
     {
       "surface_form": "nondiagnostic",
       "normalized_form": "Nondiagnostic",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T033",
-      "semantic_type_name": "Finding",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
+      "source_guidelines": [
+        "CREST_46165",
+        "CREST_46167"
+      ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "fully informed patient",
+      "normalized_form": "Fully informed patient",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "nonaggressive management approach",
+      "normalized_form": "Nonaggressive management approach",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T058",
+      "semantic_type_name": "Health Care Activity",
       "source_guidelines": [
         "CREST_46165"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "nonaggressive management approach",
-      "normalized_form": "Nonaggressive Management Approach",
+      "surface_form": "CT scans",
+      "normalized_form": "Computed Tomography Scans",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T058",
-      "semantic_type_name": "Health Care Activity",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -1803,6 +1774,17 @@
       "source_count": 1
     },
     {
+      "surface_form": "solid, indeterminate nodule",
+      "normalized_form": "Solitary Pulmonary Nodule",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T190",
+      "semantic_type_name": "Anatomical Abnormality",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
       "surface_form": "malignant growth",
       "normalized_form": "Malignant Neoplasm",
       "semantic_group": "DISO",
@@ -1811,7 +1793,7 @@
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "serial imaging",
@@ -1819,17 +1801,6 @@
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "nonsurgical biopsy",
-      "normalized_form": "Biopsy, NOS",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -1846,97 +1817,7 @@
         "CREST_46168",
         "CREST_46171"
       ],
-      "source_count": 6
-    },
-    {
-      "surface_form": "imaging tests",
-      "normalized_form": "Diagnostic Imaging",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46165",
-        "CREST_46169"
-      ],
-      "source_count": 4
-    },
-    {
-      "surface_form": "probability of malignancy",
-      "normalized_form": "Probability of malignancy",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "benign diagnosis",
-      "normalized_form": "Benign diagnosis",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T033",
-      "semantic_type_name": "Finding",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "specific medical treatment",
-      "normalized_form": "Medical treatment",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T058",
-      "semantic_type_name": "Health Care Activity",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "treatment",
-      "normalized_form": "Treatment",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T058",
-      "semantic_type_name": "Health Care Activity",
-      "source_guidelines": [
-        "CREST_46165",
-        "CREST_46169"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "malignant diagnosis",
-      "normalized_form": "Malignant diagnosis",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T033",
-      "semantic_type_name": "Finding",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "risk of surgical complications",
-      "normalized_form": "Surgical complication",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T037",
-      "semantic_type_name": "Injury or Poisoning",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "indeterminate nodule",
-      "normalized_form": "Indeterminate Nodule",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T033",
-      "semantic_type_name": "Finding",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
+      "source_count": 5
     },
     {
       "surface_form": "nonsurgical biopsy",
@@ -1947,55 +1828,11 @@
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "suspicious for malignancy",
-      "normalized_form": "Suspicious for Malignancy",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T033",
-      "semantic_type_name": "Finding",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "fully informed patient",
-      "normalized_form": "Fully Informed Patient",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "definitive diagnostic procedure",
-      "normalized_form": "Definitive Diagnostic Procedure",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "surgical diagnosis",
-      "normalized_form": "Surgical Diagnosis",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
       "source_count": 2
     },
     {
-      "surface_form": "≥8 mm in diameter",
-      "normalized_form": "8 mm",
+      "surface_form": "clinical pretest probability",
+      "normalized_form": "Pretest Probability",
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
@@ -2005,22 +1842,99 @@
       "source_count": 1
     },
     {
-      "surface_form": "thoracoscopy",
-      "normalized_form": "Thoracoscopy",
+      "surface_form": "imaging tests",
+      "normalized_form": "Diagnostic Imaging Procedure",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46165"
       ],
       "source_count": 1
     },
     {
+      "surface_form": "probability of malignancy",
+      "normalized_form": "Probability of Malignancy",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T081",
+      "semantic_type_name": "Quantitative Concept",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "benign diagnosis",
+      "normalized_form": "Benign Diagnosis",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "specific medical treatment",
+      "normalized_form": "Medical Treatment",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T058",
+      "semantic_type_name": "Health Care Activity",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "malignant diagnosis",
+      "normalized_form": "Malignant Neoplasm Diagnosis",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "risk of surgical complications",
+      "normalized_form": "Surgical Complication Risk",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T201",
+      "semantic_type_name": "Clinical Attribute",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": ">8 mm in diameter",
+      "normalized_form": "8 millimeters",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T081",
+      "semantic_type_name": "Quantitative Concept",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 3
+    },
+    {
+      "surface_form": "surgical diagnosis",
+      "normalized_form": "Surgical diagnosis",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 2
+    },
+    {
       "surface_form": "diagnostic wedge resection",
       "normalized_form": "Diagnostic Wedge Resection",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -2052,8 +1966,8 @@
       "surface_form": "risk factors",
       "normalized_form": "Risk Factors",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T201",
-      "semantic_type_name": "Clinical Attribute",
+      "semantic_type_tui": "T102",
+      "semantic_type_name": "Group Attribute",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -2063,8 +1977,8 @@
       "surface_form": "CT surveillance",
       "normalized_form": "Computed Tomography Surveillance",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -2074,8 +1988,8 @@
       "surface_form": "size of the nodule",
       "normalized_form": "Nodule Size",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -2083,7 +1997,7 @@
     },
     {
       "surface_form": "≤4 mm in diameter",
-      "normalized_form": "4 mm diameter",
+      "normalized_form": "4 Millimeters",
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
@@ -2096,8 +2010,8 @@
       "surface_form": "followed",
       "normalized_form": "Follow-up",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "semantic_type_tui": "T058",
+      "semantic_type_name": "Health Care Activity",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -2105,7 +2019,7 @@
     },
     {
       "surface_form": "potential benefits and harms",
-      "normalized_form": "Benefit and Harm",
+      "normalized_form": "Benefits and Harms",
       "semantic_group": "CONC",
       "semantic_type_tui": "T080",
       "semantic_type_name": "Qualitative Concept",
@@ -2115,15 +2029,26 @@
       "source_count": 1
     },
     {
+      "surface_form": "approach",
+      "normalized_form": "Approach",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T169",
+      "semantic_type_name": "Functional Concept",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
       "surface_form": ">4 mm to 6 mm",
-      "normalized_form": "4 mm to 6 mm",
+      "normalized_form": "4 to 6 Millimeters",
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "reevaluated",
@@ -2134,7 +2059,7 @@
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 2
+      "source_count": 1
     },
     {
       "surface_form": "12 months",
@@ -2145,18 +2070,18 @@
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 3
+      "source_count": 2
     },
     {
       "surface_form": ">6 mm to 8 mm",
-      "normalized_form": "6 mm to 8 mm",
+      "normalized_form": "6 to 8 Millimeters",
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "6 and 12 months",
@@ -2182,14 +2107,14 @@
     },
     {
       "surface_form": "≤8 mm in diameter",
-      "normalized_form": "8 Millimeters",
+      "normalized_form": "8 Millimeters in Diameter",
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "risk factors for lung cancer",
@@ -2197,6 +2122,17 @@
       "semantic_group": "CONC",
       "semantic_type_tui": "T102",
       "semantic_type_name": "Group Attribute",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "≤4 mm in diameter",
+      "normalized_form": "4 Millimeters in Diameter",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T081",
+      "semantic_type_name": "Quantitative Concept",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -2233,58 +2169,14 @@
       "source_guidelines": [
         "CREST_46165"
       ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "nonsolid (pure ground glass) nodule",
-      "normalized_form": "Ground-Glass Nodule",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T190",
-      "semantic_type_name": "Anatomical Abnormality",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
       "source_count": 1
     },
     {
       "surface_form": "nonsolid",
-      "normalized_form": "Nonsolid",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "pure ground glass",
-      "normalized_form": "Ground Glass",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "≤5 mm",
-      "normalized_form": "5 Millimeter",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "nonsolid (pure ground glass) nodule",
-      "normalized_form": "Ground-glass pulmonary nodule",
+      "normalized_form": "Ground-glass",
       "semantic_group": "DISO",
-      "semantic_type_tui": "T190",
-      "semantic_type_name": "Anatomical Abnormality",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -2299,11 +2191,66 @@
       "source_guidelines": [
         "CREST_46165"
       ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "≤5 mm",
+      "normalized_form": "5 millimeters",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T081",
+      "semantic_type_name": "Quantitative Concept",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
       "source_count": 1
     },
     {
-      "surface_form": ">5 mm in diameter",
-      "normalized_form": "Greater than 5 millimeters in diameter",
+      "surface_form": "diameter",
+      "normalized_form": "Diameter",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T081",
+      "semantic_type_name": "Quantitative Concept",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 3
+    },
+    {
+      "surface_form": "further evaluation",
+      "normalized_form": "Diagnostic Evaluation",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "nonsolid (pure ground glass) nodule",
+      "normalized_form": "Ground-glass pulmonary nodule",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "pure ground glass",
+      "normalized_form": "Pure ground-glass",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": ">5 mm",
+      "normalized_form": "Greater than 5 millimeters",
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
@@ -2336,7 +2283,7 @@
     },
     {
       "surface_form": "part-solid nodule",
-      "normalized_form": "Part-solid pulmonary nodule",
+      "normalized_form": "Part-Solid Pulmonary Nodule",
       "semantic_group": "DISO",
       "semantic_type_tui": "T190",
       "semantic_type_name": "Anatomical Abnormality",
@@ -2346,33 +2293,22 @@
       "source_count": 2
     },
     {
-      "surface_form": "≤8 mm in diameter",
-      "normalized_form": "8 millimeters in diameter",
+      "surface_form": "3, 12, and 24 months",
+      "normalized_form": "3, 12, and 24 months",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "semantic_type_tui": "T079",
+      "semantic_type_name": "Temporal Concept",
       "source_guidelines": [
         "CREST_46165"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "3 months",
-      "normalized_form": "3 months",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T079",
-      "semantic_type_name": "Temporal Concept",
-      "source_guidelines": [
-        "CREST_46165"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "annual",
-      "normalized_form": "Annual",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T079",
-      "semantic_type_name": "Temporal Concept",
+      "surface_form": "annual CT surveillance",
+      "normalized_form": "Annual Computed Tomography Surveillance",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -2390,11 +2326,22 @@
       "source_count": 1
     },
     {
-      "surface_form": "8 mm",
-      "normalized_form": "8 millimeter",
+      "surface_form": "repeat chest CT",
+      "normalized_form": "repeat chest computed tomography",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "3 months",
+      "normalized_form": "3 months",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "semantic_type_tui": "T079",
+      "semantic_type_name": "Temporal Concept",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -2402,7 +2349,7 @@
     },
     {
       "surface_form": "dominant nodule",
-      "normalized_form": "Dominant Nodule",
+      "normalized_form": "Dominant nodule",
       "semantic_group": "DISO",
       "semantic_type_tui": "T190",
       "semantic_type_name": "Anatomical Abnormality",
@@ -2412,11 +2359,22 @@
       "source_count": 1
     },
     {
-      "surface_form": "one or more additional small nodules",
-      "normalized_form": "Multiple Small Nodules",
+      "surface_form": "additional small nodules",
+      "normalized_form": "Small pulmonary nodules",
       "semantic_group": "DISO",
       "semantic_type_tui": "T190",
       "semantic_type_name": "Anatomical Abnormality",
+      "source_guidelines": [
+        "CREST_46165"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "evaluated individually",
+      "normalized_form": "Evaluation",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46165"
       ],
@@ -2424,7 +2382,7 @@
     },
     {
       "surface_form": "histopathological confirmation",
-      "normalized_form": "Histopathologic Confirmation",
+      "normalized_form": "Histopathologic confirmation",
       "semantic_group": "PROC",
       "semantic_type_tui": "T059",
       "semantic_type_name": "Laboratory Procedure",
@@ -2444,11 +2402,24 @@
         "CREST_46167",
         "CREST_46169"
       ],
-      "source_count": 5
+      "source_count": 8
+    },
+    {
+      "surface_form": "patients with known or suspected lung cancer",
+      "normalized_form": "Patients with Lung Cancer",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
+      "source_guidelines": [
+        "CREST_46166",
+        "CREST_46168",
+        "CREST_46170"
+      ],
+      "source_count": 4
     },
     {
       "surface_form": "delivery of care",
-      "normalized_form": "Delivery of Care",
+      "normalized_form": "Patient Care",
       "semantic_group": "PROC",
       "semantic_type_tui": "T058",
       "semantic_type_name": "Health Care Activity",
@@ -2459,10 +2430,10 @@
     },
     {
       "surface_form": "timely",
-      "normalized_form": "Timely",
+      "normalized_form": "Time Factors",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
+      "semantic_type_tui": "T079",
+      "semantic_type_name": "Temporal Concept",
       "source_guidelines": [
         "CREST_46166"
       ],
@@ -2470,7 +2441,7 @@
     },
     {
       "surface_form": "efficient",
-      "normalized_form": "Efficient",
+      "normalized_form": "Efficiency",
       "semantic_group": "CONC",
       "semantic_type_tui": "T080",
       "semantic_type_name": "Qualitative Concept",
@@ -2480,8 +2451,19 @@
       "source_count": 1
     },
     {
+      "surface_form": "patients with lung cancer",
+      "normalized_form": "Patient with Lung Neoplasm",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
+      "source_guidelines": [
+        "CREST_46166"
+      ],
+      "source_count": 1
+    },
+    {
       "surface_form": "multimodality therapy",
-      "normalized_form": "Multimodality Therapy",
+      "normalized_form": "Multimodal Therapy",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
@@ -2492,15 +2474,14 @@
     },
     {
       "surface_form": "multidisciplinary team approach",
-      "normalized_form": "Multidisciplinary Team",
+      "normalized_form": "Patient Care Team",
       "semantic_group": "ORGA",
-      "semantic_type_tui": "T092",
-      "semantic_type_name": "Organization",
+      "semantic_type_tui": "T093",
+      "semantic_type_name": "Health Care Related Organization",
       "source_guidelines": [
-        "CREST_46166",
-        "CREST_46168"
+        "CREST_46166"
       ],
-      "source_count": 2
+      "source_count": 1
     },
     {
       "surface_form": "small cell lung cancer",
@@ -2539,24 +2520,34 @@
       "surface_form": "diagnosis",
       "normalized_form": "Diagnosis",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T078",
-      "semantic_type_name": "Idea or Concept",
+      "semantic_type_tui": "T169",
+      "semantic_type_name": "Functional Concept",
       "source_guidelines": [
-        "CREST_46167",
-        "CREST_46170"
+        "CREST_46167"
       ],
-      "source_count": 8
+      "source_count": 7
     },
     {
       "surface_form": "least invasive method",
       "normalized_form": "Least Invasive Method",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46167"
       ],
-      "source_count": 2
+      "source_count": 1
+    },
+    {
+      "surface_form": "sputum",
+      "normalized_form": "Sputum",
+      "semantic_group": "ANAT",
+      "semantic_type_tui": "T031",
+      "semantic_type_name": "Body Substance",
+      "source_guidelines": [
+        "CREST_46167"
+      ],
+      "source_count": 1
     },
     {
       "surface_form": "thoracentesis",
@@ -2571,26 +2562,14 @@
     },
     {
       "surface_form": "fine needle aspiration",
-      "normalized_form": "Fine-Needle Aspiration Biopsy",
+      "normalized_form": "Fine Needle Aspiration Biopsy",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46167"
       ],
       "source_count": 2
-    },
-    {
-      "surface_form": "bronchoscopy",
-      "normalized_form": "Bronchoscopy",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46167",
-        "CREST_46171"
-      ],
-      "source_count": 7
     },
     {
       "surface_form": "transbronchial needle aspiration",
@@ -2605,26 +2584,25 @@
     },
     {
       "surface_form": "patient's presentation",
-      "normalized_form": "Patient Presentation",
+      "normalized_form": "Clinical Presentation",
       "semantic_group": "DISO",
       "semantic_type_tui": "T033",
       "semantic_type_name": "Finding",
       "source_guidelines": [
         "CREST_46167"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
-      "surface_form": "extensive infiltration of the mediastinum",
-      "normalized_form": "Mediastinal Infiltration",
+      "surface_form": "extensive infiltration",
+      "normalized_form": "Infiltration",
       "semantic_group": "DISO",
-      "semantic_type_tui": "T190",
-      "semantic_type_name": "Anatomical Abnormality",
+      "semantic_type_tui": "T046",
+      "semantic_type_name": "Pathologic Function",
       "source_guidelines": [
-        "CREST_46167",
-        "CREST_46169"
+        "CREST_46167"
       ],
-      "source_count": 2
+      "source_count": 1
     },
     {
       "surface_form": "mediastinum",
@@ -2636,11 +2614,11 @@
         "CREST_46167",
         "CREST_46169"
       ],
-      "source_count": 6
+      "source_count": 5
     },
     {
       "surface_form": "radiographic studies",
-      "normalized_form": "Radiographic Procedure",
+      "normalized_form": "Radiographic Imaging Procedure",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -2677,17 +2655,6 @@
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "least invasive and safest method",
-      "normalized_form": "Least Invasive and Safest Method",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -2741,7 +2708,7 @@
     },
     {
       "surface_form": "solitary extrathoracic site",
-      "normalized_form": "Solitary extrathoracic site",
+      "normalized_form": "Solitary Extrathoracic Site",
       "semantic_group": "ANAT",
       "semantic_type_tui": "T029",
       "semantic_type_name": "Body Location or Region",
@@ -2749,33 +2716,10 @@
         "CREST_46167"
       ],
       "source_count": 1
-    },
-    {
-      "surface_form": "metastasis",
-      "normalized_form": "Metastatic Neoplasm",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
-      "semantic_type_name": "Neoplastic Process",
-      "source_guidelines": [
-        "CREST_46167",
-        "CREST_46169"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "metastatic site",
-      "normalized_form": "Metastatic site",
-      "semantic_group": "ANAT",
-      "semantic_type_tui": "T029",
-      "semantic_type_name": "Body Location or Region",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 2
     },
     {
       "surface_form": "tissue confirmation",
-      "normalized_form": "Tissue confirmation",
+      "normalized_form": "Tissue Confirmation",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -2785,22 +2729,22 @@
       "source_count": 1
     },
     {
-      "surface_form": "FNA",
-      "normalized_form": "Fine-Needle Aspiration",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "site",
-      "normalized_form": "Site",
+      "surface_form": "metastatic site",
+      "normalized_form": "Metastatic Site",
       "semantic_group": "ANAT",
       "semantic_type_tui": "T029",
       "semantic_type_name": "Body Location or Region",
+      "source_guidelines": [
+        "CREST_46167"
+      ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "FNA",
+      "normalized_form": "Fine Needle Aspiration",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -2809,9 +2753,9 @@
     {
       "surface_form": "multiple distant sites",
       "normalized_form": "Multiple Distant Sites",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T082",
-      "semantic_type_name": "Spatial Concept",
+      "semantic_group": "ANAT",
+      "semantic_type_tui": "T029",
+      "semantic_type_name": "Body Location or Region",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -2829,22 +2773,44 @@
       "source_count": 1
     },
     {
+      "surface_form": "lung lesion",
+      "normalized_form": "Lung Lesion",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
+      "source_guidelines": [
+        "CREST_46167"
+      ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "least invasive method",
+      "normalized_form": "Minimally Invasive Procedure",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "source_guidelines": [
+        "CREST_46167"
+      ],
+      "source_count": 1
+    },
+    {
       "surface_form": "accessible pleural effusion",
       "normalized_form": "Pleural Effusion",
       "semantic_group": "DISO",
-      "semantic_type_tui": "T047",
-      "semantic_type_name": "Disease or Syndrome",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
       "source_guidelines": [
         "CREST_46167"
       ],
       "source_count": 4
     },
     {
-      "surface_form": "patients suspected of having lung cancer",
-      "normalized_form": "Suspected lung cancer patient",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
+      "surface_form": "the cause",
+      "normalized_form": "Cause",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T169",
+      "semantic_type_name": "Functional Concept",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -2862,15 +2828,15 @@
       "source_count": 1
     },
     {
-      "surface_form": "negative",
-      "normalized_form": "Negative",
-      "semantic_group": "PHEN",
-      "semantic_type_tui": "T034",
-      "semantic_type_name": "Laboratory or Test Result",
+      "surface_form": "cytology",
+      "normalized_form": "Cytology",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T059",
+      "semantic_type_name": "Laboratory Procedure",
       "source_guidelines": [
         "CREST_46167"
       ],
-      "source_count": 2
+      "source_count": 1
     },
     {
       "surface_form": "pleural biopsy",
@@ -2917,42 +2883,6 @@
       "source_count": 1
     },
     {
-      "surface_form": "patients",
-      "normalized_form": "Patients",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
-        "CREST_46167",
-        "CREST_46168",
-        "CREST_46169",
-        "CREST_46171"
-      ],
-      "source_count": 10
-    },
-    {
-      "surface_form": "sputum",
-      "normalized_form": "Sputum",
-      "semantic_group": "ANAT",
-      "semantic_type_tui": "T031",
-      "semantic_type_name": "Body Substance",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "cytology",
-      "normalized_form": "Cytology",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T059",
-      "semantic_type_name": "Laboratory Procedure",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 2
-    },
-    {
       "surface_form": "carcinoma",
       "normalized_form": "Carcinoma",
       "semantic_group": "DISO",
@@ -2975,19 +2905,8 @@
       "source_count": 3
     },
     {
-      "surface_form": "patients suspected of having lung cancer",
-      "normalized_form": "Patients Suspected of Having Lung Cancer",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
       "surface_form": "central lesion",
-      "normalized_form": "Central Lesion",
+      "normalized_form": "Central lesion",
       "semantic_group": "DISO",
       "semantic_type_tui": "T190",
       "semantic_type_name": "Anatomical Abnormality",
@@ -2998,7 +2917,7 @@
     },
     {
       "surface_form": "further testing",
-      "normalized_form": "Further Diagnostic Testing",
+      "normalized_form": "Diagnostic test",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -3008,31 +2927,9 @@
       "source_count": 1
     },
     {
-      "surface_form": "bronchoscopy results",
-      "normalized_form": "Bronchoscopy Result",
-      "semantic_group": "PHEN",
-      "semantic_type_tui": "T034",
-      "semantic_type_name": "Laboratory or Test Result",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "non-diagnostic",
-      "normalized_form": "Non-diagnostic",
-      "semantic_group": "PHEN",
-      "semantic_type_tui": "T034",
-      "semantic_type_name": "Laboratory or Test Result",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "suspicion",
-      "normalized_form": "Suspicion",
-      "semantic_group": "CONC",
+      "surface_form": "suspicion of lung cancer",
+      "normalized_form": "Suspicion of lung neoplasm",
+      "semantic_group": "DISO",
       "semantic_type_tui": "T033",
       "semantic_type_name": "Finding",
       "source_guidelines": [
@@ -3041,8 +2938,19 @@
       "source_count": 1
     },
     {
+      "surface_form": "patients suspected of having lung cancer",
+      "normalized_form": "Patient population with suspected lung cancer",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
+      "source_guidelines": [
+        "CREST_46167"
+      ],
+      "source_count": 1
+    },
+    {
       "surface_form": "peripheral lung nodule",
-      "normalized_form": "Peripheral Lung Nodule",
+      "normalized_form": "Peripheral lung nodule",
       "semantic_group": "DISO",
       "semantic_type_tui": "T190",
       "semantic_type_name": "Anatomical Abnormality",
@@ -3053,7 +2961,7 @@
     },
     {
       "surface_form": "lung nodule",
-      "normalized_form": "Lung Nodule",
+      "normalized_form": "Lung nodule",
       "semantic_group": "DISO",
       "semantic_type_tui": "T190",
       "semantic_type_name": "Anatomical Abnormality",
@@ -3064,7 +2972,7 @@
     },
     {
       "surface_form": "tissue diagnosis",
-      "normalized_form": "Tissue Diagnosis",
+      "normalized_form": "Tissue diagnosis",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -3074,11 +2982,33 @@
       "source_count": 2
     },
     {
-      "surface_form": "surgical candidacy",
-      "normalized_form": "Surgical Candidacy",
+      "surface_form": "uncertainty of diagnosis",
+      "normalized_form": "Diagnostic uncertainty",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T201",
-      "semantic_type_name": "Clinical Attribute",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
+      "source_guidelines": [
+        "CREST_46167"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "poor surgical candidacy",
+      "normalized_form": "Poor surgical candidacy",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
+      "source_guidelines": [
+        "CREST_46167"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "surgical candidacy",
+      "normalized_form": "Surgical candidacy",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -3086,7 +3016,7 @@
     },
     {
       "surface_form": "radial EBUS",
-      "normalized_form": "Radial Endobronchial Ultrasound",
+      "normalized_form": "Radial endobronchial ultrasound",
       "semantic_group": "DEVI",
       "semantic_type_tui": "T074",
       "semantic_type_name": "Medical Device",
@@ -3096,19 +3026,8 @@
       "source_count": 1
     },
     {
-      "surface_form": "EBUS",
-      "normalized_form": "Endobronchial Ultrasound",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
       "surface_form": "adjunct imaging modality",
-      "normalized_form": "Adjunct Imaging Modality",
+      "normalized_form": "Adjunct imaging modality",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -3119,32 +3038,10 @@
     },
     {
       "surface_form": "imaging modality",
-      "normalized_form": "Imaging Modality",
+      "normalized_form": "Imaging modality",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "uncertainty of diagnosis",
-      "normalized_form": "Diagnostic Uncertainty",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T201",
-      "semantic_type_name": "Clinical Attribute",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "suspected of having lung cancer",
-      "normalized_form": "Suspected Lung Cancer",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
-      "semantic_type_name": "Neoplastic Process",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -3162,44 +3059,11 @@
       "source_count": 1
     },
     {
-      "surface_form": "lung lesions",
-      "normalized_form": "Lung Lesion",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T190",
-      "semantic_type_name": "Anatomical Abnormality",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
       "surface_form": "electromagnetic navigation guidance",
       "normalized_form": "Electromagnetic Navigation Guidance",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "equipment",
-      "normalized_form": "Equipment",
-      "semantic_group": "DEVI",
-      "semantic_type_tui": "T074",
-      "semantic_type_name": "Medical Device",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "expertise",
-      "normalized_form": "Expertise",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -3209,41 +3073,30 @@
       "surface_form": "peripheral lesion",
       "normalized_form": "Peripheral Lesion",
       "semantic_group": "DISO",
-      "semantic_type_tui": "T190",
-      "semantic_type_name": "Anatomical Abnormality",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
       "source_guidelines": [
         "CREST_46167"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "management",
-      "normalized_form": "Disease Management",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T058",
-      "semantic_type_name": "Health Care Activity",
+      "surface_form": "non-diagnostic",
+      "normalized_form": "Nondiagnostic Result",
+      "semantic_group": "PHEN",
+      "semantic_type_tui": "T034",
+      "semantic_type_name": "Laboratory or Test Result",
       "source_guidelines": [
         "CREST_46167"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "diagnostic option",
-      "normalized_form": "Diagnostic Option",
+      "surface_form": "suspicion",
+      "normalized_form": "Suspicion",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T169",
-      "semantic_type_name": "Functional Concept",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "suspicion of lung cancer",
-      "normalized_form": "Suspected Lung Neoplasm",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
-      "semantic_type_name": "Neoplastic Process",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -3261,24 +3114,33 @@
       "source_count": 1
     },
     {
-      "surface_form": "non-small cell lung cancer",
-      "normalized_form": "Non-Small Cell Lung Carcinoma",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
-      "semantic_type_name": "Neoplastic Process",
+      "surface_form": "cytology",
+      "normalized_form": "Cytologic Examination",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T059",
+      "semantic_type_name": "Laboratory Procedure",
       "source_guidelines": [
-        "CREST_46167",
-        "CREST_46169",
-        "CREST_46170"
+        "CREST_46167"
       ],
-      "source_count": 7
+      "source_count": 1
+    },
+    {
+      "surface_form": "sputum",
+      "normalized_form": "Sputum Specimen",
+      "semantic_group": "OBJC",
+      "semantic_type_tui": "T031",
+      "semantic_type_name": "Body Substance",
+      "source_guidelines": [
+        "CREST_46167"
+      ],
+      "source_count": 1
     },
     {
       "surface_form": "bronchoscopic specimens",
       "normalized_form": "Bronchoscopic Specimen",
       "semantic_group": "OBJC",
-      "semantic_type_tui": "T167",
-      "semantic_type_name": "Substance",
+      "semantic_type_tui": "T031",
+      "semantic_type_name": "Body Substance",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -3296,8 +3158,8 @@
       "source_count": 1
     },
     {
-      "surface_form": "tissue",
-      "normalized_form": "Tissue",
+      "surface_form": "adequate tissue",
+      "normalized_form": "Adequate Tissue",
       "semantic_group": "ANAT",
       "semantic_type_tui": "T024",
       "semantic_type_name": "Tissue",
@@ -3310,8 +3172,8 @@
       "surface_form": "histologic type",
       "normalized_form": "Histologic Type",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T185",
-      "semantic_type_name": "Classification",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
       "source_guidelines": [
         "CREST_46167",
         "CREST_46170"
@@ -3322,8 +3184,19 @@
       "surface_form": "molecular analysis",
       "normalized_form": "Molecular Analysis",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T059",
-      "semantic_type_name": "Laboratory Procedure",
+      "semantic_type_tui": "T063",
+      "semantic_type_name": "Molecular Biology Research Technique",
+      "source_guidelines": [
+        "CREST_46167"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "erroneous diagnosis",
+      "normalized_form": "Incorrect Diagnosis",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -3333,19 +3206,8 @@
       "surface_form": "cytology specimen",
       "normalized_form": "Cytology Specimen",
       "semantic_group": "OBJC",
-      "semantic_type_tui": "T167",
-      "semantic_type_name": "Substance",
-      "source_guidelines": [
-        "CREST_46167"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "clinical presentation",
-      "normalized_form": "Clinical Presentation",
-      "semantic_group": "PHEN",
-      "semantic_type_tui": "T033",
-      "semantic_type_name": "Finding",
+      "semantic_type_tui": "T031",
+      "semantic_type_name": "Body Substance",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -3364,10 +3226,21 @@
     },
     {
       "surface_form": "definitive cell type",
+      "normalized_form": "Definitive Cell Type",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T185",
+      "semantic_type_name": "Classification",
+      "source_guidelines": [
+        "CREST_46167"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "cell type",
       "normalized_form": "Cell Type",
-      "semantic_group": "GENE",
-      "semantic_type_tui": "T025",
-      "semantic_type_name": "Cell",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T185",
+      "semantic_type_name": "Classification",
       "source_guidelines": [
         "CREST_46167"
       ],
@@ -3383,6 +3256,17 @@
         "CREST_46168"
       ],
       "source_count": 2
+    },
+    {
+      "surface_form": "multidisciplinary team",
+      "normalized_form": "Multidisciplinary Team",
+      "semantic_group": "ORGA",
+      "semantic_type_tui": "T092",
+      "semantic_type_name": "Organization",
+      "source_guidelines": [
+        "CREST_46168"
+      ],
+      "source_count": 1
     },
     {
       "surface_form": "thoracic surgeon",
@@ -3440,17 +3324,6 @@
       "source_count": 1
     },
     {
-      "surface_form": "potential candidates",
-      "normalized_form": "Potential Candidates",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
-        "CREST_46168"
-      ],
-      "source_count": 1
-    },
-    {
       "surface_form": "fully evaluated",
       "normalized_form": "Physiologic Evaluation",
       "semantic_group": "PROC",
@@ -3464,9 +3337,9 @@
     {
       "surface_form": "age",
       "normalized_form": "Age",
-      "semantic_group": "PHYS",
-      "semantic_type_tui": "T201",
-      "semantic_type_name": "Clinical Attribute",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
       "source_guidelines": [
         "CREST_46168"
       ],
@@ -3484,8 +3357,19 @@
       "source_count": 1
     },
     {
+      "surface_form": "perioperative cardiovascular risk",
+      "normalized_form": "Perioperative Cardiovascular Risk",
+      "semantic_group": "PHYS",
+      "semantic_type_tui": "T201",
+      "semantic_type_name": "Clinical Attribute",
+      "source_guidelines": [
+        "CREST_46168"
+      ],
+      "source_count": 1
+    },
+    {
       "surface_form": "preoperative cardiologic evaluation",
-      "normalized_form": "Preoperative Cardiac Evaluation",
+      "normalized_form": "Preoperative Cardiologic Evaluation",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -3496,7 +3380,7 @@
     },
     {
       "surface_form": "cardiologic guidelines",
-      "normalized_form": "Cardiology Guidelines",
+      "normalized_form": "Cardiologic Guidelines",
       "semantic_group": "CONC",
       "semantic_type_tui": "T170",
       "semantic_type_name": "Intellectual Product",
@@ -3525,18 +3409,18 @@
       "source_guidelines": [
         "CREST_46168"
       ],
-      "source_count": 2
+      "source_count": 3
     },
     {
       "surface_form": "diffusing capacity",
-      "normalized_form": "Diffusing Capacity of the Lung",
+      "normalized_form": "Diffusing Capacity",
       "semantic_group": "PHYS",
       "semantic_type_tui": "T201",
       "semantic_type_name": "Clinical Attribute",
       "source_guidelines": [
         "CREST_46168"
       ],
-      "source_count": 2
+      "source_count": 1
     },
     {
       "surface_form": "DLCO",
@@ -3547,7 +3431,7 @@
       "source_guidelines": [
         "CREST_46168"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "predicted postoperative",
@@ -3569,7 +3453,7 @@
       "source_guidelines": [
         "CREST_46168"
       ],
-      "source_count": 4
+      "source_count": 5
     },
     {
       "surface_form": "PPO DLCO",
@@ -3580,25 +3464,14 @@
       "source_guidelines": [
         "CREST_46168"
       ],
-      "source_count": 3
+      "source_count": 5
     },
     {
       "surface_form": "patients with lung cancer",
-      "normalized_form": "Lung Cancer Patients",
+      "normalized_form": "Patient with Lung Cancer",
       "semantic_group": "LIVB",
       "semantic_type_tui": "T101",
       "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
-        "CREST_46168"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "tests",
-      "normalized_form": "Diagnostic Test",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46168"
       ],
@@ -3616,33 +3489,33 @@
       "source_count": 1
     },
     {
-      "surface_form": "PPO DLCO",
-      "normalized_form": "Predicted postoperative diffusing capacity of the lungs for carbon monoxide",
-      "semantic_group": "PHYS",
-      "semantic_type_tui": "T034",
-      "semantic_type_name": "Laboratory or Test Result",
+      "surface_form": "further tests",
+      "normalized_form": "Diagnostic Tests",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46168"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "<60% predicted",
-      "normalized_form": "Less than 60 percent predicted",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "surface_form": "resectional surgery",
+      "normalized_form": "Resectional Surgery",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46168"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "30% predicted",
-      "normalized_form": "30 percent predicted",
+      "surface_form": "predicted",
+      "normalized_form": "Predicted",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "semantic_type_tui": "T080",
+      "semantic_type_name": "Qualitative Concept",
       "source_guidelines": [
         "CREST_46168"
       ],
@@ -3650,21 +3523,21 @@
     },
     {
       "surface_form": "low technology exercise test",
-      "normalized_form": "Low technology exercise test",
+      "normalized_form": "Exercise Test",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46168"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "stair climb",
-      "normalized_form": "Stair climbing test",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
+      "normalized_form": "Stair Climbing",
+      "semantic_group": "ACTI",
+      "semantic_type_tui": "T056",
+      "semantic_type_name": "Daily or Recreational Activity",
       "source_guidelines": [
         "CREST_46168"
       ],
@@ -3672,29 +3545,29 @@
     },
     {
       "surface_form": "shuttle walk test",
-      "normalized_form": "Shuttle walk test",
+      "normalized_form": "Shuttle Walk Test",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46168"
       ],
-      "source_count": 3
+      "source_count": 4
     },
     {
-      "surface_form": "PPO FEV1 <30% predicted",
-      "normalized_form": "Predicted postoperative forced expiratory volume in 1 second less than 30 percent predicted",
-      "semantic_group": "PHYS",
-      "semantic_type_tui": "T201",
-      "semantic_type_name": "Clinical Attribute",
+      "surface_form": "patients with lung cancer",
+      "normalized_form": "Lung Cancer Patient",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
       "source_guidelines": [
         "CREST_46168"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
-      "surface_form": "PPO DLCO <30% predicted",
-      "normalized_form": "Predicted postoperative diffusing capacity of the lungs for carbon monoxide less than 30 percent predicted",
+      "surface_form": "performance",
+      "normalized_form": "Performance",
       "semantic_group": "PHYS",
       "semantic_type_tui": "T201",
       "semantic_type_name": "Clinical Attribute",
@@ -3712,14 +3585,14 @@
       "source_guidelines": [
         "CREST_46168"
       ],
-      "source_count": 4
+      "source_count": 5
     },
     {
       "surface_form": "measurement",
       "normalized_form": "Measurement",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "semantic_group": "ACTI",
+      "semantic_type_tui": "T059",
+      "semantic_type_name": "Laboratory Procedure",
       "source_guidelines": [
         "CREST_46168"
       ],
@@ -3737,55 +3610,22 @@
       "source_count": 2
     },
     {
-      "surface_form": "walk <25 shuttles",
-      "normalized_form": "Shuttle Walk Test performance less than 25 shuttles",
-      "semantic_group": "PHYS",
-      "semantic_type_tui": "T201",
-      "semantic_type_name": "Clinical Attribute",
+      "surface_form": "walk",
+      "normalized_form": "Walking",
+      "semantic_group": "ACTI",
+      "semantic_type_tui": "T056",
+      "semantic_type_name": "Daily or Recreational Activity",
       "source_guidelines": [
         "CREST_46168"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "<25 shuttles",
-      "normalized_form": "Less than 25 shuttles",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
-      "source_guidelines": [
-        "CREST_46168"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "<400 m",
-      "normalized_form": "Less than 400 meters",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
-      "source_guidelines": [
-        "CREST_46168"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "climb <22 m",
-      "normalized_form": "Stair Climbing Test performance less than 22 meters",
-      "semantic_group": "PHYS",
-      "semantic_type_tui": "T201",
-      "semantic_type_name": "Clinical Attribute",
-      "source_guidelines": [
-        "CREST_46168"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "<22 m",
-      "normalized_form": "Less than 22 meters",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "surface_form": "climb",
+      "normalized_form": "Climbing",
+      "semantic_group": "ACTI",
+      "semantic_type_tui": "T056",
+      "semantic_type_name": "Daily or Recreational Activity",
       "source_guidelines": [
         "CREST_46168"
       ],
@@ -3793,21 +3633,10 @@
     },
     {
       "surface_form": "symptom limited stair climbing test",
-      "normalized_form": "Symptom-limited stair climbing test",
+      "normalized_form": "Symptom-Limited Stair Climbing Test",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46168"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "Vo2max",
-      "normalized_form": "VO2 max",
-      "semantic_group": "PHYS",
-      "semantic_type_tui": "T201",
-      "semantic_type_name": "Clinical Attribute",
       "source_guidelines": [
         "CREST_46168"
       ],
@@ -3822,11 +3651,11 @@
       "source_guidelines": [
         "CREST_46168"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "mL/kg/min",
-      "normalized_form": "Milliliters per kilogram per minute",
+      "normalized_form": "milliliter per kilogram per minute",
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
@@ -3836,11 +3665,11 @@
       "source_count": 1
     },
     {
-      "surface_form": "predicted",
-      "normalized_form": "Predicted",
+      "surface_form": "35% predicted",
+      "normalized_form": "Predicted Percentage",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
+      "semantic_type_tui": "T081",
+      "semantic_type_name": "Quantitative Concept",
       "source_guidelines": [
         "CREST_46168"
       ],
@@ -3902,6 +3731,28 @@
       "source_count": 2
     },
     {
+      "surface_form": "diffusion capacity",
+      "normalized_form": "Diffusing Capacity of the Lung",
+      "semantic_group": "PHYS",
+      "semantic_type_tui": "T201",
+      "semantic_type_name": "Clinical Attribute",
+      "source_guidelines": [
+        "CREST_46168"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "completion",
+      "normalized_form": "Completion",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T079",
+      "semantic_type_name": "Temporal Concept",
+      "source_guidelines": [
+        "CREST_46168"
+      ],
+      "source_count": 1
+    },
+    {
       "surface_form": "upper lobe emphysema",
       "normalized_form": "Upper Lobe Emphysema",
       "semantic_group": "DISO",
@@ -3918,6 +3769,17 @@
       "semantic_group": "ANAT",
       "semantic_type_tui": "T029",
       "semantic_type_name": "Body Location or Region",
+      "source_guidelines": [
+        "CREST_46168"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "emphysema",
+      "normalized_form": "Emphysema",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T047",
+      "semantic_type_name": "Disease or Syndrome",
       "source_guidelines": [
         "CREST_46168"
       ],
@@ -3957,6 +3819,28 @@
       "source_count": 1
     },
     {
+      "surface_form": "resection",
+      "normalized_form": "Surgical Excision",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "source_guidelines": [
+        "CREST_46168"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "candidates",
+      "normalized_form": "Candidates",
+      "semantic_group": "LIVB",
+      "semantic_type_tui": "T101",
+      "semantic_type_name": "Patient or Disabled Group",
+      "source_guidelines": [
+        "CREST_46168"
+      ],
+      "source_count": 1
+    },
+    {
       "surface_form": "tobacco dependence treatment",
       "normalized_form": "Tobacco Dependence Treatment",
       "semantic_group": "PROC",
@@ -3971,30 +3855,8 @@
       "surface_form": "tobacco dependence",
       "normalized_form": "Tobacco Dependence",
       "semantic_group": "DISO",
-      "semantic_type_tui": "T047",
-      "semantic_type_name": "Disease or Syndrome",
-      "source_guidelines": [
-        "CREST_46168"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "tobacco",
-      "normalized_form": "Tobacco",
-      "semantic_group": "OBJC",
-      "semantic_type_tui": "T168",
-      "semantic_type_name": "Food",
-      "source_guidelines": [
-        "CREST_46168"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "patients with lung cancer",
-      "normalized_form": "Patient with Lung Cancer",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
+      "semantic_type_tui": "T048",
+      "semantic_type_name": "Mental or Behavioral Dysfunction",
       "source_guidelines": [
         "CREST_46168"
       ],
@@ -4024,7 +3886,7 @@
     },
     {
       "surface_form": "Vo2max",
-      "normalized_form": "Maximum Oxygen Consumption",
+      "normalized_form": "Maximum Oxygen Uptake",
       "semantic_group": "PHYS",
       "semantic_type_tui": "T201",
       "semantic_type_name": "Clinical Attribute",
@@ -4035,10 +3897,43 @@
     },
     {
       "surface_form": "mL/kg/min",
-      "normalized_form": "Milliliter per Kilogram per Minute",
+      "normalized_form": "Milliliters per Kilogram per Minute",
       "semantic_group": "CONC",
       "semantic_type_tui": "T081",
       "semantic_type_name": "Quantitative Concept",
+      "source_guidelines": [
+        "CREST_46168"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "%",
+      "normalized_form": "Percent",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T081",
+      "semantic_type_name": "Quantitative Concept",
+      "source_guidelines": [
+        "CREST_46168"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "preoperative pulmonary rehabilitation",
+      "normalized_form": "Preoperative Pulmonary Rehabilitation",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "source_guidelines": [
+        "CREST_46168"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "postoperative pulmonary rehabilitation",
+      "normalized_form": "Postoperative Pulmonary Rehabilitation",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46168"
       ],
@@ -4056,59 +3951,37 @@
       "source_count": 1
     },
     {
-      "surface_form": "preoperative",
-      "normalized_form": "Preoperative",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T079",
-      "semantic_type_name": "Temporal Concept",
-      "source_guidelines": [
-        "CREST_46168"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "postoperative",
-      "normalized_form": "Postoperative",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T079",
-      "semantic_type_name": "Temporal Concept",
-      "source_guidelines": [
-        "CREST_46168"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "resectional surgery",
-      "normalized_form": "Resectional Surgery",
+      "surface_form": "treatment",
+      "normalized_form": "Treatment",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
-        "CREST_46168"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "eligible for treatment",
-      "normalized_form": "Treatment Eligible",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "patients",
-      "normalized_form": "Patient Group",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
         "CREST_46169"
       ],
       "source_count": 2
+    },
+    {
+      "surface_form": "scan",
+      "normalized_form": "Scan",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "contrast",
+      "normalized_form": "Contrast Media",
+      "semantic_group": "CHEM",
+      "semantic_type_tui": "T130",
+      "semantic_type_name": "Indicator, Reagent, or Diagnostic Aid",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
     },
     {
       "surface_form": "clinical evaluation",
@@ -4119,33 +3992,11 @@
       "source_guidelines": [
         "CREST_46169"
       ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "initial definition",
-      "normalized_form": "Initial Definition",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T170",
-      "semantic_type_name": "Intellectual Product",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "tumor stage",
       "normalized_form": "Tumor Stage",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "stage",
-      "normalized_form": "Stage",
       "semantic_group": "CONC",
       "semantic_type_tui": "T080",
       "semantic_type_name": "Qualitative Concept",
@@ -4177,11 +4028,11 @@
       "source_count": 2
     },
     {
-      "surface_form": "extrathoracic",
-      "normalized_form": "Extrathoracic Region",
-      "semantic_group": "ANAT",
-      "semantic_type_tui": "T029",
-      "semantic_type_name": "Body Location or Region",
+      "surface_form": "additional imaging",
+      "normalized_form": "Imaging",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46169"
       ],
@@ -4193,6 +4044,39 @@
       "semantic_group": "PHYS",
       "semantic_type_tui": "T201",
       "semantic_type_name": "Clinical Attribute",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "suspicious extrathoracic abnormalities",
+      "normalized_form": "Suspicious Extrathoracic Abnormality",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T190",
+      "semantic_type_name": "Anatomical Abnormality",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "extrathoracic",
+      "normalized_form": "Extrathoracic region",
+      "semantic_group": "ANAT",
+      "semantic_type_tui": "T029",
+      "semantic_type_name": "Body Location or Region",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "metastases",
+      "normalized_form": "Metastatic Neoplasm",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T191",
+      "semantic_type_name": "Neoplastic Process",
       "source_guidelines": [
         "CREST_46169"
       ],
@@ -4212,7 +4096,7 @@
     {
       "surface_form": "imaging finding",
       "normalized_form": "Imaging Finding",
-      "semantic_group": "PHEN",
+      "semantic_group": "DISO",
       "semantic_type_tui": "T033",
       "semantic_type_name": "Finding",
       "source_guidelines": [
@@ -4224,8 +4108,8 @@
       "surface_form": "abnormality",
       "normalized_form": "Abnormality",
       "semantic_group": "DISO",
-      "semantic_type_tui": "T020",
-      "semantic_type_name": "Acquired Abnormality",
+      "semantic_type_tui": "T190",
+      "semantic_type_name": "Anatomical Abnormality",
       "source_guidelines": [
         "CREST_46169"
       ],
@@ -4235,8 +4119,8 @@
       "surface_form": "tissue sampling",
       "normalized_form": "Tissue Sampling",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46169"
       ],
@@ -4266,7 +4150,7 @@
     },
     {
       "surface_form": "clinical stage III or IV",
-      "normalized_form": "Stage III or IV",
+      "normalized_form": "Clinical Stage III or IV",
       "semantic_group": "CONC",
       "semantic_type_tui": "T080",
       "semantic_type_name": "Qualitative Concept",
@@ -4277,10 +4161,10 @@
     },
     {
       "surface_form": "routine imaging",
-      "normalized_form": "Imaging",
+      "normalized_form": "Routine Imaging",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46169"
       ],
@@ -4298,7 +4182,7 @@
       "source_count": 1
     },
     {
-      "surface_form": "MRI",
+      "surface_form": "magnetic resonance imaging",
       "normalized_form": "Magnetic Resonance Imaging",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
@@ -4306,22 +4190,11 @@
       "source_guidelines": [
         "CREST_46169"
       ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "negative clinical evaluation",
-      "normalized_form": "Negative Clinical Evaluation",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T033",
-      "semantic_type_name": "Finding",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "extensive mediastinal infiltration of tumor",
-      "normalized_form": "Mediastinal Tumor Infiltration",
+      "normalized_form": "Extensive Mediastinal Tumor Infiltration",
       "semantic_group": "DISO",
       "semantic_type_tui": "T190",
       "semantic_type_name": "Anatomical Abnormality",
@@ -4329,6 +4202,28 @@
         "CREST_46169"
       ],
       "source_count": 1
+    },
+    {
+      "surface_form": "mediastinal infiltration",
+      "normalized_form": "Mediastinal Infiltration",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T190",
+      "semantic_type_name": "Anatomical Abnormality",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "tumor",
+      "normalized_form": "Neoplasm",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T191",
+      "semantic_type_name": "Neoplastic Process",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 2
     },
     {
       "surface_form": "distant metastases",
@@ -4340,6 +4235,17 @@
         "CREST_46169"
       ],
       "source_count": 6
+    },
+    {
+      "surface_form": "radiographic (CT) assessment",
+      "normalized_form": "Computed Tomography Assessment",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
     },
     {
       "surface_form": "mediastinal stage",
@@ -4365,7 +4271,7 @@
     },
     {
       "surface_form": "discrete mediastinal lymph node enlargement",
-      "normalized_form": "Mediastinal lymph node enlargement",
+      "normalized_form": "Mediastinal Lymph Node Enlargement",
       "semantic_group": "DISO",
       "semantic_type_tui": "T190",
       "semantic_type_name": "Anatomical Abnormality",
@@ -4376,7 +4282,7 @@
     },
     {
       "surface_form": "PET uptake",
-      "normalized_form": "Positron Emission Tomography uptake",
+      "normalized_form": "Positron Emission Tomography Uptake",
       "semantic_group": "PHEN",
       "semantic_type_tui": "T034",
       "semantic_type_name": "Laboratory or Test Result",
@@ -4387,7 +4293,7 @@
     },
     {
       "surface_form": "mediastinal nodes",
-      "normalized_form": "Mediastinal lymph nodes",
+      "normalized_form": "Mediastinal Lymph Nodes",
       "semantic_group": "ANAT",
       "semantic_type_tui": "T023",
       "semantic_type_name": "Body Part, Organ, or Organ Component",
@@ -4398,7 +4304,7 @@
     },
     {
       "surface_form": "invasive staging of the mediastinum",
-      "normalized_form": "Invasive mediastinal staging",
+      "normalized_form": "Invasive Mediastinal Staging",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -4409,21 +4315,32 @@
     },
     {
       "surface_form": "staging",
-      "normalized_form": "Cancer staging",
+      "normalized_form": "Cancer Staging",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46169"
       ],
-      "source_count": 1
+      "source_count": 2
+    },
+    {
+      "surface_form": "imaging",
+      "normalized_form": "Medical Imaging",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 3
     },
     {
       "surface_form": "PET activity",
       "normalized_form": "Positron Emission Tomography activity",
       "semantic_group": "PHEN",
-      "semantic_type_tui": "T034",
-      "semantic_type_name": "Laboratory or Test Result",
+      "semantic_type_tui": "T067",
+      "semantic_type_name": "Phenomenon or Process",
       "source_guidelines": [
         "CREST_46169"
       ],
@@ -4441,74 +4358,8 @@
       "source_count": 2
     },
     {
-      "surface_form": "normal appearing nodes",
-      "normalized_form": "Normal appearing lymph nodes",
-      "semantic_group": "PHYS",
-      "semantic_type_tui": "T201",
-      "semantic_type_name": "Clinical Attribute",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "invasive staging",
-      "normalized_form": "Invasive staging procedure",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "staging",
-      "normalized_form": "Staging",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 3
-    },
-    {
-      "surface_form": "imaging",
-      "normalized_form": "Medical imaging",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "high suspicion",
-      "normalized_form": "High Suspicion",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "N2,3 involvement",
-      "normalized_form": "N2/N3 Lymph Node Involvement",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T190",
-      "semantic_type_name": "Anatomical Abnormality",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 2
-    },
-    {
       "surface_form": "lymph node",
-      "normalized_form": "Lymph Node",
+      "normalized_form": "Lymph node",
       "semantic_group": "ANAT",
       "semantic_type_tui": "T023",
       "semantic_type_name": "Body Part, Organ, or Organ Component",
@@ -4516,18 +4367,51 @@
         "CREST_46169",
         "CREST_46170"
       ],
-      "source_count": 3
+      "source_count": 4
+    },
+    {
+      "surface_form": "normal appearing nodes",
+      "normalized_form": "Normal appearing lymph nodes",
+      "semantic_group": "ANAT",
+      "semantic_type_tui": "T023",
+      "semantic_type_name": "Body Part, Organ, or Organ Component",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "invasive staging of the mediastinum",
+      "normalized_form": "Mediastinal invasive staging",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "N2,3 involvement",
+      "normalized_form": "N2/N3 lymph node involvement",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T047",
+      "semantic_type_name": "Disease or Syndrome",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 2
     },
     {
       "surface_form": "needle technique",
-      "normalized_form": "Needle Technique",
+      "normalized_form": "Needle Procedure",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46169"
       ],
-      "source_count": 2
+      "source_count": 1
     },
     {
       "surface_form": "combined EBUS/EUS-NA",
@@ -4538,22 +4422,11 @@
       "source_guidelines": [
         "CREST_46169"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "surgical staging",
       "normalized_form": "Surgical Staging",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "best first test",
-      "normalized_form": "First-line Diagnostic Test",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -4561,6 +4434,17 @@
         "CREST_46169"
       ],
       "source_count": 2
+    },
+    {
+      "surface_form": "best first test",
+      "normalized_form": "First Test",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
     },
     {
       "surface_form": "intermediate suspicion",
@@ -4582,6 +4466,50 @@
       "source_guidelines": [
         "CREST_46169"
       ],
+      "source_count": 2
+    },
+    {
+      "surface_form": "central tumor",
+      "normalized_form": "Central Lung Tumor",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T191",
+      "semantic_type_name": "Neoplastic Process",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "N1 lymph node enlargement",
+      "normalized_form": "N1 lymph node enlargement",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T190",
+      "semantic_type_name": "Anatomical Abnormality",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "staging",
+      "normalized_form": "Staging",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "N2,3 involvement",
+      "normalized_form": "N2/N3 Involvement",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T033",
+      "semantic_type_name": "Finding",
+      "source_guidelines": [
+        "CREST_46169"
+      ],
       "source_count": 1
     },
     {
@@ -4593,21 +4521,10 @@
       "source_guidelines": [
         "CREST_46169"
       ],
-      "source_count": 2
-    },
-    {
-      "surface_form": "N1 lymph node enlargement",
-      "normalized_form": "N1 Lymph Node Enlargement",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T190",
-      "semantic_type_name": "Anatomical Abnormality",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
       "source_count": 1
     },
     {
-      "surface_form": "lymph node enlargement",
+      "surface_form": "N1 lymph node enlargement",
       "normalized_form": "Lymph Node Enlargement",
       "semantic_group": "DISO",
       "semantic_type_tui": "T190",
@@ -4615,33 +4532,22 @@
       "source_guidelines": [
         "CREST_46169"
       ],
-      "source_count": 2
+      "source_count": 1
     },
     {
-      "surface_form": "N2,3 involvement",
-      "normalized_form": "N2 and N3 involvement",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T190",
-      "semantic_type_name": "Anatomical Abnormality",
+      "surface_form": "needle technique",
+      "normalized_form": "Needle Technique",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46169"
       ],
       "source_count": 1
     },
     {
-      "surface_form": "radiographically normal mediastinum",
-      "normalized_form": "Normal mediastinum",
-      "semantic_group": "ANAT",
-      "semantic_type_tui": "T029",
-      "semantic_type_name": "Body Location or Region",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "combined EBUS/EUS-NA",
-      "normalized_form": "Combined endobronchial ultrasound and endoscopic ultrasound-guided needle aspiration",
+      "surface_form": "best first test",
+      "normalized_form": "First-line diagnostic test",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -4649,18 +4555,6 @@
         "CREST_46169"
       ],
       "source_count": 1
-    },
-    {
-      "surface_form": "patients",
-      "normalized_form": "Patient Population",
-      "semantic_group": "LIVB",
-      "semantic_type_tui": "T101",
-      "semantic_type_name": "Patient or Disabled Group",
-      "source_guidelines": [
-        "CREST_46169",
-        "CREST_46171"
-      ],
-      "source_count": 2
     },
     {
       "surface_form": "peripheral",
@@ -4686,18 +4580,7 @@
     },
     {
       "surface_form": "negative nodal involvement",
-      "normalized_form": "Negative Nodal Involvement",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T033",
-      "semantic_type_name": "Finding",
-      "source_guidelines": [
-        "CREST_46169"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "nodal involvement",
-      "normalized_form": "Nodal Involvement",
+      "normalized_form": "Negative nodal involvement",
       "semantic_group": "DISO",
       "semantic_type_tui": "T033",
       "semantic_type_name": "Finding",
@@ -4708,10 +4591,10 @@
     },
     {
       "surface_form": "invasive preoperative evaluation",
-      "normalized_form": "Invasive Preoperative Evaluation",
+      "normalized_form": "Invasive preoperative evaluation",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
+      "semantic_type_tui": "T061",
+      "semantic_type_name": "Therapeutic or Preventive Procedure",
       "source_guidelines": [
         "CREST_46169"
       ],
@@ -4719,7 +4602,7 @@
     },
     {
       "surface_form": "LUL cancer",
-      "normalized_form": "left upper lobe cancer",
+      "normalized_form": "Left Upper Lobe Lung Cancer",
       "semantic_group": "DISO",
       "semantic_type_tui": "T191",
       "semantic_type_name": "Neoplastic Process",
@@ -4730,7 +4613,7 @@
     },
     {
       "surface_form": "invasive assessment",
-      "normalized_form": "invasive assessment",
+      "normalized_form": "Invasive Assessment",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -4741,10 +4624,10 @@
     },
     {
       "surface_form": "aortopulmonary window",
-      "normalized_form": "aortopulmonary window",
+      "normalized_form": "Aortopulmonary Window",
       "semantic_group": "ANAT",
-      "semantic_type_tui": "T030",
-      "semantic_type_name": "Body Space or Junction",
+      "semantic_type_tui": "T029",
+      "semantic_type_name": "Body Location or Region",
       "source_guidelines": [
         "CREST_46169"
       ],
@@ -4752,7 +4635,7 @@
     },
     {
       "surface_form": "APW nodes",
-      "normalized_form": "aortopulmonary window lymph nodes",
+      "normalized_form": "Aortopulmonary Window Lymph Nodes",
       "semantic_group": "ANAT",
       "semantic_type_tui": "T023",
       "semantic_type_name": "Body Part, Organ, or Organ Component",
@@ -4763,7 +4646,7 @@
     },
     {
       "surface_form": "nodes",
-      "normalized_form": "lymph nodes",
+      "normalized_form": "Lymph Nodes",
       "semantic_group": "ANAT",
       "semantic_type_tui": "T023",
       "semantic_type_name": "Body Part, Organ, or Organ Component",
@@ -4774,10 +4657,10 @@
     },
     {
       "surface_form": "Chamberlain",
-      "normalized_form": "Chamberlain procedure",
+      "normalized_form": "Chamberlain Procedure",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T061",
-      "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46169"
       ],
@@ -4785,7 +4668,7 @@
     },
     {
       "surface_form": "VATS",
-      "normalized_form": "video-assisted thoracoscopic surgery",
+      "normalized_form": "Video-Assisted Thoracoscopic Surgery",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
@@ -4796,7 +4679,7 @@
     },
     {
       "surface_form": "extended cervical mediastinoscopy",
-      "normalized_form": "extended cervical mediastinoscopy",
+      "normalized_form": "Extended Cervical Mediastinoscopy",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -4807,7 +4690,7 @@
     },
     {
       "surface_form": "mediastinal node stations",
-      "normalized_form": "mediastinal lymph node stations",
+      "normalized_form": "Mediastinal Lymph Node Stations",
       "semantic_group": "ANAT",
       "semantic_type_tui": "T023",
       "semantic_type_name": "Body Part, Organ, or Body Component",
@@ -4842,8 +4725,8 @@
       "surface_form": "tumor size",
       "normalized_form": "Tumor Size",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T081",
-      "semantic_type_name": "Quantitative Concept",
+      "semantic_type_tui": "T201",
+      "semantic_type_name": "Clinical Attribute",
       "source_guidelines": [
         "CREST_46170"
       ],
@@ -4851,10 +4734,10 @@
     },
     {
       "surface_form": "location",
-      "normalized_form": "Location",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T082",
-      "semantic_type_name": "Spatial Concept",
+      "normalized_form": "Anatomic Site",
+      "semantic_group": "ANAT",
+      "semantic_type_tui": "T029",
+      "semantic_type_name": "Body Location or Region",
       "source_guidelines": [
         "CREST_46170"
       ],
@@ -4894,8 +4777,19 @@
       "source_count": 1
     },
     {
+      "surface_form": "pleural",
+      "normalized_form": "Pleura",
+      "semantic_group": "ANAT",
+      "semantic_type_tui": "T023",
+      "semantic_type_name": "Body Part, Organ, or Organ Component",
+      "source_guidelines": [
+        "CREST_46170"
+      ],
+      "source_count": 1
+    },
+    {
       "surface_form": "surgical margins",
-      "normalized_form": "Surgical Margins",
+      "normalized_form": "Surgical Margin",
       "semantic_group": "ANAT",
       "semantic_type_tui": "T023",
       "semantic_type_name": "Body Part, Organ, or Organ Component",
@@ -4917,7 +4811,7 @@
     },
     {
       "surface_form": "pleural-based tumors",
-      "normalized_form": "Pleural Neoplasms",
+      "normalized_form": "Pleural neoplasms",
       "semantic_group": "DISO",
       "semantic_type_tui": "T191",
       "semantic_type_name": "Neoplastic Process",
@@ -4927,8 +4821,19 @@
       "source_count": 1
     },
     {
+      "surface_form": "limited panel",
+      "normalized_form": "Panel",
+      "semantic_group": "CONC",
+      "semantic_type_tui": "T170",
+      "semantic_type_name": "Intellectual Product",
+      "source_guidelines": [
+        "CREST_46170"
+      ],
+      "source_count": 1
+    },
+    {
       "surface_form": "histochemical assays",
-      "normalized_form": "Histochemical Assay",
+      "normalized_form": "Histochemical Assays",
       "semantic_group": "PROC",
       "semantic_type_tui": "T059",
       "semantic_type_name": "Laboratory Procedure",
@@ -4939,7 +4844,7 @@
     },
     {
       "surface_form": "immunohistochemical assays",
-      "normalized_form": "Immunohistochemistry",
+      "normalized_form": "Immunohistochemical Assays",
       "semantic_group": "PROC",
       "semantic_type_tui": "T059",
       "semantic_type_name": "Laboratory Procedure",
@@ -4971,17 +4876,6 @@
       "source_count": 1
     },
     {
-      "surface_form": "adenocarcinoma",
-      "normalized_form": "Adenocarcinoma",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
-      "semantic_type_name": "Neoplastic Process",
-      "source_guidelines": [
-        "CREST_46170"
-      ],
-      "source_count": 3
-    },
-    {
       "surface_form": "malignant mesothelioma",
       "normalized_form": "Malignant Mesothelioma",
       "semantic_group": "DISO",
@@ -4993,22 +4887,11 @@
       "source_count": 1
     },
     {
-      "surface_form": "mesothelioma",
-      "normalized_form": "Mesothelioma",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
-      "semantic_type_name": "Neoplastic Process",
-      "source_guidelines": [
-        "CREST_46170"
-      ],
-      "source_count": 1
-    },
-    {
       "surface_form": "diagnostic accuracy",
       "normalized_form": "Diagnostic Accuracy",
-      "semantic_group": "CONC",
-      "semantic_type_tui": "T080",
-      "semantic_type_name": "Qualitative Concept",
+      "semantic_group": "PHEN",
+      "semantic_type_tui": "T201",
+      "semantic_type_name": "Clinical Attribute",
       "source_guidelines": [
         "CREST_46170"
       ],
@@ -5026,8 +4909,8 @@
       "source_count": 1
     },
     {
-      "surface_form": "small cell carcinoma",
-      "normalized_form": "Small Cell Carcinoma",
+      "surface_form": "tumors",
+      "normalized_form": "Tumor",
       "semantic_group": "DISO",
       "semantic_type_tui": "T191",
       "semantic_type_name": "Neoplastic Process",
@@ -5037,11 +4920,11 @@
       "source_count": 1
     },
     {
-      "surface_form": "lung",
-      "normalized_form": "Lung",
-      "semantic_group": "ANAT",
-      "semantic_type_tui": "T023",
-      "semantic_type_name": "Body Part, Organ, or Organ Component",
+      "surface_form": "small cell carcinoma",
+      "normalized_form": "Small cell carcinoma",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T191",
+      "semantic_type_name": "Neoplastic Process",
       "source_guidelines": [
         "CREST_46170"
       ],
@@ -5049,7 +4932,7 @@
     },
     {
       "surface_form": "diagnostic panel",
-      "normalized_form": "Diagnostic Panel",
+      "normalized_form": "Diagnostic panel",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -5060,10 +4943,10 @@
     },
     {
       "surface_form": "immunohistochemical assays",
-      "normalized_form": "Immunohistochemical Assay",
+      "normalized_form": "Immunohistochemistry",
       "semantic_group": "PROC",
-      "semantic_type_tui": "T059",
-      "semantic_type_name": "Laboratory Procedure",
+      "semantic_type_tui": "T060",
+      "semantic_type_name": "Diagnostic Procedure",
       "source_guidelines": [
         "CREST_46170"
       ],
@@ -5071,7 +4954,7 @@
     },
     {
       "surface_form": "glandular producing tumors",
-      "normalized_form": "Glandular-producing tumor",
+      "normalized_form": "Glandular Producing Tumor",
       "semantic_group": "DISO",
       "semantic_type_tui": "T191",
       "semantic_type_name": "Neoplastic Process",
@@ -5114,6 +4997,17 @@
       "source_count": 1
     },
     {
+      "surface_form": "adenocarcinomas",
+      "normalized_form": "Adenocarcinoma",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T191",
+      "semantic_type_name": "Neoplastic Process",
+      "source_guidelines": [
+        "CREST_46170"
+      ],
+      "source_count": 2
+    },
+    {
       "surface_form": "squamous cell carcinoma",
       "normalized_form": "Squamous Cell Carcinoma",
       "semantic_group": "DISO",
@@ -5126,7 +5020,7 @@
     },
     {
       "surface_form": "cytologic material",
-      "normalized_form": "Cytologic Specimen",
+      "normalized_form": "Cytologic Material",
       "semantic_group": "OBJC",
       "semantic_type_tui": "T168",
       "semantic_type_name": "Food",
@@ -5137,7 +5031,7 @@
     },
     {
       "surface_form": "small tissue samples",
-      "normalized_form": "Tissue Sample",
+      "normalized_form": "Small Tissue Sample",
       "semantic_group": "ANAT",
       "semantic_type_tui": "T024",
       "semantic_type_name": "Tissue",
@@ -5145,17 +5039,6 @@
         "CREST_46170"
       ],
       "source_count": 1
-    },
-    {
-      "surface_form": "discrimination",
-      "normalized_form": "Differential Diagnosis",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46170"
-      ],
-      "source_count": 2
     },
     {
       "surface_form": "primary lung carcinoma",
@@ -5180,11 +5063,22 @@
       "source_count": 1
     },
     {
-      "surface_form": "directed panel",
-      "normalized_form": "Panel",
+      "surface_form": "differential",
+      "normalized_form": "Differential Diagnosis",
       "semantic_group": "CONC",
-      "semantic_type_tui": "T170",
-      "semantic_type_name": "Intellectual Product",
+      "semantic_type_tui": "T078",
+      "semantic_type_name": "Idea or Concept",
+      "source_guidelines": [
+        "CREST_46170"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "directed panel of immunohistochemical assays",
+      "normalized_form": "Immunohistochemical Assay Panel",
+      "semantic_group": "PROC",
+      "semantic_type_tui": "T059",
+      "semantic_type_name": "Laboratory Procedure",
       "source_guidelines": [
         "CREST_46170"
       ],
@@ -5192,7 +5086,7 @@
     },
     {
       "surface_form": "immunohistochemical assays",
-      "normalized_form": "Immunohistochemical Assays",
+      "normalized_form": "Immunohistochemical Assay",
       "semantic_group": "PROC",
       "semantic_type_tui": "T059",
       "semantic_type_name": "Laboratory Procedure",
@@ -5203,10 +5097,10 @@
     },
     {
       "surface_form": "severe dysplasia",
-      "normalized_form": "Severe dysplasia",
+      "normalized_form": "Severe Dysplasia",
       "semantic_group": "DISO",
-      "semantic_type_tui": "T047",
-      "semantic_type_name": "Disease or Syndrome",
+      "semantic_type_tui": "T190",
+      "semantic_type_name": "Anatomical Abnormality",
       "source_guidelines": [
         "CREST_46171"
       ],
@@ -5216,7 +5110,7 @@
       "surface_form": "carcinoma in situ",
       "normalized_form": "Carcinoma in situ",
       "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
+      "semantic_type_tui": "Tis",
       "semantic_type_name": "Neoplastic Process",
       "source_guidelines": [
         "CREST_46171"
@@ -5225,7 +5119,7 @@
     },
     {
       "surface_form": "chest imaging studies",
-      "normalized_form": "Chest imaging",
+      "normalized_form": "Chest Imaging Studies",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -5236,7 +5130,7 @@
     },
     {
       "surface_form": "localizing abnormality",
-      "normalized_form": "Localization abnormality",
+      "normalized_form": "Localizing Abnormality",
       "semantic_group": "DISO",
       "semantic_type_tui": "T033",
       "semantic_type_name": "Finding",
@@ -5247,7 +5141,7 @@
     },
     {
       "surface_form": "standard WLB",
-      "normalized_form": "White light bronchoscopy",
+      "normalized_form": "White Light Bronchoscopy",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -5258,7 +5152,7 @@
     },
     {
       "surface_form": "endobronchial lesion",
-      "normalized_form": "Endobronchial lesion",
+      "normalized_form": "Endobronchial Lesion",
       "semantic_group": "DISO",
       "semantic_type_tui": "T190",
       "semantic_type_name": "Anatomical Abnormality",
@@ -5276,7 +5170,7 @@
       "source_guidelines": [
         "CREST_46171"
       ],
-      "source_count": 1
+      "source_count": 2
     },
     {
       "surface_form": "follow-up WLB",
@@ -5290,19 +5184,8 @@
       "source_count": 1
     },
     {
-      "surface_form": "bronchial intraepithelial neoplasia",
-      "normalized_form": "Bronchial intraepithelial neoplasia",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T191",
-      "semantic_type_name": "Neoplastic Process",
-      "source_guidelines": [
-        "CREST_46171"
-      ],
-      "source_count": 2
-    },
-    {
       "surface_form": "early lung cancer",
-      "normalized_form": "Early lung cancer",
+      "normalized_form": "Early Lung Cancer",
       "semantic_group": "DISO",
       "semantic_type_tui": "T191",
       "semantic_type_name": "Neoplastic Process",
@@ -5324,7 +5207,18 @@
     },
     {
       "surface_form": "tumor margins",
-      "normalized_form": "Tumor Margin",
+      "normalized_form": "Tumor Margins",
+      "semantic_group": "ANAT",
+      "semantic_type_tui": "T190",
+      "semantic_type_name": "Anatomical Abnormality",
+      "source_guidelines": [
+        "CREST_46171"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "synchronous lesions",
+      "normalized_form": "Synchronous Lesions",
       "semantic_group": "DISO",
       "semantic_type_tui": "T190",
       "semantic_type_name": "Anatomical Abnormality",
@@ -5334,30 +5228,8 @@
       "source_count": 1
     },
     {
-      "surface_form": "assessment",
-      "normalized_form": "Assessment",
-      "semantic_group": "PROC",
-      "semantic_type_tui": "T060",
-      "semantic_type_name": "Diagnostic Procedure",
-      "source_guidelines": [
-        "CREST_46171"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "synchronous lesions",
-      "normalized_form": "Synchronous Lesion",
-      "semantic_group": "DISO",
-      "semantic_type_tui": "T033",
-      "semantic_type_name": "Finding",
-      "source_guidelines": [
-        "CREST_46171"
-      ],
-      "source_count": 1
-    },
-    {
       "surface_form": "curative endobronchial therapy",
-      "normalized_form": "Endobronchial Therapy",
+      "normalized_form": "Endobronchial therapy",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
@@ -5368,7 +5240,7 @@
     },
     {
       "surface_form": "early central lung cancer",
-      "normalized_form": "Early Central Lung Cancer",
+      "normalized_form": "Early central lung cancer",
       "semantic_group": "DISO",
       "semantic_type_tui": "T191",
       "semantic_type_name": "Neoplastic Process",
@@ -5379,7 +5251,7 @@
     },
     {
       "surface_form": "AFB",
-      "normalized_form": "Autofluorescence Bronchoscopy",
+      "normalized_form": "Autofluorescence bronchoscopy",
       "semantic_group": "PROC",
       "semantic_type_tui": "T060",
       "semantic_type_name": "Diagnostic Procedure",
@@ -5400,41 +5272,8 @@
       "source_count": 1
     },
     {
-      "surface_form": "mucosal",
-      "normalized_form": "Mucosa",
-      "semantic_group": "ANAT",
-      "semantic_type_tui": "T024",
-      "semantic_type_name": "Tissue",
-      "source_guidelines": [
-        "CREST_46171"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "central airway",
-      "normalized_form": "Central airway",
-      "semantic_group": "ANAT",
-      "semantic_type_tui": "T023",
-      "semantic_type_name": "Body Part, Organ, or Organ Component",
-      "source_guidelines": [
-        "CREST_46171"
-      ],
-      "source_count": 1
-    },
-    {
-      "surface_form": "airway",
-      "normalized_form": "Airway",
-      "semantic_group": "ANAT",
-      "semantic_type_tui": "T023",
-      "semantic_type_name": "Body Part, Organ, or Organ Component",
-      "source_guidelines": [
-        "CREST_46171"
-      ],
-      "source_count": 1
-    },
-    {
       "surface_form": "endobronchial treatment",
-      "normalized_form": "Endobronchial treatment",
+      "normalized_form": "Endobronchial Treatment",
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
@@ -5482,6 +5321,17 @@
       "semantic_group": "PROC",
       "semantic_type_tui": "T061",
       "semantic_type_name": "Therapeutic or Preventive Procedure",
+      "source_guidelines": [
+        "CREST_46171"
+      ],
+      "source_count": 1
+    },
+    {
+      "surface_form": "bronchial intraepithelial neoplasia",
+      "normalized_form": "Bronchial Intraepithelial Neoplasia",
+      "semantic_group": "DISO",
+      "semantic_type_tui": "T191",
+      "semantic_type_name": "Neoplastic Process",
       "source_guidelines": [
         "CREST_46171"
       ],

@@ -54,6 +54,8 @@ def _build_cfg(args: argparse.Namespace, dataset_path: str, output_dir: str) -> 
         cfg.llm_dtype = args.llm_dtype
     if args.llm_attn_impl:
         cfg.llm_attn_impl = args.llm_attn_impl
+    if args.llm_device:
+        cfg.llm_device = args.llm_device
     if args.llm_batch_size is not None:
         cfg.llm_batch_size = args.llm_batch_size
     if args.condition_sentence_chunk_size is not None:
@@ -84,6 +86,7 @@ def _extract_sample_info(
         for idx, (sentence, ents) in enumerate(zip(sentences, per_sent_entities))
         if ents
     ]
+    print(f"Sentence entities: {sentence_entities}")
     total_entity_count = 0
     for ents in per_sent_entities:
         total_entity_count += len(ents)
@@ -124,7 +127,6 @@ def _extract_sample_info(
                 "condition_keywords": condition_keywords,
             }
         }
-
 
 def _iter_mediq_samples(
     path: str,
@@ -179,6 +181,7 @@ def _process_file(
             max_samples=args.max_samples,
             start_index=args.start_index,
         ):
+            print(f"Processing sample {sample} ({count + 1})", flush=True)
             sample.raw["extracted_info"] = _extract_sample_info(
                 sample,
                 entity_extractor=entity_extractor,
@@ -213,6 +216,8 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--llm-model", default=None)
     parser.add_argument("--llm-dtype", default=None, choices=["bfloat16", "float16", "float32"])
     parser.add_argument("--llm-attn-impl", default=None, choices=["sdpa", "flash_attention_2", "eager"])
+    parser.add_argument("--llm-device", default=None,
+                        help='Override runtime device, e.g. "auto", "mps", "cuda:0", or "cpu"')
     parser.add_argument("--llm-batch-size", type=int, default=None)
     parser.add_argument("--condition-sentence-chunk-size", type=int, default=None)
     parser.add_argument("--log-level", default="INFO")

@@ -3,3 +3,4 @@ output/stage1_umls_layer_triples.json filter=lfs diff=lfs merge=lfs -text
 output/stage2_umls_layer_triples.json filter=lfs diff=lfs merge=lfs -text
 output/stage2_umls_matched.json filter=lfs diff=lfs merge=lfs -text
 output/stage3_condition_augmented_triples.json filter=lfs diff=lfs merge=lfs -text
+MediQ/extracted/*.jsonl filter=lfs diff=lfs merge=lfs -text

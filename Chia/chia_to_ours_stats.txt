@@ -1,0 +1,37 @@
+======================================================================
+Chia → Ours 변환 통계
+======================================================================
+
+전체 record: 2000개 → quadruple: 13645개
+  평균 문장/record: 6.8개
+
+[text_type 분포]
+  exclusion: 8419 (61.7%)
+  inclusion: 5226 (38.3%)
+
+[triple relation 분포]
+  has_contraindicated_drug: 6774 (49.6%)
+  has_target_population: 5226 (38.3%)
+  has_contraindicated_effect: 1645 (12.1%)
+
+[Overall conversion_status 분포]
+  converted: 5732 (42.0%)
+  partial: 5414 (39.7%)
+  unconverted: 2362 (17.3%)
+  evidence_only: 137 (1.0%)
+
+[condition 단위 통계]
+  총 condition: 27289개
+  categorical_state: 20255 (74.2%)
+  medication_history: 3801 (13.9%)
+  numeric_threshold: 2117 (7.8%)
+  temporal_condition: 1116 (4.1%)
+
+[condition별 conversion_status 분포]
+  converted: 18866 (69.1%)
+  partial: 6956 (25.5%)
+  unconverted: 753 (2.8%)
+  evidence_only: 714 (2.6%)
+
+[Validation 결과]
+  Issue 건수: 0

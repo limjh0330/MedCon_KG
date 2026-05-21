@@ -52,7 +52,7 @@ SEMANTIC_GROUPS_FILE = os.environ.get(
 
 # ── Output ──
 OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "./output")
-OUTPUT_RECOMMENDATIONS_FILE = "stage0_recommendations.json"
+OUTPUT_RECOMMENDATIONS_FILE = "stage0_documents.jsonl"
 OUTPUT_ENTITIES_FILE = "stage1_entity_candidates.json"
 OUTPUT_MATCHED_FILE = "stage2_umls_matched.json"
 OUTPUT_TRIPLES_FILE = "stage2_umls_layer_triples.json"

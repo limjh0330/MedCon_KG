@@ -13,7 +13,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(PROJECT_ROOT / ".env", override=False)
 
 
-ALL_VARIANTS = ("only_llm", "vector_rag", "kg_no_cond", "kg_with_cond")
+ALL_VARIANTS = ("vector_rag",) # "only_llm", "vector_rag", "kg_no_cond", "kg_with_cond"
 
 
 @dataclass

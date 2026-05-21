@@ -149,13 +149,16 @@ def _build_parser() -> argparse.ArgumentParser:
 def _resolve_variants(spec: str) -> tuple[str, ...]:
     if spec.strip().lower() == "all":
         return tuple(ALL_VARIANTS)
-    chosen = [v.strip() for v in spec.split(",") if v.strip()]
-    unknown = [v for v in chosen if v not in ALL_VARIANTS]
-    if unknown:
-        raise ValueError(
-            f"Unknown variant(s): {unknown}. Available: {ALL_VARIANTS}"
-        )
-    return tuple(chosen)
+    if len(spec) == 1:
+        return spec
+    else:
+        chosen = [v.strip() for v in spec.split(",") if v.strip()]
+        unknown = [v for v in chosen if v not in ALL_VARIANTS]
+        if unknown:
+            raise ValueError(
+                f"Unknown variant(s): {unknown}. Available: {ALL_VARIANTS}"
+            )
+        return tuple(chosen)
 
 
 def _cfg_from_args(args: argparse.Namespace) -> ExperimentConfig:

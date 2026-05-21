@@ -62,7 +62,10 @@ class VectorRAGRetriever(BaseRetriever):
     def __init__(self, cfg: ExperimentConfig):
         self.cfg = cfg
         recs_data = _load_json(cfg.stage0_recs_path)
-        self.recommendations: list[dict] = recs_data.get("recommendations", [])
+        self.recommendations: list[dict] = (
+            recs_data.get("recommendations", [])
+            or recs_data.get("raw_texts", [])
+        )
         # Stage 0 may store the sentence text under several keys depending on the
         # source DB (CREST uses `text`/`guideline_context`; PUBMED uses `abstract`;
         # the normalizer adds `raw_text`). Fall back across them so VectorRAG works
@@ -75,7 +78,7 @@ class VectorRAGRetriever(BaseRetriever):
              or "")
             for r in self.recommendations
         ]
-        logger.info(f"VectorRAG: loaded {len(self.texts)} recommendations")
+        logger.info(f"VectorRAG: loaded {len(self.texts)} document texts for embedding")
 
         self.embedder = OpenAIEmbedder(
             api_key=cfg.openai_api_key,

@@ -1,25 +1,30 @@
-# 1) 시스템 패키지 설치
-apt-get update
-apt-get install -y git git-lfs python3 python3-pip
+# # For runiing at RunPod
 
-# 2) Git LFS 활성화
-git lfs install
+# # 1) 시스템 패키지 설치
+# apt-get update
+# apt-get install -y git git-lfs python3 python3-pip
 
-# 3) 저장소 clone
-cd /workspace
-git clone https://github.com/limjh0330/MedCon_KG.git
-cd MedCon_KG
+# # 2) Git LFS 활성화
+# git lfs install
 
-# 4) LFS 파일 내려받기
-git lfs pull
+# # 3) 저장소 clone
+# cd /workspace
+# git clone https://github.com/limjh0330/MedCon_KG.git
+# cd MedCon_KG
+
+# # 4) LFS 파일 내려받기
+# git lfs pull
+
+
+cd "/Users/lim/Desktop/main_lap/study/Master/ER project/MedCon_KG" || exit 1
 
 # 5) 의존성 설치
 pip install -U pip
 pip install -r requirements.txt           
 pip install -r experiments/requirements.txt 
 
-# 6) CUDA 가용성 점검
-python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
+# # 6) CUDA 가용성 점검
+# python -c "import torch; print('CUDA:', torch.cuda.is_available()); print('MPS:', torch.backends.mps.is_available() if hasattr(torch.backends, 'mps') else False)"
 
 # 7) 실험 실행
 mkdir -p output/full_rag_experiment
@@ -27,13 +32,14 @@ mkdir -p output/full_rag_experiment
 # 사용 가능한 variant: only_llm, vector_rag, kg_no_cond, kg_with_cond, all
 # --llm-model 미지정 시 기본값: meta-llama/Llama-3.1-8B-Instruct
 # iLlama로 실행하려면 아래 명령에 --llm-model Codingchild/ILlama-8b-LoRA 추가
-nohup python -u -m experiments.run \
+python -u -m experiments.run \
     --dataset mediq \
     --dataset-path ./MediQ/all_craft_md.jsonl \
     --variants all \
     --output-dir ./output/full_rag_experiment \
-    --llm-batch-size 8 \
-    --llm-dtype bfloat16 \
+    --llm-model "Qwen/Qwen2.5-1.5B-Instruct" \
+    --llm-batch-size 2 \
+    --llm-dtype float16 \
     --vector-top-k 5 \
     --log-level INFO \
     > output/full_rag_experiment/stdout.log 2>&1 &

@@ -17,7 +17,7 @@ import re
 import threading
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Iterator, Optional
 
 import numpy as np
 
@@ -61,15 +61,7 @@ class VectorRAGRetriever(BaseRetriever):
 
     def __init__(self, cfg: ExperimentConfig):
         self.cfg = cfg
-        recs_data = _load_json(cfg.stage0_recs_path)
-        self.recommendations: list[dict] = (
-            recs_data.get("recommendations", [])
-            or recs_data.get("raw_texts", [])
-        )
-        # Stage 0 may store the sentence text under several keys depending on the
-        # source DB (CREST uses `text`/`guideline_context`; PUBMED uses `abstract`;
-        # the normalizer adds `raw_text`). Fall back across them so VectorRAG works
-        # regardless of which DB produced the records.
+        self.recommendations = load_stage0_recommendation_records(cfg.stage0_recs_path)
         self.texts: list[str] = [
             (r.get("text")
              or r.get("raw_text")
@@ -205,6 +197,145 @@ def _load_json(path: str) -> dict:
         raise FileNotFoundError(f"Missing required file: {path}")
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
+
+
+def _resolve_stage0_documents_jsonl_path(stage0_path: str, data: dict) -> Optional[str]:
+    rel = (
+        data.get("documents_jsonl")
+        or data.get("document_jsonl")
+        or data.get("stage0_documents_jsonl")
+    )
+    if not rel:
+        return None
+    if os.path.isabs(rel):
+        return rel
+    return os.path.join(os.path.dirname(stage0_path), rel)
+
+
+def _split_strength_prefixed_text(raw_text: str) -> tuple[str, str]:
+    text = str(raw_text or "").strip()
+    if text.startswith(":"):
+        text = text[1:].strip()
+    prefix, separator, remainder = text.partition(" : ")
+    if (
+        separator
+        and prefix.strip()
+        and remainder.strip()
+        and len(prefix.strip()) <= 32
+        and "\n" not in prefix
+    ):
+        return prefix.strip(), remainder.strip()
+    return "", text
+
+
+def _iter_stage0_document_records(doc: dict) -> Iterator[dict]:
+    guideline_id = (
+        str(doc.get("db_guideline_id", "")).strip()
+        or str(doc.get("guideline_id", "")).strip()
+    )
+    guideline_context = str(doc.get("guideline_context", "") or "")
+    raw_texts = doc.get("raw_texts") or []
+    if isinstance(raw_texts, str):
+        raw_texts = [raw_texts]
+
+    for sentence_index, raw_text in enumerate(raw_texts, start=1):
+        raw_text = str(raw_text or "").strip()
+        if not raw_text:
+            continue
+        strength, text = _split_strength_prefixed_text(raw_text)
+        yield {
+            "guideline_id": guideline_id,
+            "db_guideline_id": guideline_id,
+            "guideline_context": guideline_context,
+            "raw_text": raw_text,
+            "text": text,
+            "strength": strength,
+            "sentence_index": sentence_index,
+        }
+
+
+def iter_stage0_recommendation_records(stage0_path: str) -> Iterator[dict]:
+    data = _load_json(stage0_path)
+
+    recommendations = data.get("recommendations", [])
+    if recommendations:
+        for rec in recommendations:
+            if not isinstance(rec, dict):
+                continue
+            normalized = dict(rec)
+            normalized["guideline_id"] = (
+                str(rec.get("guideline_id", "")).strip()
+                or str(rec.get("db_guideline_id", "")).strip()
+            )
+            normalized["text"] = (
+                str(
+                    rec.get("text")
+                    or rec.get("raw_text")
+                    or rec.get("abstract")
+                    or rec.get("guideline_context")
+                    or ""
+                ).strip()
+            )
+            if not normalized["text"]:
+                continue
+            normalized.setdefault("raw_text", normalized["text"])
+            normalized.setdefault("strength", rec.get("strength", ""))
+            yield normalized
+        return
+
+    raw_texts = data.get("raw_texts", [])
+    if raw_texts:
+        for sentence_index, raw_text in enumerate(raw_texts, start=1):
+            text = str(raw_text or "").strip()
+            if not text:
+                continue
+            strength, clean_text = _split_strength_prefixed_text(text)
+            yield {
+                "guideline_id": "",
+                "db_guideline_id": "",
+                "guideline_context": "",
+                "raw_text": text,
+                "text": clean_text,
+                "strength": strength,
+                "sentence_index": sentence_index,
+            }
+        return
+
+    documents_by_id = data.get("documents_by_id")
+    if isinstance(documents_by_id, dict) and documents_by_id:
+        for doc in documents_by_id.values():
+            if isinstance(doc, dict):
+                yield from _iter_stage0_document_records(doc)
+        return
+
+    documents_jsonl_path = _resolve_stage0_documents_jsonl_path(stage0_path, data)
+    if documents_jsonl_path:
+        if not os.path.isfile(documents_jsonl_path):
+            raise FileNotFoundError(
+                f"Stage 0 documents JSONL not found: {documents_jsonl_path}"
+            )
+        with open(documents_jsonl_path, "r", encoding="utf-8") as f:
+            for line_no, line in enumerate(f, start=1):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    doc = json.loads(line)
+                except json.JSONDecodeError as e:
+                    raise ValueError(
+                        f"Invalid JSON on line {line_no} of {documents_jsonl_path}: {e}"
+                    ) from e
+                if isinstance(doc, dict):
+                    yield from _iter_stage0_document_records(doc)
+        return
+
+    raise ValueError(
+        "Stage 0 payload does not contain recommendations/raw_texts/documents_jsonl"
+    )
+
+
+def load_stage0_recommendation_records(stage0_path: str) -> list[dict]:
+    return list(iter_stage0_recommendation_records(stage0_path))
 
 
 # ──────────────────────────────────────────────────────────────────────

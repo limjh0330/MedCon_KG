@@ -269,6 +269,7 @@ temp/
 *.DS_Store
 *.html
 *.xml
+*.jsonl
 
 # Pipeline outputs
 outputs/

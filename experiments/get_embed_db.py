@@ -113,6 +113,26 @@ def _split_strength_prefixed_text(raw_text: str) -> tuple[str, str]:
     return "", text
 
 
+def _count_existing_metadata(metadata_jsonl_path: str) -> int:
+    if not os.path.isfile(metadata_jsonl_path):
+        return 0
+
+    count = 0
+    with open(metadata_jsonl_path, "r", encoding="utf-8") as f:
+        for line_no, line in enumerate(f, start=1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                json.loads(line)
+            except json.JSONDecodeError as e:
+                raise ValueError(
+                    f"Invalid JSON on line {line_no} of {metadata_jsonl_path}: {e}"
+                ) from e
+            count += 1
+    return count
+
+
 def _flush_batch(
     batch_rows: list[dict],
     *,
@@ -122,6 +142,7 @@ def _flush_batch(
     dimension: Optional[int],
     total_vectors: int,
     metadata_file,
+    faiss_index_path: Optional[str] = None,
 ) -> tuple[object, int, int]:
     vectors = embedder.embed_texts(
         [row["text"] for row in batch_rows]
@@ -144,6 +165,15 @@ def _flush_batch(
         metadata_file.write(json.dumps(row, ensure_ascii=False) + "\n")
 
     total_vectors += len(batch_rows)
+    metadata_file.flush()
+    if faiss_index_path:
+        faiss_module.write_index(index, faiss_index_path)
+        logger.debug(
+            "Persisted FAISS index with %s vectors to %s",
+            total_vectors,
+            faiss_index_path,
+        )
+
     batch_rows.clear()
     return index, dimension, total_vectors
 
@@ -158,11 +188,17 @@ def _iter_filtered_records(
     faiss_module,
     metadata_file,
     progress,
+    faiss_index_path: Optional[str] = None,
+    initial_index=None,
+    initial_dimension: Optional[int] = None,
+    initial_total_vectors: int = 0,
+    skip_records: int = 0,
 ) -> tuple[object, Optional[int], int]:
-    index = None
-    dimension = None
-    total_vectors = 0
+    index = initial_index
+    dimension = initial_dimension
+    total_vectors = initial_total_vectors
     emitted = 0
+    skipped = 0
     batch_rows: list[dict] = []
 
     with open(stage0_documents_path, "r", encoding="utf-8") as f:
@@ -200,6 +236,13 @@ def _iter_filtered_records(
                     continue
 
                 emitted += 1
+                if emitted <= skip_records:
+                    skipped += 1
+                    progress.update(1)
+                    if max_records is not None and emitted >= max_records:
+                        break
+                    continue
+
                 batch_rows.append({
                     "guideline_id": guideline_id,
                     "source_db": source_db,
@@ -219,6 +262,7 @@ def _iter_filtered_records(
                         dimension=dimension,
                         total_vectors=total_vectors,
                         metadata_file=metadata_file,
+                        faiss_index_path=faiss_index_path,
                     )
                     progress.update(batch_size)
 
@@ -227,6 +271,9 @@ def _iter_filtered_records(
 
             if max_records is not None and emitted >= max_records:
                 break
+
+    if skipped:
+        logger.info("Skipped %s records already present in metadata/FAISS", skipped)
 
     if batch_rows:
         final_batch_size = len(batch_rows)
@@ -238,6 +285,7 @@ def _iter_filtered_records(
             dimension=dimension,
             total_vectors=total_vectors,
             metadata_file=metadata_file,
+            faiss_index_path=faiss_index_path,
         )
         progress.update(final_batch_size)
 
@@ -271,13 +319,36 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
         f", max_records={args.max_records}" if args.max_records is not None else "",
     )
 
+    existing_record_count = _count_existing_metadata(metadata_jsonl_path)
+    index = None
+    dimension = None
+    if existing_record_count:
+        if not os.path.isfile(faiss_index_path):
+            raise FileNotFoundError(
+                "metadata.jsonl already contains records, but index.faiss is missing. "
+                "Cannot skip embedding existing metadata rows without the matching FAISS index."
+            )
+        index = faiss.read_index(faiss_index_path)
+        dimension = int(index.d)
+        index_total = int(index.ntotal)
+        if index_total != existing_record_count:
+            raise ValueError(
+                "metadata.jsonl and index.faiss are out of sync: "
+                f"metadata has {existing_record_count} records, FAISS has {index_total} vectors."
+            )
+        logger.info(
+            "Resuming from %s existing metadata/FAISS records",
+            existing_record_count,
+        )
+
     embedder = OpenAIEmbedder(
         api_key=cfg.openai_api_key,
         model=cfg.embedding_model,
         batch_size=cfg.embedding_batch_size,
     )
 
-    with open(metadata_jsonl_path, "w", encoding="utf-8") as meta_f:
+    metadata_mode = "a" if existing_record_count else "w"
+    with open(metadata_jsonl_path, metadata_mode, encoding="utf-8") as meta_f:
         progress = tqdm(desc="Indexing records", unit="record", dynamic_ncols=True)
         try:
             index, dimension, total_vectors = _iter_filtered_records(
@@ -288,7 +359,12 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
                 embedder=embedder,
                 faiss_module=faiss,
                 metadata_file=meta_f,
+                faiss_index_path=faiss_index_path,
                 progress=progress,
+                initial_index=index,
+                initial_dimension=dimension,
+                initial_total_vectors=existing_record_count,
+                skip_records=existing_record_count,
             )
         finally:
             progress.close()

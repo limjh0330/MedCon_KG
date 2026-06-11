@@ -66,7 +66,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--batch-size",
         type=int,
-        default=None,
+        default=32,
         help="Embedding batch size override (default: ExperimentConfig.embedding_batch_size).",
     )
     parser.add_argument(
@@ -156,13 +156,20 @@ def _flush_batch(
         dimension = int(vectors.shape[1])
         index = faiss_module.IndexFlatIP(dimension)
         logger.info("Initialized FAISS IndexFlatIP with dimension=%s", dimension)
+    elif int(vectors.shape[1]) != int(dimension):
+        raise ValueError(
+            f"Embedding dimension mismatch: got {vectors.shape[1]}, expected {dimension}"
+        )
 
     faiss_module.normalize_L2(vectors)
     index.add(vectors)
+    if faiss_index_path:
+        faiss_module.write_index(index, faiss_index_path)
 
     for offset, row in enumerate(batch_rows):
         row["vector_id"] = total_vectors + offset
         metadata_file.write(json.dumps(row, ensure_ascii=False) + "\n")
+    metadata_file.flush()
 
     total_vectors += len(batch_rows)
     metadata_file.flush()
@@ -186,6 +193,11 @@ def _iter_filtered_records(
     batch_size: int,
     embedder: OpenAIEmbedder,
     faiss_module,
+    faiss_index_path: str,
+    existing_record_keys: set[tuple[str, str, int]],
+    index=None,
+    dimension: Optional[int] = None,
+    total_vectors: int = 0,
     metadata_file,
     progress,
     faiss_index_path: Optional[str] = None,
@@ -204,15 +216,7 @@ def _iter_filtered_records(
     with open(stage0_documents_path, "r", encoding="utf-8") as f:
         for line_no, line in enumerate(f, start=1):
             line = line.strip()
-            if not line:
-                continue
-            try:
-                doc = json.loads(line)
-            except json.JSONDecodeError as e:
-                raise ValueError(
-                    f"Invalid JSON on line {line_no} of {stage0_documents_path}: {e}"
-                ) from e
-
+            doc = json.loads(line)
             guideline_id = str(
                 doc.get("db_guideline_id")
                 or doc.get("guideline_id")
@@ -251,7 +255,15 @@ def _iter_filtered_records(
                     "guideline_context": guideline_context,
                     "raw_text": raw_text,
                     "text": text,
-                })
+                }
+                record_key = _record_key(row)
+                if record_key in existing_record_keys:
+                    skipped_existing += 1
+                    if max_records is not None and emitted >= max_records:
+                        break
+                    continue
+
+                batch_rows.append(row)
 
                 if len(batch_rows) >= batch_size:
                     index, dimension, total_vectors = _flush_batch(
@@ -289,7 +301,7 @@ def _iter_filtered_records(
         )
         progress.update(final_batch_size)
 
-    return index, dimension, total_vectors
+    return index, dimension, total_vectors, skipped_existing
 
 
 def build_faiss_db(args: argparse.Namespace) -> dict:
@@ -351,13 +363,18 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
     with open(metadata_jsonl_path, metadata_mode, encoding="utf-8") as meta_f:
         progress = tqdm(desc="Indexing records", unit="record", dynamic_ncols=True)
         try:
-            index, dimension, total_vectors = _iter_filtered_records(
+            index, dimension, total_vectors, skipped_existing = _iter_filtered_records(
                 stage0_documents_path=args.stage0_documents,
                 allowed_prefixes=allowed_prefixes,
                 max_records=args.max_records,
                 batch_size=cfg.embedding_batch_size,
                 embedder=embedder,
                 faiss_module=faiss,
+                faiss_index_path=faiss_index_path,
+                existing_record_keys=existing_record_keys,
+                index=index,
+                dimension=dimension,
+                total_vectors=total_vectors,
                 metadata_file=meta_f,
                 faiss_index_path=faiss_index_path,
                 progress=progress,
@@ -373,6 +390,12 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
         raise ValueError("No records were indexed. Check the Stage-0 input or filters.")
 
     faiss.write_index(index, faiss_index_path)
+    logger.info(
+        "Added %s new records, skipped %s existing records, total vectors=%s",
+        total_vectors - existing_record_count,
+        skipped_existing,
+        total_vectors,
+    )
 
     manifest = {
         "created_at": datetime.now().isoformat(),
@@ -385,6 +408,9 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
         "faiss_metric": "cosine_similarity_via_normalized_inner_product",
         "dimension": dimension,
         "record_count": total_vectors,
+        "existing_record_count": existing_record_count,
+        "new_record_count": total_vectors - existing_record_count,
+        "skipped_existing_record_count": skipped_existing,
         "max_records": args.max_records,
         "db_prefixes": sorted(allowed_prefixes) if allowed_prefixes else [],
     }

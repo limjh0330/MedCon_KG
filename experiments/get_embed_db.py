@@ -157,7 +157,7 @@ def _flush_batch(
     total_vectors: int,
     metadata_file,
     faiss_index_path: Optional[str] = None,
-) -> tuple[object, int, int]:
+) -> tuple[int, int]:
     vectors = embedder.embed_texts([row["text"] for row in batch_rows]).astype(
         np.float32,
         copy=False,
@@ -194,7 +194,7 @@ def _flush_batch(
         )
 
     batch_rows.clear()
-    return index, dimension, total_vectors
+    return dimension, total_vectors
 
 
 def _iter_filtered_records(
@@ -212,7 +212,7 @@ def _iter_filtered_records(
     total_vectors: int,
     metadata_file,
     progress,
-) -> tuple[object, Optional[int], int, int]:
+) -> tuple[Optional[int], int, int]:
     emitted = 0
     skipped_existing = 0
     batch_rows: list[dict] = []
@@ -268,7 +268,7 @@ def _iter_filtered_records(
 
                 batch_rows.append(row)
                 if len(batch_rows) >= batch_size:
-                    index, dimension, total_vectors = _flush_batch(
+                    dimension, total_vectors = _flush_batch(
                         batch_rows,
                         embedder=embedder,
                         faiss_module=faiss_module,
@@ -288,7 +288,7 @@ def _iter_filtered_records(
 
     if batch_rows:
         final_batch_size = len(batch_rows)
-        index, dimension, total_vectors = _flush_batch(
+        dimension, total_vectors = _flush_batch(
             batch_rows,
             embedder=embedder,
             faiss_module=faiss_module,
@@ -300,7 +300,7 @@ def _iter_filtered_records(
         )
         progress.update(final_batch_size)
 
-    return index, dimension, total_vectors, skipped_existing
+    return dimension, total_vectors, skipped_existing
 
 
 def build_faiss_db(args: argparse.Namespace) -> dict:
@@ -374,7 +374,7 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
     with open(metadata_jsonl_path, metadata_open_mode, encoding="utf-8") as meta_f:
         progress = tqdm(desc="Indexing records", unit="record", dynamic_ncols=True)
         try:
-            index, dimension, total_vectors, skipped_existing = _iter_filtered_records(
+            dimension, total_vectors, skipped_existing = _iter_filtered_records(
                 stage0_documents_path=args.stage0_documents,
                 allowed_prefixes=allowed_prefixes,
                 max_records=args.max_records,
@@ -395,7 +395,6 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
     if index is None or dimension is None:
         raise ValueError("No records were indexed. Check the Stage-0 input or filters.")
 
-    faiss.write_index(index, faiss_index_path)
     logger.info(
         "Added %s new records, skipped %s existing records, total vectors=%s",
         total_vectors - existing_record_count,

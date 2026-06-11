@@ -35,8 +35,8 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from cli_utils import setup_logging
-from .ex_config import ExperimentConfig
-from .llm_backend import OpenAIEmbedder
+from experiments.ex_config import ExperimentConfig
+from experiments.llm_backend import OpenAIEmbedder
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +88,9 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def _parse_prefixes(value: str) -> Optional[set[str]]:
-    prefixes = {part.strip().upper() for part in (value or "").split(",") if part.strip()}
+    prefixes = {
+        part.strip().upper() for part in (value or "").split(",") if part.strip()
+    }
     return prefixes or None
 
 
@@ -113,10 +115,21 @@ def _split_strength_prefixed_text(raw_text: str) -> tuple[str, str]:
     return "", text
 
 
-def _count_existing_metadata(metadata_jsonl_path: str) -> int:
-    if not os.path.isfile(metadata_jsonl_path):
-        return 0
+def _record_key(row: dict) -> tuple[str, str, int]:
+    return (
+        str(row.get("guideline_id") or "").strip(),
+        str(row.get("source_db") or "").strip(),
+        int(row.get("sentence_index") or 0)
+    )
 
+
+def _load_existing_metadata_keys(
+    metadata_jsonl_path: str,
+) -> tuple[set[tuple[str, str, int]], int]:
+    if not os.path.isfile(metadata_jsonl_path):
+        return set(), 0
+
+    keys: set[tuple[str, str, int]] = set()
     count = 0
     with open(metadata_jsonl_path, "r", encoding="utf-8") as f:
         for line_no, line in enumerate(f, start=1):
@@ -124,13 +137,14 @@ def _count_existing_metadata(metadata_jsonl_path: str) -> int:
             if not line:
                 continue
             try:
-                json.loads(line)
+                row = json.loads(line)
             except json.JSONDecodeError as e:
                 raise ValueError(
                     f"Invalid JSON on line {line_no} of {metadata_jsonl_path}: {e}"
                 ) from e
+            keys.add(_record_key(row))
             count += 1
-    return count
+    return keys, count
 
 
 def _flush_batch(
@@ -144,9 +158,10 @@ def _flush_batch(
     metadata_file,
     faiss_index_path: Optional[str] = None,
 ) -> tuple[object, int, int]:
-    vectors = embedder.embed_texts(
-        [row["text"] for row in batch_rows]
-    ).astype(np.float32, copy=False)
+    vectors = embedder.embed_texts([row["text"] for row in batch_rows]).astype(
+        np.float32,
+        copy=False,
+    )
     if vectors.ndim != 2 or vectors.shape[0] != len(batch_rows):
         raise ValueError(
             f"Embedding shape mismatch: got {vectors.shape}, expected ({len(batch_rows)}, D)"
@@ -163,13 +178,10 @@ def _flush_batch(
 
     faiss_module.normalize_L2(vectors)
     index.add(vectors)
-    if faiss_index_path:
-        faiss_module.write_index(index, faiss_index_path)
 
     for offset, row in enumerate(batch_rows):
         row["vector_id"] = total_vectors + offset
         metadata_file.write(json.dumps(row, ensure_ascii=False) + "\n")
-    metadata_file.flush()
 
     total_vectors += len(batch_rows)
     metadata_file.flush()
@@ -195,32 +207,30 @@ def _iter_filtered_records(
     faiss_module,
     faiss_index_path: str,
     existing_record_keys: set[tuple[str, str, int]],
-    index=None,
-    dimension: Optional[int] = None,
-    total_vectors: int = 0,
+    index,
+    dimension: Optional[int],
+    total_vectors: int,
     metadata_file,
     progress,
-    faiss_index_path: Optional[str] = None,
-    initial_index=None,
-    initial_dimension: Optional[int] = None,
-    initial_total_vectors: int = 0,
-    skip_records: int = 0,
-) -> tuple[object, Optional[int], int]:
-    index = initial_index
-    dimension = initial_dimension
-    total_vectors = initial_total_vectors
+) -> tuple[object, Optional[int], int, int]:
     emitted = 0
-    skipped = 0
+    skipped_existing = 0
     batch_rows: list[dict] = []
 
     with open(stage0_documents_path, "r", encoding="utf-8") as f:
         for line_no, line in enumerate(f, start=1):
             line = line.strip()
-            doc = json.loads(line)
+            if not line:
+                continue
+            try:
+                doc = json.loads(line)
+            except json.JSONDecodeError as e:
+                raise ValueError(
+                    f"Invalid JSON on line {line_no} of {stage0_documents_path}: {e}"
+                ) from e
+
             guideline_id = str(
-                doc.get("db_guideline_id")
-                or doc.get("guideline_id")
-                or ""
+                doc.get("db_guideline_id") or doc.get("guideline_id") or ""
             ).strip()
             source_db = _infer_source_db(guideline_id)
             if allowed_prefixes and source_db.upper() not in allowed_prefixes:
@@ -240,14 +250,7 @@ def _iter_filtered_records(
                     continue
 
                 emitted += 1
-                if emitted <= skip_records:
-                    skipped += 1
-                    progress.update(1)
-                    if max_records is not None and emitted >= max_records:
-                        break
-                    continue
-
-                batch_rows.append({
+                row = {
                     "guideline_id": guideline_id,
                     "source_db": source_db,
                     "sentence_index": sentence_index,
@@ -256,15 +259,14 @@ def _iter_filtered_records(
                     "raw_text": raw_text,
                     "text": text,
                 }
-                record_key = _record_key(row)
-                if record_key in existing_record_keys:
+                if _record_key(row) in existing_record_keys:
                     skipped_existing += 1
+                    progress.update(1)
                     if max_records is not None and emitted >= max_records:
                         break
                     continue
 
                 batch_rows.append(row)
-
                 if len(batch_rows) >= batch_size:
                     index, dimension, total_vectors = _flush_batch(
                         batch_rows,
@@ -283,9 +285,6 @@ def _iter_filtered_records(
 
             if max_records is not None and emitted >= max_records:
                 break
-
-    if skipped:
-        logger.info("Skipped %s records already present in metadata/FAISS", skipped)
 
     if batch_rows:
         final_batch_size = len(batch_rows)
@@ -331,26 +330,39 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
         f", max_records={args.max_records}" if args.max_records is not None else "",
     )
 
-    existing_record_count = _count_existing_metadata(metadata_jsonl_path)
+    existing_record_keys: set[tuple[str, str, int]] = set()
+    existing_record_count = 0
     index = None
     dimension = None
-    if existing_record_count:
-        if not os.path.isfile(faiss_index_path):
+    total_vectors = 0
+    metadata_open_mode = "w"
+
+    if os.path.isfile(faiss_index_path):
+        if not os.path.isfile(metadata_jsonl_path):
             raise FileNotFoundError(
-                "metadata.jsonl already contains records, but index.faiss is missing. "
-                "Cannot skip embedding existing metadata rows without the matching FAISS index."
+                "Existing FAISS index found but metadata.jsonl is missing; "
+                "cannot determine which records to skip."
             )
+        existing_record_keys, existing_record_count = _load_existing_metadata_keys(
+            metadata_jsonl_path
+        )
         index = faiss.read_index(faiss_index_path)
         dimension = int(index.d)
-        index_total = int(index.ntotal)
-        if index_total != existing_record_count:
+        total_vectors = int(index.ntotal)
+        if total_vectors != existing_record_count:
             raise ValueError(
-                "metadata.jsonl and index.faiss are out of sync: "
-                f"metadata has {existing_record_count} records, FAISS has {index_total} vectors."
+                "FAISS index row count does not match metadata.jsonl line count: "
+                f"{total_vectors} != {existing_record_count}"
             )
+        metadata_open_mode = "a"
         logger.info(
             "Resuming from %s existing metadata/FAISS records",
             existing_record_count,
+        )
+    elif os.path.isfile(metadata_jsonl_path):
+        logger.warning(
+            "Found metadata without %s; rebuilding metadata/index from scratch.",
+            faiss_index_path,
         )
 
     embedder = OpenAIEmbedder(
@@ -359,8 +371,7 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
         batch_size=cfg.embedding_batch_size,
     )
 
-    metadata_mode = "a" if existing_record_count else "w"
-    with open(metadata_jsonl_path, metadata_mode, encoding="utf-8") as meta_f:
+    with open(metadata_jsonl_path, metadata_open_mode, encoding="utf-8") as meta_f:
         progress = tqdm(desc="Indexing records", unit="record", dynamic_ncols=True)
         try:
             index, dimension, total_vectors, skipped_existing = _iter_filtered_records(
@@ -376,12 +387,7 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
                 dimension=dimension,
                 total_vectors=total_vectors,
                 metadata_file=meta_f,
-                faiss_index_path=faiss_index_path,
                 progress=progress,
-                initial_index=index,
-                initial_dimension=dimension,
-                initial_total_vectors=existing_record_count,
-                skip_records=existing_record_count,
             )
         finally:
             progress.close()

@@ -13,6 +13,7 @@ import json
 import logging
 import os
 import re
+import time
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -372,12 +373,21 @@ class OpenAIEmbedder:
         self,
         api_key: Optional[str],
         model: str = "text-embedding-3-large",
-        batch_size: int = 128,
+        batch_size: int = 32,
+        base_delay: float = 2.0,
+        per_batch_sleep: float = 0.25,
+        max_retries: int = 6,
     ):
         if not api_key:
             raise ValueError("OpenAI API key is required for embeddings (Variant 2).")
         try:
-            from openai import OpenAI
+            from openai import (
+                APIConnectionError,
+                APIError,
+                APITimeoutError,
+                OpenAI,
+                RateLimitError,
+            )
         except ImportError as e:
             raise ImportError(
                 "Install OpenAI SDK: pip install 'openai>=1.70.0'"
@@ -385,6 +395,11 @@ class OpenAIEmbedder:
         self.client = OpenAI(api_key=api_key)
         self.model = model
         self.batch_size = batch_size
+        self.base_delay = base_delay
+        self.per_batch_sleep = per_batch_sleep
+        self.max_retries = max_retries
+        self._rate_limit_error = RateLimitError
+        self._transient_errors = (APIError, APITimeoutError, APIConnectionError)
 
     def embed_texts(self, texts: list[str]) -> np.ndarray:
         """Return an (N, D) float32 matrix. Input order is preserved."""
@@ -393,9 +408,62 @@ class OpenAIEmbedder:
         vectors: list[list[float]] = []
         for i in range(0, len(texts), self.batch_size):
             batch = texts[i : i + self.batch_size]
-            resp = self.client.embeddings.create(model=self.model, input=batch)
+            resp = self._create_embedding_with_retries(batch)
             vectors.extend(d.embedding for d in resp.data)
+            if self.per_batch_sleep > 0 and i + self.batch_size < len(texts):
+                time.sleep(self.per_batch_sleep)
         return np.asarray(vectors, dtype=np.float32)
+
+    def _create_embedding_with_retries(self, batch: list[str]):
+        for attempt in range(1, self.max_retries + 1):
+            try:
+                return self.client.embeddings.create(model=self.model, input=batch)
+            except self._rate_limit_error as e:
+                if attempt >= self.max_retries:
+                    raise
+                delay = self._retry_delay(e, attempt)
+                logger.warning(
+                    "OpenAI embedding rate limit hit; retrying in %.3fs "
+                    "(attempt %d/%d)",
+                    delay,
+                    attempt,
+                    self.max_retries,
+                )
+                time.sleep(delay)
+            except self._transient_errors as e:
+                if attempt >= self.max_retries:
+                    raise
+                delay = self._fallback_delay(attempt)
+                logger.warning(
+                    "OpenAI embedding transient error (%s); retrying in %.3fs "
+                    "(attempt %d/%d)",
+                    e.__class__.__name__,
+                    delay,
+                    attempt,
+                    self.max_retries,
+                )
+                time.sleep(delay)
+
+        raise RuntimeError("OpenAI embedding retry loop exhausted unexpectedly")
+
+    def _retry_delay(self, error: Exception, attempt: int) -> float:
+        retry_after = self._parse_retry_after_seconds(str(error))
+        if retry_after is not None:
+            return retry_after
+        return self._fallback_delay(attempt)
+
+    def _fallback_delay(self, attempt: int) -> float:
+        return self.base_delay * (2 ** (attempt - 1))
+
+    @staticmethod
+    def _parse_retry_after_seconds(message: str) -> Optional[float]:
+        m = re.search(r"try again in\s+([0-9]*\.?[0-9]+)\s*(ms|s)", message, re.I)
+        if not m:
+            return None
+        value = float(m.group(1))
+        if m.group(2).lower() == "ms":
+            return value / 1000.0
+        return value
 
     def embed_with_cache(
         self,

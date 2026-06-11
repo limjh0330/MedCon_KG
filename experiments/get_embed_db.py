@@ -35,8 +35,8 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from cli_utils import setup_logging
-from experiments.config import ExperimentConfig
-from experiments.llm_backend import OpenAIEmbedder
+from .ex_config import ExperimentConfig
+from .llm_backend import OpenAIEmbedder
 
 logger = logging.getLogger(__name__)
 

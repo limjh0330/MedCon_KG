@@ -147,75 +147,12 @@ def _load_existing_metadata_keys(
     return keys, count
 
 
-def _flush_batch(
-    batch_rows: list[dict],
-    *,
-    embedder: OpenAIEmbedder,
-    faiss_module,
-    index,
-    dimension: Optional[int],
-    total_vectors: int,
-    metadata_file,
-    faiss_index_path: Optional[str] = None,
-) -> tuple[int, int]:
-    vectors = embedder.embed_texts([row["text"] for row in batch_rows]).astype(
-        np.float32,
-        copy=False,
-    )
-    if vectors.ndim != 2 or vectors.shape[0] != len(batch_rows):
-        raise ValueError(
-            f"Embedding shape mismatch: got {vectors.shape}, expected ({len(batch_rows)}, D)"
-        )
-
-    if dimension is None:
-        dimension = int(vectors.shape[1])
-        index = faiss_module.IndexFlatIP(dimension)
-        logger.info("Initialized FAISS IndexFlatIP with dimension=%s", dimension)
-    elif int(vectors.shape[1]) != int(dimension):
-        raise ValueError(
-            f"Embedding dimension mismatch: got {vectors.shape[1]}, expected {dimension}"
-        )
-
-    faiss_module.normalize_L2(vectors)
-    index.add(vectors)
-
-    for offset, row in enumerate(batch_rows):
-        row["vector_id"] = total_vectors + offset
-        metadata_file.write(json.dumps(row, ensure_ascii=False) + "\n")
-
-    total_vectors += len(batch_rows)
-    metadata_file.flush()
-    if faiss_index_path:
-        faiss_module.write_index(index, faiss_index_path)
-        logger.debug(
-            "Persisted FAISS index with %s vectors to %s",
-            total_vectors,
-            faiss_index_path,
-        )
-
-    batch_rows.clear()
-    return dimension, total_vectors
-
-
-def _iter_filtered_records(
+def _iter_sentence_rows(
     stage0_documents_path: str,
     allowed_prefixes: Optional[set[str]],
     max_records: Optional[int],
-    *,
-    batch_size: int,
-    embedder: OpenAIEmbedder,
-    faiss_module,
-    faiss_index_path: str,
-    existing_record_keys: set[tuple[str, str, int]],
-    index,
-    dimension: Optional[int],
-    total_vectors: int,
-    metadata_file,
-    progress,
-) -> tuple[Optional[int], int, int]:
+):
     emitted = 0
-    skipped_existing = 0
-    batch_rows: list[dict] = []
 
     with open(stage0_documents_path, "r", encoding="utf-8") as f:
         for line_no, line in enumerate(f, start=1):
@@ -250,7 +187,7 @@ def _iter_filtered_records(
                     continue
 
                 emitted += 1
-                row = {
+                yield {
                     "guideline_id": guideline_id,
                     "source_db": source_db,
                     "sentence_index": sentence_index,
@@ -259,36 +196,130 @@ def _iter_filtered_records(
                     "raw_text": raw_text,
                     "text": text,
                 }
-                if _record_key(row) in existing_record_keys:
-                    skipped_existing += 1
-                    progress.update(1)
-                    if max_records is not None and emitted >= max_records:
-                        break
-                    continue
-
-                batch_rows.append(row)
-                if len(batch_rows) >= batch_size:
-                    dimension, total_vectors = _flush_batch(
-                        batch_rows,
-                        embedder=embedder,
-                        faiss_module=faiss_module,
-                        index=index,
-                        dimension=dimension,
-                        total_vectors=total_vectors,
-                        metadata_file=metadata_file,
-                        faiss_index_path=faiss_index_path,
-                    )
-                    progress.update(batch_size)
-
                 if max_records is not None and emitted >= max_records:
-                    break
+                    return
 
-            if max_records is not None and emitted >= max_records:
-                break
+
+def _count_target_sentences(
+    stage0_documents_path: str,
+    allowed_prefixes: Optional[set[str]],
+    max_records: Optional[int],
+    existing_record_keys: set[tuple[str, str, int]],
+) -> tuple[int, int]:
+    total_sentences = 0
+    already_indexed_sentences = 0
+
+    for row in _iter_sentence_rows(
+        stage0_documents_path=stage0_documents_path,
+        allowed_prefixes=allowed_prefixes,
+        max_records=max_records,
+    ):
+        total_sentences += 1
+        if _record_key(row) in existing_record_keys:
+            already_indexed_sentences += 1
+
+    return total_sentences, already_indexed_sentences
+
+
+def _flush_batch(
+    batch_rows: list[dict],
+    *,
+    embedder: OpenAIEmbedder,
+    faiss_module,
+    index,
+    dimension: Optional[int],
+    total_vectors: int,
+    metadata_file,
+    faiss_index_path: Optional[str] = None,
+) -> tuple[object, int, int]:
+    vectors = embedder.embed_texts([row["text"] for row in batch_rows]).astype(
+        np.float32,
+        copy=False,
+    )
+    if vectors.ndim != 2 or vectors.shape[0] != len(batch_rows):
+        raise ValueError(
+            f"Embedding shape mismatch: got {vectors.shape}, expected ({len(batch_rows)}, D)"
+        )
+
+    if index is None:
+        dimension = int(vectors.shape[1])
+        index = faiss_module.IndexFlatIP(dimension)
+        logger.info("Initialized FAISS IndexFlatIP with dimension=%s", dimension)
+    elif dimension is None:
+        dimension = int(index.d)
+
+    if int(vectors.shape[1]) != int(dimension):
+        raise ValueError(
+            f"Embedding dimension mismatch: got {vectors.shape[1]}, expected {dimension}"
+        )
+
+    faiss_module.normalize_L2(vectors)
+    index.add(vectors)
+
+    for offset, row in enumerate(batch_rows):
+        row["vector_id"] = total_vectors + offset
+        metadata_file.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+    total_vectors += len(batch_rows)
+    metadata_file.flush()
+    if faiss_index_path:
+        faiss_module.write_index(index, faiss_index_path)
+        logger.debug(
+            "Persisted FAISS index with %s vectors to %s",
+            total_vectors,
+            faiss_index_path,
+        )
+
+    batch_rows.clear()
+    return index, dimension, total_vectors
+
+
+def _iter_filtered_records(
+    stage0_documents_path: str,
+    allowed_prefixes: Optional[set[str]],
+    max_records: Optional[int],
+    *,
+    batch_size: int,
+    embedder: OpenAIEmbedder,
+    faiss_module,
+    faiss_index_path: str,
+    existing_record_keys: set[tuple[str, str, int]],
+    index,
+    dimension: Optional[int],
+    total_vectors: int,
+    metadata_file,
+    progress,
+) -> tuple[object, Optional[int], int, int]:
+    skipped_existing = 0
+    batch_rows: list[dict] = []
+
+    for row in _iter_sentence_rows(
+        stage0_documents_path=stage0_documents_path,
+        allowed_prefixes=allowed_prefixes,
+        max_records=max_records,
+    ):
+        if _record_key(row) in existing_record_keys:
+            skipped_existing += 1
+            continue
+
+        batch_rows.append(row)
+        if len(batch_rows) >= batch_size:
+            flushed_count = len(batch_rows)
+            index, dimension, total_vectors = _flush_batch(
+                batch_rows,
+                embedder=embedder,
+                faiss_module=faiss_module,
+                index=index,
+                dimension=dimension,
+                total_vectors=total_vectors,
+                metadata_file=metadata_file,
+                faiss_index_path=faiss_index_path,
+            )
+            progress.update(flushed_count)
 
     if batch_rows:
         final_batch_size = len(batch_rows)
-        dimension, total_vectors = _flush_batch(
+        index, dimension, total_vectors = _flush_batch(
             batch_rows,
             embedder=embedder,
             faiss_module=faiss_module,
@@ -300,7 +331,7 @@ def _iter_filtered_records(
         )
         progress.update(final_batch_size)
 
-    return dimension, total_vectors, skipped_existing
+    return index, dimension, total_vectors, skipped_existing
 
 
 def build_faiss_db(args: argparse.Namespace) -> dict:
@@ -332,10 +363,10 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
 
     existing_record_keys: set[tuple[str, str, int]] = set()
     existing_record_count = 0
-    index = None
-    dimension = None
-    total_vectors = 0
     metadata_open_mode = "w"
+    index = None
+    dimension: Optional[int] = None
+    total_vectors = 0
 
     if os.path.isfile(faiss_index_path):
         if not os.path.isfile(metadata_jsonl_path):
@@ -351,8 +382,8 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
         total_vectors = int(index.ntotal)
         if total_vectors != existing_record_count:
             raise ValueError(
-                "FAISS index row count does not match metadata.jsonl line count: "
-                f"{total_vectors} != {existing_record_count}"
+                "Existing FAISS index/metadata count mismatch: "
+                f"index={total_vectors}, metadata={existing_record_count}"
             )
         metadata_open_mode = "a"
         logger.info(
@@ -371,10 +402,28 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
         batch_size=cfg.embedding_batch_size,
     )
 
+    total_target_sentences, already_indexed_sentences = _count_target_sentences(
+        stage0_documents_path=args.stage0_documents,
+        allowed_prefixes=allowed_prefixes,
+        max_records=args.max_records,
+        existing_record_keys=existing_record_keys,
+    )
+    logger.info(
+        "Embedding progress baseline: %s/%s eligible raw_text sentences already indexed",
+        already_indexed_sentences,
+        total_target_sentences,
+    )
+
     with open(metadata_jsonl_path, metadata_open_mode, encoding="utf-8") as meta_f:
-        progress = tqdm(desc="Indexing records", unit="record", dynamic_ncols=True)
+        progress = tqdm(
+            total=total_target_sentences,
+            initial=already_indexed_sentences,
+            desc="Embedding sentences",
+            unit="sentence",
+            dynamic_ncols=True,
+        )
         try:
-            dimension, total_vectors, skipped_existing = _iter_filtered_records(
+            index, dimension, total_vectors, skipped_existing = _iter_filtered_records(
                 stage0_documents_path=args.stage0_documents,
                 allowed_prefixes=allowed_prefixes,
                 max_records=args.max_records,

@@ -30,14 +30,21 @@ from typing import Optional
 import numpy as np
 from tqdm import tqdm
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = PACKAGE_ROOT.parent
 
-from cli_utils import setup_logging
-from experiments.ex_config import ExperimentConfig
-from experiments.llm_backend import OpenAIEmbedder
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
+try:
+    from .ex_config import ExperimentConfig
+    from .llm_backend import OpenAIEmbedder
+    from ..cli_utils import setup_logging
+
+except ImportError:
+    from MedCon_KG.experiments.ex_config import ExperimentConfig
+    from MedCon_KG.experiments.llm_backend import OpenAIEmbedder
+    from MedCon_KG.cli_utils import setup_logging
 logger = logging.getLogger(__name__)
 
 
@@ -142,9 +149,44 @@ def _load_existing_metadata_keys(
                 raise ValueError(
                     f"Invalid JSON on line {line_no} of {metadata_jsonl_path}: {e}"
                 ) from e
+            vector_id = row.get("vector_id")
+            if vector_id != count:
+                raise ValueError(
+                    f"Non-contiguous vector_id on line {line_no} of "
+                    f"{metadata_jsonl_path}: got {vector_id}, expected {count}"
+                )
             keys.add(_record_key(row))
             count += 1
     return keys, count
+
+
+def _truncate_metadata_to_count(metadata_jsonl_path: str, target_count: int) -> None:
+    """Roll metadata back to the last FAISS checkpoint after an interrupted write."""
+    kept = 0
+    with open(metadata_jsonl_path, "r+b") as f:
+        while kept < target_count:
+            line = f.readline()
+            if not line:
+                raise ValueError(
+                    f"Metadata ended at {kept} records; cannot truncate to {target_count}."
+                )
+            if line.strip():
+                kept += 1
+        f.truncate(f.tell())
+
+
+def _write_faiss_index_atomic(faiss_module, index, faiss_index_path: str) -> None:
+    """Write a checkpoint without replacing the last valid index prematurely."""
+    if faiss_index_path is None:
+        raise ValueError("faiss_index_path is required for checkpoint writes")
+    faiss_index_path = os.fspath(faiss_index_path)
+    temp_path = f"{faiss_index_path}.tmp.{os.getpid()}"
+    try:
+        faiss_module.write_index(index, temp_path)
+        os.replace(temp_path, faiss_index_path)
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
 
 def _iter_sentence_rows(
@@ -262,8 +304,9 @@ def _flush_batch(
 
     total_vectors += len(batch_rows)
     metadata_file.flush()
+    os.fsync(metadata_file.fileno())
     if faiss_index_path:
-        faiss_module.write_index(index, faiss_index_path)
+        _write_faiss_index_atomic(faiss_module, index, faiss_index_path)
         logger.debug(
             "Persisted FAISS index with %s vectors to %s",
             total_vectors,
@@ -292,6 +335,8 @@ def _iter_filtered_records(
 ) -> tuple[object, Optional[int], int, int]:
     skipped_existing = 0
     batch_rows: list[dict] = []
+    checkpoint_interval = 10_000
+    last_checkpoint_total = total_vectors
 
     for row in _iter_sentence_rows(
         stage0_documents_path=stage0_documents_path,
@@ -313,9 +358,13 @@ def _iter_filtered_records(
                 dimension=dimension,
                 total_vectors=total_vectors,
                 metadata_file=metadata_file,
-                faiss_index_path=faiss_index_path,
+                faiss_index_path=None,
             )
             progress.update(flushed_count)
+            if total_vectors - last_checkpoint_total >= checkpoint_interval:
+                _write_faiss_index_atomic(faiss_module, index, faiss_index_path)
+                last_checkpoint_total = total_vectors
+                logger.info("Checkpointed %s FAISS vectors", total_vectors)
 
     if batch_rows:
         final_batch_size = len(batch_rows)
@@ -327,9 +376,13 @@ def _iter_filtered_records(
             dimension=dimension,
             total_vectors=total_vectors,
             metadata_file=metadata_file,
-            faiss_index_path=faiss_index_path,
+            faiss_index_path=None,
         )
         progress.update(final_batch_size)
+
+    if index is not None and total_vectors != last_checkpoint_total:
+        _write_faiss_index_atomic(faiss_module, index, faiss_index_path)
+        logger.info("Checkpointed %s FAISS vectors", total_vectors)
 
     return index, dimension, total_vectors, skipped_existing
 
@@ -380,10 +433,22 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
         index = faiss.read_index(faiss_index_path)
         dimension = int(index.d)
         total_vectors = int(index.ntotal)
-        if total_vectors != existing_record_count:
+        if existing_record_count > total_vectors:
+            logger.warning(
+                "Metadata is ahead of the last valid FAISS checkpoint "
+                "(index=%s, metadata=%s); rolling metadata back.",
+                total_vectors,
+                existing_record_count,
+            )
+            _truncate_metadata_to_count(metadata_jsonl_path, total_vectors)
+            existing_record_keys, existing_record_count = _load_existing_metadata_keys(
+                metadata_jsonl_path
+            )
+        elif total_vectors > existing_record_count:
             raise ValueError(
                 "Existing FAISS index/metadata count mismatch: "
-                f"index={total_vectors}, metadata={existing_record_count}"
+                f"index={total_vectors}, metadata={existing_record_count}. "
+                "The index is ahead of metadata and cannot be recovered automatically."
             )
         metadata_open_mode = "a"
         logger.info(

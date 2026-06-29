@@ -19,6 +19,7 @@ Example:
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 import logging
 import os
@@ -189,6 +190,17 @@ def _write_faiss_index_atomic(faiss_module, index, faiss_index_path: str) -> Non
             os.remove(temp_path)
 
 
+def _merge_faiss_index(index, temporary_index) -> None:
+    """Append a temporary FAISS index into the final index and leave no batch state."""
+    if temporary_index.ntotal == 0:
+        return
+
+    try:
+        index.merge_from(temporary_index)
+    except TypeError:
+        index.merge_from(temporary_index, 0)
+
+
 def _iter_sentence_rows(
     stage0_documents_path: str,
     allowed_prefixes: Optional[set[str]],
@@ -296,7 +308,14 @@ def _flush_batch(
         )
 
     faiss_module.normalize_L2(vectors)
-    index.add(vectors)
+    temporary_index = faiss_module.IndexFlatIP(int(dimension))
+    try:
+        temporary_index.add(vectors)
+        _merge_faiss_index(index, temporary_index)
+    finally:
+        del temporary_index
+        del vectors
+        gc.collect()
 
     for offset, row in enumerate(batch_rows):
         row["vector_id"] = total_vectors + offset

@@ -373,6 +373,7 @@ class OpenAIEmbedder:
         self,
         api_key: Optional[str],
         model: str = "text-embedding-3-large",
+        dimensions: Optional[int] = None,
         batch_size: int = 32,
         base_delay: float = 2.0,
         per_batch_sleep: float = 0.25,
@@ -394,6 +395,7 @@ class OpenAIEmbedder:
             ) from e
         self.client = OpenAI(api_key=api_key)
         self.model = model
+        self.dimensions = dimensions
         self.batch_size = batch_size
         self.base_delay = base_delay
         self.per_batch_sleep = per_batch_sleep
@@ -417,7 +419,13 @@ class OpenAIEmbedder:
     def _create_embedding_with_retries(self, batch: list[str]):
         for attempt in range(1, self.max_retries + 1):
             try:
-                return self.client.embeddings.create(model=self.model, input=batch)
+                request = {
+                    "model": self.model,
+                    "input": batch,
+                }
+                if self.dimensions is not None:
+                    request["dimensions"] = self.dimensions
+                return self.client.embeddings.create(**request)
             except self._rate_limit_error as e:
                 if attempt >= self.max_retries:
                     raise
@@ -476,7 +484,7 @@ class OpenAIEmbedder:
         re-calling the API. The hash is over the concatenated SHA256 of texts so
         any change to the input invalidates the cache.
         """
-        sig = self._sig(texts)
+        sig = self._sig(texts, self.model, self.dimensions)
         if os.path.isfile(cache_path):
             try:
                 cached = np.load(cache_path, allow_pickle=False)
@@ -498,8 +506,15 @@ class OpenAIEmbedder:
         return matrix
 
     @staticmethod
-    def _sig(texts: list[str]) -> str:
+    def _sig(
+        texts: list[str],
+        model: str,
+        dimensions: Optional[int],
+    ) -> str:
         h = hashlib.sha256()
+        h.update(model.encode("utf-8"))
+        h.update(b"\x00")
+        h.update(str(dimensions).encode("utf-8"))
         h.update(str(len(texts)).encode())
         for t in texts:
             h.update(b"\x00")

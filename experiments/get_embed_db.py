@@ -20,6 +20,7 @@ import logging
 import os
 import re
 import sys
+from glob import glob
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -253,14 +254,19 @@ def _count_target_sentences(
     return total_sentences, already_indexed_sentences
 
 
-def _write_index_atomic(faiss_module, index, output_path: str) -> None:
-    temp_path = f"{output_path}.tmp.{os.getpid()}"
-    try:
-        faiss_module.write_index(index, temp_path)
-        os.replace(temp_path, output_path)
-    finally:
+def _cleanup_temp_files(output_path: str) -> None:
+    for temp_path in glob(f"{output_path}.tmp.*"):
         if os.path.exists(temp_path):
             os.remove(temp_path)
+
+
+def _write_index_checkpoint(faiss_module, index, output_path: str) -> None:
+    """Persist a shard checkpoint without keeping a parallel tmp shard file."""
+    _cleanup_temp_files(output_path)
+    faiss_module.write_index(index, output_path)
+    temp_path = f"{output_path}.tmp.{os.getpid()}"
+    if os.path.exists(temp_path):
+        os.remove(temp_path)
 
 
 def _load_existing_metadata_keys(
@@ -429,7 +435,7 @@ def _checkpoint_current_shard(
 ) -> None:
     if state.index is None or state.vector_count == 0:
         return
-    _write_index_atomic(faiss_module, state.index, paths.shard_path(state.shard_id))
+    _write_index_checkpoint(faiss_module, state.index, paths.shard_path(state.shard_id))
     _update_shard_inventory(shard_infos, paths, state.shard_id, state.vector_count)
     state.last_checkpoint_count = state.vector_count
 

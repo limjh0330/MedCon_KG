@@ -7,6 +7,7 @@ retriever, and saves:
 - `index_1024d_shard_*.faiss`: normalized inner-product shards
 - `metadata_1024d.jsonl`: one JSON record per vector, same order as FAISS rows
 - `manifest_1024d.json`: build metadata and shard inventory
+- `output/long_text.jsonl`: texts exceeding the embedding input-token limit
 
 Resume is supported. Existing metadata is read first, previously indexed keys
 are skipped, and the current shard is checkpointed every 10,000 new vectors.
@@ -44,6 +45,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_EMBEDDING_DIMENSION = 1024
 CHECKPOINT_INTERVAL = 10_000
 SHARD_SIZE = 100_000
+MAX_INPUT_TOKENS = 8191
 SHARD_RE = re.compile(r"^index_(\d+)d_shard_(\d{6})\.faiss$")
 
 
@@ -440,10 +442,35 @@ def _checkpoint_current_shard(
     state.last_checkpoint_count = state.vector_count
 
 
+def _embedding_tokenizer(model: str):
+    """Return the tiktoken tokenizer associated with an embedding model."""
+    try:
+        import tiktoken
+    except ImportError as e:
+        raise ImportError(
+            "`tiktoken` is required to validate embedding input lengths. "
+            "Install it with: pip install tiktoken"
+        ) from e
+
+    try:
+        return tiktoken.encoding_for_model(model)
+    except KeyError:
+        # Custom model aliases are not always registered in tiktoken. OpenAI's
+        # current embedding models use cl100k_base, so use it as a safe fallback.
+        logger.warning(
+            "No tiktoken encoding registered for embedding model %r; "
+            "using cl100k_base.",
+            model,
+        )
+        return tiktoken.get_encoding("cl100k_base")
+
+
 def _flush_batch(
     batch_rows: list[dict],
     *,
     embedder: OpenAIEmbedder,
+    tokenizer,
+    long_text_file,
     faiss_module,
     paths: ArtifactPaths,
     metadata_file,
@@ -452,13 +479,31 @@ def _flush_batch(
     dimension: Optional[int],
     total_vectors: int,
 ) -> tuple[ShardState, int, int]:
-    vectors = embedder.embed_texts([row["text"] for row in batch_rows]).astype(
+    embedding_rows: list[dict] = []
+    for row in batch_rows:
+        token_count = len(tokenizer.encode(row["text"]))
+        if token_count < MAX_INPUT_TOKENS:
+            embedding_rows.append(row)
+        else:
+            long_text_file.write(json.dumps({"text": row["text"]}, ensure_ascii=False) + "\n")
+            logger.warning(
+                "Skipping text with %s tokens (maximum embedding input: %s)",
+                token_count,
+                MAX_INPUT_TOKENS,
+            )
+
+    long_text_file.flush()
+
+    if not embedding_rows:
+        return state, dimension or paths.dimension, total_vectors
+
+    vectors = embedder.embed_texts([row["text"] for row in embedding_rows]).astype(
         np.float32,
         copy=False,
     )
-    if vectors.ndim != 2 or vectors.shape[0] != len(batch_rows):
+    if vectors.ndim != 2 or vectors.shape[0] != len(embedding_rows):
         raise ValueError(
-            f"Embedding shape mismatch: got {vectors.shape}, expected ({len(batch_rows)}, D)"
+            f"Embedding shape mismatch: got {vectors.shape}, expected ({len(embedding_rows)}, D)"
         )
 
     batch_dimension = int(vectors.shape[1])
@@ -472,7 +517,7 @@ def _flush_batch(
     faiss_module.normalize_L2(vectors)
 
     row_offset = 0
-    while row_offset < len(batch_rows):
+    while row_offset < len(embedding_rows):
         if state.index is None:
             state = ShardState(
                 shard_id=state.shard_id,
@@ -487,13 +532,13 @@ def _flush_batch(
             )
 
         shard_remaining = SHARD_SIZE - state.vector_count
-        take = min(shard_remaining, len(batch_rows) - row_offset)
+        take = min(shard_remaining, len(embedding_rows) - row_offset)
         next_offset = row_offset + take
 
         state.index.add(vectors[row_offset:next_offset])
 
         shard_base = state.vector_count
-        for local_offset, row in enumerate(batch_rows[row_offset:next_offset]):
+        for local_offset, row in enumerate(embedding_rows[row_offset:next_offset]):
             row["vector_id"] = total_vectors
             row["shard_id"] = state.shard_id
             row["shard_vector_id"] = shard_base + local_offset
@@ -626,6 +671,9 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
         dimensions=args.embedding_dimension,
         batch_size=args.batch_size,
     )
+    tokenizer = _embedding_tokenizer(embedder.model)
+    long_text_path = os.path.join(PROJECT_ROOT, "output", "long_text.jsonl")
+    os.makedirs(os.path.dirname(long_text_path), exist_ok=True)
 
     metadata_mode = "a" if existing_record_count else "w"
     batch_rows: list[dict] = []
@@ -633,7 +681,10 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
     dimension = args.embedding_dimension if existing_record_count else None
     skipped_existing = 0
 
-    with open(paths.metadata_path, metadata_mode, encoding="utf-8") as metadata_file:
+    with (
+        open(paths.metadata_path, metadata_mode, encoding="utf-8") as metadata_file,
+        open(long_text_path, "a", encoding="utf-8") as long_text_file,
+    ):
         progress = tqdm(
             total=total_target_sentences,
             initial=already_indexed_sentences,
@@ -660,6 +711,8 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
                 state, dimension, total_vectors = _flush_batch(
                     batch_rows,
                     embedder=embedder,
+                    tokenizer=tokenizer,
+                    long_text_file=long_text_file,
                     faiss_module=faiss,
                     paths=paths,
                     metadata_file=metadata_file,
@@ -676,6 +729,8 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
                 state, dimension, total_vectors = _flush_batch(
                     batch_rows,
                     embedder=embedder,
+                    tokenizer=tokenizer,
+                    long_text_file=long_text_file,
                     faiss_module=faiss,
                     paths=paths,
                     metadata_file=metadata_file,
@@ -714,6 +769,8 @@ def build_faiss_db(args: argparse.Namespace) -> dict:
         "embedding_model": args.embedding_model,
         "embedding_dimension": args.embedding_dimension,
         "embedding_batch_size": args.batch_size,
+        "max_input_tokens": MAX_INPUT_TOKENS,
+        "long_text_jsonl_path": long_text_path,
         "faiss_metric": "cosine_similarity_via_normalized_inner_product",
         "dimension": dimension,
         "record_count": total_vectors,

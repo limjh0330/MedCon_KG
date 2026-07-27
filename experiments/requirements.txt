@@ -14,6 +14,7 @@ peft>=0.14.0
 
 # Vector RAG (cosine similarity).
 numpy>=1.26.0
+tiktoken
 
 # Progress + diagnostics.
 tqdm>=4.66.0
